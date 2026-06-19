@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* Primary Luxury Palette */
+  --color-primary-mauve: #442852;
+  --color-primary-dark: #321c3d;
+  /* Soft & Subtle Accents */
+  --color-secondary-rose: #CBB0DC;
+  --color-secondary-light: #B292C7;
+  /* Warm & Neutral Backgrounds */
+  --color-bg-warm: #F9F6F0;
+  --color-bg-light: #F5F2ED;
+  /* Text Colors */
+  --color-text-dark: #2D2D2D;
+  --color-text-light: #5A5A5A;
+  /* Utility Colors */
+  --color-border-light: #E5E0D8;
+  --color-border-mid: #D1C9C0;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand-primary: #442852;
+  --color-brand-secondary: #CBB0DC;
+  --color-brand-accent: #F9F6F0;
+  --color-brand-text: #2D2D2D;
+  --font-sans: var(--font-outfit);
+}
+
+body {
+  background: var(--color-brand-accent);
+  color: var(--color-brand-text);
+  font-family: var(--font-sans), sans-serif;
+}
+
+/* Premium Typography Utilities */
+.text-luxury {
+  @apply text-[#442852] font-bold;
+}
+
+.text-rose-accent {
+  @apply text-[#CBB0DC];
+}
+
+.text-body {
+  @apply text-[#2D2D2D];
+}
+
+/* Background Utilities */
+.bg-luxury {
+  @apply bg-[#442852];
+}
+
+.bg-rose-subtle {
+  @apply bg-[#CBB0DC];
+}
+
+.bg-warm-nude {
+  @apply bg-[#F9F6F0];
+}
+
+/* Border Utilities */
+.border-rose-subtle {
+  @apply border-[#E5E0D8];
+}
+
+.border-rose-light {
+  @apply border-[#D1C9C0];
+}
+
+/* Button Utilities */
+.btn-primary {
+  @apply bg-[#442852] text-white font-medium rounded-xl py-3 px-6 hover:bg-[#321c3d] hover:shadow-lg transition-all active:scale-95;
+}
+
+.btn-secondary {
+  @apply bg-[#CBB0DC] text-[#442852] font-medium rounded-xl py-3 px-6 hover:bg-[#B292C7] hover:shadow-lg transition-all active:scale-95;
+}
+
+.btn-ghost {
+  @apply bg-transparent border border-[#E5E0D8] text-[#442852] font-medium rounded-xl py-3 px-6 hover:bg-[#F9F6F0] transition-all;
+}
+
+/* Input Utilities */
+.input-primary {
+  @apply w-full rounded-xl border border-[#D1C9C0] bg-white px-4 py-2.5 text-[#2D2D2D] placeholder-gray-400 focus:border-[#442852] focus:outline-none focus:ring-1 focus:ring-[#442852] transition-all;
+}
+
+/* Card Utilities */
+.card-premium {
+  @apply bg-white rounded-2xl border border-[#E5E0D8] shadow-sm hover:shadow-md transition-shadow;
+}
+
+/* Badge Utilities */
+.badge-luxury {
+  @apply inline-flex items-center rounded-full bg-[#442852] text-white px-3 py-1 text-xs font-medium;
+}
+
+.badge-rose {
+  @apply inline-flex items-center rounded-full bg-[#CBB0DC] text-[#442852] px-3 py-1 text-xs font-medium;
+}
+
+.badge-muted {
+  @apply inline-flex items-center rounded-full bg-[#F9F6F0] text-[#2D2D2D] px-3 py-1 text-xs font-medium border border-[#E5E0D8];
+}
+
+/* Hover Effects */
+.hover-luxury {
+  @apply hover:text-[#442852] hover:border-[#442852] transition-colors;
+}
+
+.hover-rose {
+  @apply hover:text-[#CBB0DC] hover:border-[#CBB0DC] transition-colors;
+}
+
+/* Smooth Transitions */
+.transition-smooth {
+  @apply transition-all duration-300 ease-in-out;
+}
