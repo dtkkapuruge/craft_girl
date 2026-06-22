@@ -36,3 +36,4 @@ build/
 .env.local
 .env.* 
 >>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
+package-lock.json
