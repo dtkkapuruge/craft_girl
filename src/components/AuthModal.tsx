@@ -5,23 +5,23 @@ import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function AuthModal() {
-  const { isAuthModalOpen, setAuthModalOpen, signIn, signUp } = useAuth();
+  const { authModalOpen, setAuthModalOpen, signInWithEmail, registerWithEmail } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
 
-  if (!isAuthModalOpen) return null;
+  if (!authModalOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
       if (isLogin) {
-        await signIn(email, password);
+        await signInWithEmail(email, password);
       } else {
-        await signUp(email, password, displayName);
+        await registerWithEmail(email, password, displayName);
       }
       setAuthModalOpen(false);
     } catch (error) {
