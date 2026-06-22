@@ -1,16 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-<<<<<<< HEAD
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { getRoleDisplayName, hasPermission } from '@/lib/rbac';
 import toast from 'react-hot-toast';
-=======
-import { usePathname } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
-import { getRoleDisplayName, hasPermission } from '@/lib/rbac';
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
 import {
   LayoutDashboard,
   Package,
@@ -35,10 +29,7 @@ const PAGE_TITLES: Record<string, string> = {
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, role, signOut } = useAuth();
-<<<<<<< HEAD
   const router = useRouter();
-=======
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
 
   const navItems = ALL_NAV_ITEMS.filter((item) =>
     hasPermission(role, item.permission)
@@ -86,11 +77,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <p className="text-[11px] text-zinc-400 mt-0.5">{getRoleDisplayName(role)}</p>
           </div>
           <button
-<<<<<<< HEAD
             onClick={async () => { await signOut(); toast.success('Signed out successfully.'); router.push('/'); }}
-=======
-            onClick={() => signOut()}
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-600 transition-all duration-200 hover:border-zinc-300 hover:text-zinc-900 hover:shadow-sm"
           >
             <LogOut className="h-3.5 w-3.5" />

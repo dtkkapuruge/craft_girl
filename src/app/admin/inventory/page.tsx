@@ -109,7 +109,6 @@ function InventoryContent() {
   // Adjust finished product stock inline
   const adjustProductStock = async (productId: string, currentStock: number, delta: number) => {
     const newStock = Math.max(0, currentStock + delta);
-<<<<<<< HEAD
     // Optimistic update in UI immediately
     setProducts(prev => prev.map(p => p.id === productId ? { ...p, stockCount: newStock } : p));
     try {
@@ -138,19 +137,6 @@ function InventoryContent() {
     } catch (err) {
       console.error(err);
       alert('Failed to update stock quantity on server.');
-=======
-    // Optimistic Update
-    setProducts(prev => prev.map(p => p.id === productId ? { ...p, stockCount: newStock } : p));
-    try {
-      await updateDoc(doc(db, 'products', productId), {
-        stockCount: newStock,
-        updatedAt: Timestamp.now()
-      });
-    } catch (err) {
-      console.error(err);
-      alert('Failed to update stock quantity on server.');
-      // Revert stock
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
       loadProducts();
     }
   };

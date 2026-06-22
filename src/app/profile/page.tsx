@@ -6,10 +6,7 @@ import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { LogOut, Package, User, MapPin } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-<<<<<<< HEAD
 import toast from 'react-hot-toast';
-=======
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
 
 export default function ProfilePage() {
   const { user, loading, signOut } = useAuth();
@@ -78,11 +75,7 @@ export default function ProfilePage() {
           </div>
 
           <button
-<<<<<<< HEAD
             onClick={async () => { await signOut(); toast.success('Signed out successfully.'); router.push('/'); }}
-=======
-            onClick={() => signOut()}
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
             className="flex items-center gap-2 px-6 py-3 bg-[#F9F6F0] text-[#442852] hover:bg-[#E5E0D8] rounded-xl font-medium transition-colors"
           >
             <LogOut className="w-5 h-5" />

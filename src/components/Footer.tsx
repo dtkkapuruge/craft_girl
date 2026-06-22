@@ -10,11 +10,7 @@ export default function Footer() {
     <footer className="bg-[#2D1B3D] border-t border-[#442852]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
-<<<<<<< HEAD
 
-=======
-          
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
           <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-[#CBB0DC] rounded-full flex items-center justify-center">
@@ -35,11 +31,7 @@ export default function Footer() {
             >
               {/* Custom SVG Facebook Icon */}
               <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-<<<<<<< HEAD
                 <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
-=======
-                <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/>
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
               </svg>
             </a>
           </div>
@@ -63,14 +55,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-<<<<<<< HEAD
                 <Link href="/category/stationery" className="text-sm text-[#E5E0D8]/80 hover:text-white transition-colors">
                   Stationery
                 </Link>
               </li>
               <li>
-=======
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
                 <Link href="/" className="text-sm text-[#E5E0D8]/80 hover:text-white transition-colors">
                   All Products
                 </Link>
@@ -122,13 +111,8 @@ export default function Footer() {
                 </a>
               </div>
               <div className="flex gap-3">
-                {/* Inline SVG for Facebook List Item */}
                 <svg className="w-5 h-5 text-[#CBB0DC] flex-shrink-0 mt-0.5 fill-current" viewBox="0 0 24 24">
-<<<<<<< HEAD
                   <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
-=======
-                  <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/>
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
                 </svg>
                 <a
                   href="https://www.facebook.com/profile.php?id=100086577828998"

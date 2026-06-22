@@ -38,10 +38,7 @@ export default function Home() {
       value: product.price,
       currency: 'LKR',
     });
-<<<<<<< HEAD
     // Toast is shown by ProductCard component
-=======
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
   };
 
   return (
@@ -95,7 +92,7 @@ export default function Home() {
           </div>
         )}
       </section>
-      
+
       {/* Features */}
       <section className="bg-white border-y border-[#E5E0D8] py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

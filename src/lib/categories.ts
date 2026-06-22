@@ -17,10 +17,7 @@ export function getCategoryLabel(value: string): string {
 export const LEGACY_CATEGORY_MAP: Record<string, string> = {
   'handmade-jewelry': 'jewellery',
   'resin-crafts': 'resin',
-<<<<<<< HEAD
   'resin-art': 'resin',
-=======
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
   stationery: 'stationery',
 };
 

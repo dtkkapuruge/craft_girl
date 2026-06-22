@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-<<<<<<< HEAD
 import {
   User,
   signInWithPopup,
@@ -11,14 +10,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
-=======
-import { 
-  User, 
-  signInWithPopup, 
-  GoogleAuthProvider, 
-  signOut as firebaseSignOut,
-  onAuthStateChanged
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -35,11 +26,8 @@ interface AuthContextType {
   authModalOpen: boolean;
   setAuthModalOpen: (isOpen: boolean) => void;
   signInWithCredentials: (email: string, password: string) => Promise<boolean>;
-<<<<<<< HEAD
   registerWithEmail: (email: string, password: string, displayName: string) => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
-=======
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -52,7 +40,6 @@ const AuthContext = createContext<AuthContextType>({
   authModalOpen: false,
   setAuthModalOpen: () => {},
   signInWithCredentials: async () => false,
-<<<<<<< HEAD
   registerWithEmail: async () => {},
   signInWithEmail: async () => {},
 });
@@ -92,10 +79,6 @@ async function resolveUserRole(currentUser: User): Promise<UserRole> {
   }
 }
 
-=======
-});
-
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -104,11 +87,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
-<<<<<<< HEAD
     // Check for mock admin session first (legacy admin login)
-=======
-    // Check for mock admin session first
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
     const mockSession = typeof window !== 'undefined' ? localStorage.getItem('mock_admin_session') : null;
     if (mockSession) {
       try {
@@ -119,19 +98,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setLoading(false);
         document.cookie = 'admin_session=true; path=/; max-age=86400';
         return;
-<<<<<<< HEAD
       } catch {
         localStorage.removeItem('mock_admin_session');
-=======
-      } catch (e) {
-        console.error("Failed to parse mock session:", e);
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
       }
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-<<<<<<< HEAD
 
       if (currentUser) {
         const userRole = await resolveUserRole(currentUser);
@@ -143,67 +116,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           document.cookie = 'admin_session=true; path=/; max-age=86400';
         } else {
           document.cookie = 'admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-=======
-      
-      if (currentUser) {
-        try {
-          const userRef = doc(db, 'users', currentUser.uid);
-          const userDoc = await getDoc(userRef);
-          let userRole: UserRole = (userDoc.data()?.role as UserRole) || 'customer';
-
-          // Apply pre-assigned role from invite if user doc is missing or still customer
-          if (currentUser.email) {
-            const inviteRef = doc(db, 'user_invites', currentUser.email.toLowerCase());
-            const inviteDoc = await getDoc(inviteRef);
-            if (inviteDoc.exists()) {
-              const invitedRole = inviteDoc.data()?.role as UserRole;
-              if (invitedRole && invitedRole !== 'customer') {
-                userRole = invitedRole;
-              }
-            }
-          }
-
-          setRole(userRole);
-
-          const isAdminUser = userRole === 'admin' || userRole === 'super-admin';
-          setIsAdmin(isAdminUser);
-
-          if (hasDashboardAccess(userRole)) {
-            document.cookie = 'admin_session=true; path=/; max-age=86400';
-          } else {
-            document.cookie = 'admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-          }
-
-          if (!userDoc.exists()) {
-            await setDoc(userRef, {
-              email: currentUser.email,
-              displayName: currentUser.displayName,
-              photoURL: currentUser.photoURL,
-              role: userRole,
-              createdAt: new Date().toISOString(),
-            });
-          } else if (userDoc.data()?.role !== userRole && userRole !== 'customer') {
-            await setDoc(userRef, { role: userRole, updatedAt: new Date().toISOString() }, { merge: true });
-          }
-        } catch (error) {
-          console.error("Error fetching user role:", error);
-          setRole('customer');
-          setIsAdmin(false);
-          document.cookie = "admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
         }
       } else {
         setRole('customer');
         setIsAdmin(false);
-<<<<<<< HEAD
         document.cookie = 'admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       }
 
-=======
-        document.cookie = "admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-      }
-      
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
       setLoading(false);
     });
 
@@ -212,7 +131,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-<<<<<<< HEAD
     await signInWithPopup(auth, provider);
     setAuthModalOpen(false);
   };
@@ -237,17 +155,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Legacy mock admin login (kept for admin panel access)
-=======
-    try {
-      await signInWithPopup(auth, provider);
-      setAuthModalOpen(false);
-    } catch (error) {
-      console.error('Error signing in with Google', error);
-      throw error;
-    }
-  };
-
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
   const signInWithCredentials = async (email: string, password: string): Promise<boolean> => {
     const emailLower = email.trim().toLowerCase();
     let roleToSet: UserRole | null = null;
@@ -270,11 +177,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email: emailLower,
         displayName,
         photoURL: null,
-<<<<<<< HEAD
       } as unknown as User;
-=======
-      } as any;
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('mock_admin_session', JSON.stringify({
@@ -290,7 +193,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return true;
     }
 
-<<<<<<< HEAD
     // Also try real Firebase admin users (those stored in Firestore with admin roles)
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -298,9 +200,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch {
       return false;
     }
-=======
-    return false;
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
   };
 
   const signOut = async () => {
@@ -308,11 +207,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('mock_admin_session');
       }
-<<<<<<< HEAD
       document.cookie = 'admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-=======
-      document.cookie = "admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
       setUser(null);
       setRole('customer');
       setIsAdmin(false);
@@ -323,7 +218,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-<<<<<<< HEAD
     <AuthContext.Provider value={{
       user,
       loading,
@@ -336,18 +230,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       signInWithCredentials,
       registerWithEmail,
       signInWithEmail,
-=======
-    <AuthContext.Provider value={{ 
-      user, 
-      loading, 
-      role,
-      isAdmin, 
-      signInWithGoogle, 
-      signOut,
-      authModalOpen,
-      setAuthModalOpen,
-      signInWithCredentials
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
     }}>
       {children}
     </AuthContext.Provider>
