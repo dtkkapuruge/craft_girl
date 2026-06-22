@@ -1,0 +1,65 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserRole() {
+      return request.auth.token.role;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() == 'admin';
+    }
+
+    function isStaff() {
+      return isAuthenticated() && (getUserRole() == 'staff' || getUserRole() == 'admin');
+    }
+
+    // Rules for products collection
+    match /products/{productId} {
+      // Public can read active (non-hidden) products
+      allow read: if !resource.data.isHidden || isAdmin();
+      // Only admin can write to products (create, update, delete)
+      allow write: if isAdmin();
+    }
+
+    // Rules for categories collection
+    match /categories/{categoryId} {
+      // Public can read categories
+      allow read: if true;
+      // Only admin can write to categories
+      allow write: if isAdmin();
+    }
+
+    // Rules for orders collection
+    match /orders/{orderId} {
+      // Public can only create (submit) an order, they cannot read other orders or list them
+      // To create, the order must meet basic validations (like COD payment method and valid phone number)
+      allow create: if request.resource.data.paymentMethod == 'COD' &&
+                      request.resource.data.customer.phone.matches('^07[0-9]{8}$') &&
+                      request.resource.data.status == 'Pending' &&
+                      request.resource.data.paymentStatus == 'Pending COD';
+
+      // Admin and Staff can read and list all orders
+      allow read, list: if isStaff();
+
+      // Only Admin and Staff can update orders (e.g. change status)
+      // Staff cannot delete orders; only Admin can delete
+      allow update: if isStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Rules for audit logs collection
+    match /audit_logs/{logId} {
+      // Only Admin can read/write audit logs. Staff might create them via actions.
+      allow read: if isAdmin();
+      allow create: if isStaff();
+      allow update, delete: if isAdmin();
+    }
+  }
+}
