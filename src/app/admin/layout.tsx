@@ -3,7 +3,11 @@
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+<<<<<<< HEAD
 import { getRoleDisplayName, hasPermission } from '@/lib/rbac';
+=======
+import { getRoleDisplayName } from '@/lib/rbac';
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -52,6 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'Settings & Logs', href: '/admin/settings', icon: Settings },
   ];
 
+<<<<<<< HEAD
   const filteredMenuItems = menuItems.filter((item) => {
     if (item.href === '/admin/users') {
       return hasPermission(role, 'canManageUsers');
@@ -62,6 +67,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return true;
   });
 
+=======
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
   return (
     <div className="flex min-h-screen bg-[#FDFBF7]">
       {/* Sidebar - වම් පැත්තේ මෙනු එක */}
@@ -78,7 +85,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           <nav className="space-y-1.5">
+<<<<<<< HEAD
             {filteredMenuItems.map((item) => {
+=======
+            {menuItems.map((item) => {
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
               const Icon = item.icon;
               const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
               return (

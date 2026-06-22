@@ -173,6 +173,7 @@ function formatDate(createdAt: Order['createdAt']) {
   });
 }
 
+<<<<<<< HEAD
 function normalizeOrder(id: string, data: any): Order {
   const customer = data.customer || {};
   const items = Array.isArray(data.items) ? data.items : [];
@@ -215,6 +216,8 @@ function normalizeOrder(id: string, data: any): Order {
   };
 }
 
+=======
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
 function getAccessDescription(role: string) {
   if (role === 'staff') return 'View-only access. Contact an administrator to modify orders.';
   if (role === 'admin') return 'You can update order statuses. Deletion requires super-admin access.';
@@ -280,7 +283,11 @@ function AdminOrdersPageContent() {
         if (!querySnapshot.empty) {
           const list: Order[] = [];
           querySnapshot.forEach((docSnap) => {
+<<<<<<< HEAD
             list.push(normalizeOrder(docSnap.id, docSnap.data()));
+=======
+            list.push({ id: docSnap.id, ...docSnap.data() } as Order);
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
           });
           setOrders(list);
         } else {

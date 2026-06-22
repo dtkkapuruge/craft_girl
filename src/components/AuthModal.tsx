@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
+<<<<<<< HEAD
 import { X, Loader2, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 
@@ -32,11 +33,24 @@ export default function AuthModal() {
     setView(v);
   };
 
+=======
+import { X, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+
+export default function AuthModal() {
+  const { authModalOpen, setAuthModalOpen, signInWithGoogle } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  if (!authModalOpen) return null;
+
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
   const handleGoogleSignIn = async () => {
     setLoading(true);
     setError('');
     try {
       await signInWithGoogle();
+<<<<<<< HEAD
     } catch (err: unknown) {
       const e = err as { message?: string };
       setError(e.message || 'Failed to sign in with Google');
@@ -75,12 +89,17 @@ export default function AuthModal() {
         setError(e.message || 'An error occurred. Please try again.');
       }
     } finally {
+=======
+    } catch (err: any) {
+      setError(err.message || 'Failed to sign in with Google');
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
       setLoading(false);
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+<<<<<<< HEAD
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
         onClick={() => setAuthModalOpen(false)}
@@ -90,10 +109,24 @@ export default function AuthModal() {
         <button
           onClick={() => setAuthModalOpen(false)}
           className="absolute right-4 top-4 text-gray-400 hover:text-[#442852] transition-colors z-10"
+=======
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
+        onClick={() => setAuthModalOpen(false)}
+      />
+      
+      {/* Modal */}
+      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <button 
+          onClick={() => setAuthModalOpen(false)}
+          className="absolute right-4 top-4 text-gray-400 hover:text-[#442852] transition-colors"
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
         >
           <X className="w-6 h-6" />
         </button>
 
+<<<<<<< HEAD
         <div className="p-8">
           <div className="text-center mb-6">
             <div className="w-14 h-14 bg-[#F9F6F0] rounded-full flex items-center justify-center mx-auto mb-4 border border-[#E5E0D8]">
@@ -114,6 +147,26 @@ export default function AuthModal() {
             onClick={handleGoogleSignIn}
             disabled={loading}
             className="w-full flex items-center justify-center gap-3 bg-white border border-[#D1C9C0] text-[#2D2D2D] py-3 px-4 rounded-xl font-medium hover:bg-[#F9F6F0] transition-colors disabled:opacity-50 mb-4"
+=======
+        <div className="p-8 text-center">
+          <div className="w-16 h-16 bg-[#F9F6F0] rounded-full flex items-center justify-center mx-auto mb-6">
+            <span className="text-[#442852] font-bold text-2xl">CG</span>
+          </div>
+          
+          <h2 className="text-2xl font-bold text-[#2D2D2D] mb-2">Welcome Back</h2>
+          <p className="text-gray-500 mb-8">Sign in or create an account to track your orders and save delivery addresses.</p>
+
+          {error && (
+            <div className="mb-6 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
+              {error}
+            </div>
+          )}
+
+          <button
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 bg-white border border-[#D1C9C0] text-[#2D2D2D] py-3 px-4 rounded-xl font-medium hover:bg-[#F9F6F0] transition-colors disabled:opacity-50"
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin text-[#442852]" />
@@ -127,6 +180,7 @@ export default function AuthModal() {
             )}
             Continue with Google
           </button>
+<<<<<<< HEAD
 
           <div className="relative mb-4">
             <div className="absolute inset-0 flex items-center">
@@ -217,6 +271,10 @@ export default function AuthModal() {
           </p>
         </div>
 
+=======
+        </div>
+        
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
         <div className="bg-[#F9F6F0] p-4 text-center border-t border-[#E5E0D8]">
           <p className="text-xs text-gray-500">
             By continuing, you agree to our Terms of Service and Privacy Policy.

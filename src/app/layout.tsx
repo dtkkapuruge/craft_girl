@@ -7,7 +7,10 @@ import CartDrawer from "@/components/CartDrawer";
 import AuthModal from "@/components/AuthModal";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
+<<<<<<< HEAD
 import { Toaster } from "react-hot-toast";
+=======
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
 import "./globals.css";
 
 const outfit = Outfit({
@@ -50,6 +53,7 @@ export default function RootLayout({
             {/* Global Slide-over UI & Modals */}
             <CartDrawer />
             <AuthModal />
+<<<<<<< HEAD
             <Toaster
               position="top-right"
               toastOptions={{
@@ -75,6 +79,8 @@ export default function RootLayout({
                 },
               }}
             />
+=======
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
 
             <ConditionalSiteChrome>{children}</ConditionalSiteChrome>
           </CartProvider>

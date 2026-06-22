@@ -38,7 +38,10 @@ export default function Home() {
       value: product.price,
       currency: 'LKR',
     });
+<<<<<<< HEAD
     // Toast is shown by ProductCard component
+=======
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
   };
 
   return (

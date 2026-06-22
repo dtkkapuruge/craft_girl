@@ -11,14 +11,21 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { cartCount, toggleCart } = useCart();
+<<<<<<< HEAD
   const { user, role, signOut, setAuthModalOpen } = useAuth();
+=======
+  const { user, setAuthModalOpen } = useAuth();
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+<<<<<<< HEAD
   const isAdminOrStaff = role === 'admin' || role === 'staff' || role === 'super-admin' || (user as any)?.role === 'admin' || (user as any)?.role === 'staff' || (user as any)?.role === 'super-admin';
 
+=======
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
   const isActive = (path: string) => {
     return pathname === path || pathname.startsWith(path + '/');
   };
@@ -35,6 +42,7 @@ export default function Header() {
 
   const navLinks = [
     { href: '/home', label: 'Home', active: pathname === '/home' || pathname === '/' },
+<<<<<<< HEAD
     ...(!isAdminOrStaff ? [
       { href: '/category/jewellery', label: 'Jewellery', active: isActive('/category/jewellery') || isActive('/category/handmade-jewelry') },
       { href: '/category/resin', label: 'Resin Crafts', active: isActive('/category/resin') || isActive('/category/resin-crafts') },
@@ -43,6 +51,12 @@ export default function Header() {
     ] : [
       { href: '/admin', label: 'Admin Dashboard', active: isActive('/admin') }
     ]),
+=======
+    { href: '/category/jewellery', label: 'Jewellery', active: isActive('/category/jewellery') || isActive('/category/handmade-jewelry') },
+    { href: '/category/resin', label: 'Resin Crafts', active: isActive('/category/resin') || isActive('/category/resin-crafts') },
+    { href: '/category/stationery', label: 'Stationery', active: isActive('/category/stationery') },
+    { href: '/category/chocolate-boxes', label: 'Chocolate Boxes', active: isActive('/category/chocolate-boxes') },
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
     { href: '/about', label: 'About', active: isActive('/about') },
     { href: '/contact', label: 'Contact', active: isActive('/contact') },
   ];
@@ -127,6 +141,7 @@ export default function Header() {
                     <p className="text-sm font-bold text-[#2D2D2D] truncate">{user.displayName || 'User'}</p>
                     <p className="text-xs text-gray-500 truncate">{user.email}</p>
                   </div>
+<<<<<<< HEAD
                   {!isAdminOrStaff ? (
                     <Link href="/profile" onClick={() => setIsProfileMenuOpen(false)} className="block px-4 py-2 text-sm text-[#2D2D2D] hover:bg-[#F9F6F0] hover:text-[#442852]">
                       My Profile & Orders
@@ -148,11 +163,17 @@ export default function Header() {
                       </button>
                     </>
                   )}
+=======
+                  <Link href="/profile" onClick={() => setIsProfileMenuOpen(false)} className="block px-4 py-2 text-sm text-[#2D2D2D] hover:bg-[#F9F6F0] hover:text-[#442852]">
+                    My Profile & Orders
+                  </Link>
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
                 </div>
               </>
             )}
           </div>
 
+<<<<<<< HEAD
           {!isAdminOrStaff && (
             <button
               onClick={() => toggleCart(true)}
@@ -167,6 +188,20 @@ export default function Header() {
               )}
             </button>
           )}
+=======
+          <button
+            onClick={() => toggleCart(true)}
+            className="relative p-2 text-[#442852] hover:bg-[#E5E0D8] rounded-full transition-colors"
+            aria-label="Open cart"
+          >
+            <ShoppingCart className="w-6 h-6" />
+            {cartCount > 0 && (
+              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-[#442852] rounded-full">
+                {cartCount}
+              </span>
+            )}
+          </button>
+>>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
         </div>
       </div>
 
