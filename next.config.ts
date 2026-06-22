@@ -11,7 +11,6 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'firebasestorage.googleapis.com',
       },
-<<<<<<< HEAD
       {
         protocol: 'https',
         hostname: 'images.pexels.com',
@@ -20,8 +19,6 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
       },
-=======
->>>>>>> 24e10e7af165d9d6fee0db4791fe2a2a8a334ab3
     ],
   },
 };
