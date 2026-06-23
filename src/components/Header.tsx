@@ -60,8 +60,12 @@ export default function Header() {
         </button>
 
         <Link href="/home" className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#442852]">
-            <span className="text-white font-bold text-sm">CG</span>
+          <div className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-[#442852]">
+            <img 
+               src={process.env.NEXT_PUBLIC_STORE_LOGO_URL || "https://ui-avatars.com/api/?name=CG&background=442852&color=fff"} 
+               alt="Craft Girly Logo" 
+               className="w-full h-full object-cover" 
+            />
           </div>
           <span className="font-bold text-xl hidden sm:block text-[#442852]">
             Craft Girly Store

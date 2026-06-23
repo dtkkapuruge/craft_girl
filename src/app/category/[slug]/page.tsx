@@ -66,17 +66,7 @@ export default function CategoryPage() {
     });
   };
 
-  if (!loading && !baseProducts.length) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center bg-[#F9F6F0]">
-        <h1 className="text-3xl font-bold text-[#442852] mb-4">Category Not Found</h1>
-        <p className="text-gray-500 mb-8">We couldn&apos;t find any products in &ldquo;{categoryName}&rdquo;.</p>
-        <Link href="/" className="px-6 py-3 bg-[#442852] text-white rounded-full font-medium hover:bg-[#321c3d] transition-colors">
-          Return Home
-        </Link>
-      </div>
-    );
-  }
+  // Empty check removed so normal layout renders even if no products.
 
   return (
     <div className="bg-[#F9F6F0] min-h-screen">
@@ -145,13 +135,19 @@ export default function CategoryPage() {
         ) : sortedProducts.length === 0 ? (
           <div className="text-center py-20">
             <Search className="h-10 w-10 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 font-medium">No products match your search.</p>
-            <button
-              onClick={() => setSearchQuery('')}
-              className="mt-4 text-sm text-[#442852] font-semibold hover:underline"
-            >
-              Clear search
-            </button>
+            <p className="text-gray-500 font-medium">
+              {searchQuery 
+                ? 'No products match your search.' 
+                : `No products found in the "${categoryName}" category yet.`}
+            </p>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="mt-4 text-sm text-[#442852] font-semibold hover:underline"
+              >
+                Clear search
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">

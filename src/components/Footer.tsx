@@ -13,8 +13,12 @@ export default function Footer() {
 
           <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-[#CBB0DC] rounded-full flex items-center justify-center">
-                <span className="text-[#2D1B3D] font-bold text-sm">CG</span>
+              <div className="w-8 h-8 bg-[#CBB0DC] rounded-full overflow-hidden flex items-center justify-center">
+                <img 
+                  src={process.env.NEXT_PUBLIC_STORE_LOGO_URL || "https://ui-avatars.com/api/?name=CG&background=CBB0DC&color=2D1B3D"} 
+                  alt="Craft Girly Logo" 
+                  className="w-full h-full object-cover"
+                />
               </div>
               <h3 className="font-bold text-xl text-white">Craft Girly Store</h3>
             </div>

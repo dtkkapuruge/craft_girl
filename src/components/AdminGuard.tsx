@@ -20,7 +20,7 @@ export default function AdminGuard({
   minRole,
   fallback,
 }: AdminGuardProps) {
-  const { user, loading, role } = useAuth();
+  const { user, loading, role, permissions } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function AdminGuard({
 
     // Check permission if specified
     if (requiredPermission) {
-      if (!hasPermission(role, requiredPermission)) {
+      if (!hasPermission(role, requiredPermission, permissions)) {
         router.push('/admin/login');
         return;
       }
@@ -48,7 +48,7 @@ export default function AdminGuard({
         return;
       }
     }
-  }, [user, loading, role, requiredPermission, minRole, router]);
+  }, [user, loading, role, permissions, requiredPermission, minRole, router]);
 
   if (loading) {
     return fallback || (
@@ -76,7 +76,7 @@ export default function AdminGuard({
   }
 
   // Check permission if specified
-  if (requiredPermission && !hasPermission(role, requiredPermission)) {
+  if (requiredPermission && !hasPermission(role, requiredPermission, permissions)) {
     return fallback || (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">

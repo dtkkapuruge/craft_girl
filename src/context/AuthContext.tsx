@@ -13,14 +13,15 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import type { UserRole } from '@/lib/rbac';
-import { hasDashboardAccess } from '@/lib/rbac';
+import type { UserRole, RolePermission } from '@/lib/rbac';
+import { hasDashboardAccess, fetchRolePermissions } from '@/lib/rbac';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   role: UserRole;
   isAdmin: boolean;
+  permissions: RolePermission | null;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   authModalOpen: boolean;
@@ -35,6 +36,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   role: 'customer',
   isAdmin: false,
+  permissions: null,
   signInWithGoogle: async () => {},
   signOut: async () => {},
   authModalOpen: false,
@@ -84,6 +86,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<UserRole>('customer');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [permissions, setPermissions] = useState<RolePermission | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
@@ -95,7 +98,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(parsed);
         setRole(parsed.role);
         setIsAdmin(parsed.role === 'admin' || parsed.role === 'super-admin');
-        setLoading(false);
+        
+        // Fetch dynamic permissions for mock session
+        fetchRolePermissions(parsed.role).then((perms) => {
+          setPermissions(perms);
+          setLoading(false);
+        }).catch((err) => {
+          console.error(err);
+          setLoading(false);
+        });
+
         document.cookie = 'admin_session=true; path=/; max-age=86400';
         return;
       } catch {
@@ -112,7 +124,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const isAdminUser = userRole === 'admin' || userRole === 'super-admin';
         setIsAdmin(isAdminUser);
 
-        if (hasDashboardAccess(userRole)) {
+        // Fetch dynamic permissions
+        const fetchedPerms = await fetchRolePermissions(userRole);
+        setPermissions(fetchedPerms);
+
+        if (hasDashboardAccess(userRole, fetchedPerms)) {
           document.cookie = 'admin_session=true; path=/; max-age=86400';
         } else {
           document.cookie = 'admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
@@ -120,6 +136,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } else {
         setRole('customer');
         setIsAdmin(false);
+        setPermissions(null);
         document.cookie = 'admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       }
 
@@ -186,6 +203,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }));
       }
 
+      try {
+        const fetchedPerms = await fetchRolePermissions(roleToSet);
+        setPermissions(fetchedPerms);
+      } catch (err) {
+        console.error(err);
+      }
+
       setUser(mockUser);
       setRole(roleToSet);
       setIsAdmin(roleToSet === 'admin' || roleToSet === 'super-admin');
@@ -223,6 +247,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       loading,
       role,
       isAdmin,
+      permissions,
       signInWithGoogle,
       signOut,
       authModalOpen,

@@ -6,6 +6,33 @@ import { useState, useEffect, Suspense } from 'react';
 import { Mail, Lock, User, Eye, EyeOff, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+// Map Firebase auth error codes → human-readable messages
+function getAuthErrorMessage(err: any): string {
+  const code = err?.code || '';
+  switch (code) {
+    case 'auth/invalid-credential':
+    case 'auth/wrong-password':
+    case 'auth/user-not-found':
+      return 'Invalid email or password. Please check your credentials and try again.';
+    case 'auth/email-already-in-use':
+      return 'An account with this email already exists. Please sign in instead.';
+    case 'auth/weak-password':
+      return 'Password is too weak. Please use at least 6 characters.';
+    case 'auth/invalid-email':
+      return 'Please enter a valid email address.';
+    case 'auth/too-many-requests':
+      return 'Too many failed attempts. Please wait a moment and try again.';
+    case 'auth/network-request-failed':
+      return 'Network error. Please check your internet connection.';
+    case 'auth/popup-closed-by-user':
+      return 'Sign-in popup was closed. Please try again.';
+    case 'auth/cancelled-popup-request':
+      return '';
+    default:
+      return err?.message || 'Authentication failed. Please try again.';
+  }
+}
+
 function LoginFormContent() {
   const { user, loading: authLoading, signInWithGoogle, signInWithEmail, registerWithEmail } = useAuth();
   const router = useRouter();
@@ -32,10 +59,14 @@ function LoginFormContent() {
     setError('');
     try {
       await signInWithGoogle();
-      toast.success('Signed in successfully!');
+      toast.success('Signed in successfully! Welcome back 🎉');
       router.push(redirectUrl);
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google');
+      const msg = getAuthErrorMessage(err);
+      if (msg) {
+        setError(msg);
+        toast.error(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -48,19 +79,27 @@ function LoginFormContent() {
     try {
       if (view === 'register') {
         if (!displayName.trim()) {
-          setError('Please enter your name.');
+          const msg = 'Please enter your full name.';
+          setError(msg);
+          toast.error(msg);
           setLoading(false);
           return;
         }
         await registerWithEmail(email, password, displayName.trim());
-        toast.success('Account created successfully!');
+        // After registration: show success toast, switch to sign-in tab
+        toast.success('Account created! Please sign in to continue. 🎉');
+        setView('login');
+        setPassword('');
+        setDisplayName('');
       } else {
         await signInWithEmail(email, password);
-        toast.success('Signed in successfully!');
+        toast.success('Signed in successfully! Welcome back 🎉');
+        router.push(redirectUrl);
       }
-      router.push(redirectUrl);
     } catch (err: any) {
-      setError(err.message || 'Authentication failed');
+      const msg = getAuthErrorMessage(err);
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

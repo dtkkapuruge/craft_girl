@@ -12,13 +12,14 @@ import {
   Warehouse,
   Users,
   Settings,
-  LogOut
+  LogOut,
+  Shield
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, role, signOut } = useAuth();
+  const { user, role, signOut, permissions } = useAuth();
 
   const isLoginPage = pathname === '/admin/login';
 
@@ -38,6 +39,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (path.startsWith('/admin/categories')) return '| Categories';
     if (path.startsWith('/admin/inventory')) return '| Inventory';
     if (path.startsWith('/admin/users')) return '| User Management';
+    if (path.startsWith('/admin/roles')) return '| Role Permissions';
     if (path.startsWith('/admin/settings')) return '| Settings & Logs';
     return '| Admin Portal';
   };
@@ -49,12 +51,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'Categories', href: '/admin/categories', icon: Tags },
     { label: 'Inventory', href: '/admin/inventory', icon: Warehouse },
     { label: 'User Management', href: '/admin/users', icon: Users },
+    { label: 'Role Permissions', href: '/admin/roles', icon: Shield },
     { label: 'Settings & Logs', href: '/admin/settings', icon: Settings },
   ];
 
   const filteredMenuItems = menuItems.filter((item) => {
     if (item.href === '/admin/users') {
-      return hasPermission(role, 'canManageUsers');
+      return hasPermission(role, 'canManageUsers', permissions);
+    }
+    if (item.href === '/admin/roles') {
+      // super-admin = full edit access; admin = read-only view; staff/others = hidden
+      return role === 'super-admin' || role === 'admin';
     }
     if (item.href === '/admin/settings') {
       return role === 'super-admin' || role === 'admin';
