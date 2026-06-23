@@ -163,12 +163,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       role: 'customer',
       createdAt: new Date().toISOString(),
     });
-    setAuthModalOpen(false);
+    // Note: modal close is handled by the calling component (AuthModal/LoginPage)
+    // to avoid race conditions on mobile where UI updates before Firestore completes
   };
 
   const signInWithEmail = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
-    setAuthModalOpen(false);
+    // Note: modal close is handled by the calling component
   };
 
   // Legacy mock admin login (kept for admin panel access)
