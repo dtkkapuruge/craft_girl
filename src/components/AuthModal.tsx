@@ -1,7 +1,7 @@
 'use client';
 
 import { X, Loader2, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -29,7 +29,7 @@ function getAuthErrorMessage(err: any): string {
 }
 
 export default function AuthModal() {
-  const { authModalOpen, setAuthModalOpen, signInWithEmail, registerWithEmail, signInWithGoogle } = useAuth();
+  const { authModalOpen, setAuthModalOpen, signInWithEmail, registerWithEmail, signInWithGoogle, user } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -37,6 +37,15 @@ export default function AuthModal() {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // Close modal automatically once Firebase confirms the user is signed in.
+  // This is the correct trigger — not the immediate result of the await —
+  // because onAuthStateChanged fires asynchronously after sign-in resolves.
+  useEffect(() => {
+    if (user && authModalOpen) {
+      setAuthModalOpen(false);
+    }
+  }, [user, authModalOpen, setAuthModalOpen]);
 
   if (!authModalOpen) return null;
 

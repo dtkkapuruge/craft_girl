@@ -48,6 +48,10 @@ function LoginFormContent() {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
 
+  // ─── Single redirect mechanism ────────────────────────────────────────────
+  // router.push is ONLY called here, once onAuthStateChanged has confirmed the
+  // user object is set in context. Calling router.push inside the event
+  // handlers causes a race where the target page still sees user=null.
   useEffect(() => {
     if (user && !authLoading) {
       router.push(redirectUrl);
@@ -59,8 +63,9 @@ function LoginFormContent() {
     setError('');
     try {
       await signInWithGoogle();
-      toast.success('Signed in successfully! Welcome back 🎉');
-      router.push(redirectUrl);
+      // Don't router.push here — useEffect above handles redirect once
+      // onAuthStateChanged fires and sets user in context.
+      toast.success('Signed in with Google! Welcome back 🎉');
     } catch (err: any) {
       const msg = getAuthErrorMessage(err);
       if (msg) {
@@ -86,15 +91,19 @@ function LoginFormContent() {
           return;
         }
         await registerWithEmail(email, password, displayName.trim());
-        // After registration: show success toast, switch to sign-in tab
+        // After registration: switch to sign-in view so user signs in explicitly.
+        // Don't auto-redirect — the new account won't have onAuthStateChanged
+        // resolve until they sign in.
         toast.success('Account created! Please sign in to continue. 🎉');
         setView('login');
         setPassword('');
         setDisplayName('');
+        setError('');
       } else {
         await signInWithEmail(email, password);
+        // Don't router.push here — useEffect handles redirect once
+        // onAuthStateChanged fires and user is confirmed in context.
         toast.success('Signed in successfully! Welcome back 🎉');
-        router.push(redirectUrl);
       }
     } catch (err: any) {
       const msg = getAuthErrorMessage(err);
