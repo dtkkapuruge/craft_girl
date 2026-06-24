@@ -37,14 +37,30 @@ export default function ProfilePage() {
       // 2. Orders දත්ත ලබා ගැනීම
       const fetchOrders = async () => {
         try {
+          // createdAt නොමැති ඇණවුම් ගැටලුව වළක්වා ගැනීමට orderBy තාවකාලිකව ඉවත් කර දත්ත පරීක්ෂා කිරීම
           const q = query(
             collection(db, 'orders'),
-            where('userId', '==', user.uid),
-            orderBy('createdAt', 'desc')
+            where('userId', '==', user.uid)
           );
+
           const querySnapshot = await getDocs(q);
-          const orderData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          setOrders(orderData);
+
+          // Debugging සඳහා log එකක්
+          console.log("Found orders count:", querySnapshot.size);
+
+          const orderData = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+
+          // දත්ත වර්ග කිරීම (createdAt තිබේ නම් පමණක් අනුව)
+          const sortedOrders = orderData.sort((a: any, b: any) => {
+            const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(0);
+            const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(0);
+            return dateB.getTime() - dateA.getTime();
+          });
+
+          setOrders(sortedOrders);
         } catch (error) {
           console.error("Error fetching orders: ", error);
         }
@@ -86,8 +102,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-          {/* Address Book - නැවත එකතු කරන ලදී */}
+          {/* Address Book */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#E5E0D8] md:col-span-1 h-fit">
             <div className="flex justify-between items-center mb-6">
               <h2 className="font-bold flex items-center gap-2"><MapPin size={20} /> Address Book</h2>
@@ -130,7 +145,9 @@ export default function ProfilePage() {
                   <div key={order.id} className="border-b pb-4 flex justify-between">
                     <div>
                       <p className="font-semibold">Order ID: {order.id.slice(0, 8)}...</p>
-                      <p className="text-sm text-gray-500">{order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString() : 'N/A'}</p>
+                      <p className="text-sm text-gray-500">
+                        {order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString() : 'Date N/A'}
+                      </p>
                     </div>
                     <p className="font-bold">Rs. {order.totalAmount}</p>
                   </div>
