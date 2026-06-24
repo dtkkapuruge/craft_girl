@@ -9,8 +9,7 @@ import {
   query,
   orderBy,
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
 import { PRODUCTS, type Product } from '@/lib/products';
 import { getCategoryLabel } from '@/lib/categories';
 
@@ -23,6 +22,31 @@ export type ProductInput = {
   image: string;
 };
 
+// --- CLOUDINARY CONFIGURATION --
+// ඔබේ Cloudinary විස්තර මෙතැනට දමන්න
+const CLOUDINARY_CLOUD_NAME = 'dfsslx2eh'; // Cloudinary Dashboard එකෙන් ගන්න
+const CLOUDINARY_UPLOAD_PRESET = 'craft_preset'; // ඔබ සෑදූ Unsigned Upload Preset එක
+
+export async function uploadProductImage(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+    {
+      method: 'POST',
+      body: formData,
+    }
+  );
+
+  const data = await response.json();
+  if (!data.secure_url) {
+    throw new Error('Image upload failed');
+  }
+  return data.secure_url;
+}
+
 function docToProduct(id: string, data: Record<string, unknown>): Product {
   return {
     id,
@@ -30,7 +54,7 @@ function docToProduct(id: string, data: Record<string, unknown>): Product {
     description: (data.description as string) ?? '',
     price: Number(data.price) || 0,
     category: (data.category as string) ?? 'handmade',
-    image: (data.image as string) ?? (data.images as string[])?.[0] ?? '',
+    image: (data.image as string) ?? '',
     rating: Number(data.rating) || 4.8,
     reviews: Number(data.reviews) || 0,
     stockCount: Number(data.stockCount ?? data.stock) || 0,
@@ -48,16 +72,6 @@ export async function fetchAllProducts(): Promise<Product[]> {
   }
 }
 
-export async function uploadProductImage(
-  file: File,
-  productId: string
-): Promise<string> {
-  const ext = file.name.split('.').pop() || 'jpg';
-  const storageRef = ref(storage, `products/${productId}/${Date.now()}.${ext}`);
-  await uploadBytes(storageRef, file);
-  return getDownloadURL(storageRef);
-}
-
 export async function createProduct(
   input: ProductInput,
   imageFile?: File | null
@@ -66,7 +80,7 @@ export async function createProduct(
   let imageUrl = input.image;
 
   if (imageFile) {
-    imageUrl = await uploadProductImage(imageFile, id);
+    imageUrl = await uploadProductImage(imageFile);
   }
 
   const product = {
@@ -87,13 +101,13 @@ export async function updateProduct(
   input: Partial<ProductInput>,
   imageFile?: File | null
 ): Promise<void> {
-  const payload: Record<string, unknown> = {
+  const payload: Record<string, any> = {
     ...input,
     updatedAt: Timestamp.now(),
   };
 
   if (imageFile) {
-    payload.image = await uploadProductImage(imageFile, id);
+    payload.image = await uploadProductImage(imageFile);
   }
 
   await updateDoc(doc(db, 'products', id), payload);

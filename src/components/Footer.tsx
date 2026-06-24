@@ -14,9 +14,9 @@ export default function Footer() {
           <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-[#CBB0DC] rounded-full overflow-hidden flex items-center justify-center">
-                <img 
-                  src={process.env.NEXT_PUBLIC_STORE_LOGO_URL || "https://ui-avatars.com/api/?name=CG&background=CBB0DC&color=2D1B3D"} 
-                  alt="Craft Girly Logo" 
+                <img
+                  src={process.env.NEXT_PUBLIC_STORE_LOGO_URL || "https://ui-avatars.com/api/?name=CG&background=CBB0DC&color=2D1B3D"}
+                  alt="Craft Girly Logo"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -56,6 +56,16 @@ export default function Footer() {
               <li>
                 <Link href="/category/chocolate-boxes" className="text-sm text-[#E5E0D8]/80 hover:text-white transition-colors">
                   Chocolate Boxes
+                </Link>
+              </li>
+              <li>
+                <Link href="/category/chocolate-boxes" className="text-sm text-[#E5E0D8]/80 hover:text-white transition-colors">
+                  Flower Preservation
+                </Link>
+              </li>
+              <li>
+                <Link href="/" className="text-sm text-[#E5E0D8]/80 hover:text-white transition-colors">
+                  Handmade Items
                 </Link>
               </li>
               <li>
