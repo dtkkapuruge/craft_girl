@@ -1,10 +1,10 @@
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   setDoc,
   updateDoc,
-  deleteDoc,
   query,
   where,
   Timestamp,
@@ -20,9 +20,13 @@ export interface AdminUser {
   status?: 'active' | 'inactive';
   role: UserRole;
   createdAt?: string;
+  address?: string;
+  photoURL?: string;
 }
 
 const STAFF_ROLES: UserRole[] = ['staff', 'admin', 'super-admin'];
+
+// --- ADMIN USER FUNCTIONS ---
 
 export async function fetchAdminUsers(): Promise<AdminUser[]> {
   try {
@@ -49,19 +53,6 @@ export async function fetchAdminUsers(): Promise<AdminUser[]> {
   }
 }
 
-/** Pre-register a user by email — role applied when they sign in */
-export async function inviteUserByEmail(
-  email: string,
-  role: UserRole
-): Promise<void> {
-  const normalized = email.trim().toLowerCase();
-  await setDoc(doc(db, 'user_invites', normalized), {
-    email: normalized,
-    role,
-    createdAt: Timestamp.now(),
-  });
-}
-
 export async function createAdminUser(
   email: string,
   role: UserRole,
@@ -71,14 +62,11 @@ export async function createAdminUser(
   tempPassword?: string
 ): Promise<void> {
   const normalized = email.trim().toLowerCase();
-  // Check if user already exists in DB
   const existing = await findUserByEmail(normalized);
+
   if (existing) {
     await updateDoc(doc(db, 'users', existing.id), {
-      role,
-      displayName,
-      phoneNumber,
-      status,
+      role, displayName, phoneNumber, status,
       tempPassword: tempPassword || null,
       updatedAt: Timestamp.now()
     });
@@ -86,59 +74,24 @@ export async function createAdminUser(
     const id = `user_${Date.now()}`;
     await setDoc(doc(db, 'users', id), {
       email: normalized,
-      role,
-      displayName,
-      phoneNumber,
-      status,
+      role, displayName, phoneNumber, status,
       tempPassword: tempPassword || null,
       createdAt: new Date().toISOString(),
     });
   }
-  
-  // Register corresponding invite
   await inviteUserByEmail(normalized, role);
 }
 
 export async function updateAdminUser(
   userId: string,
-  data: {
-    role: UserRole;
-    displayName: string;
-    phoneNumber: string;
-    status: 'active' | 'inactive';
-    tempPassword?: string;
-  }
+  data: { role: UserRole; displayName: string; phoneNumber: string; status: 'active' | 'inactive'; tempPassword?: string; }
 ): Promise<void> {
-  const payload: Record<string, any> = {
-    role: data.role,
-    displayName: data.displayName,
-    phoneNumber: data.phoneNumber,
-    status: data.status,
-    updatedAt: Timestamp.now()
-  };
-  
-  if (data.tempPassword) {
-    payload.tempPassword = data.tempPassword;
-  }
-
-  await updateDoc(doc(db, 'users', userId), {
-    ...payload
-  });
-}
-
-export async function updateUserRole(
-  userId: string,
-  role: UserRole
-): Promise<void> {
-  await updateDoc(doc(db, 'users', userId), { role, updatedAt: Timestamp.now() });
+  const payload: Record<string, any> = { ...data, updatedAt: Timestamp.now() };
+  await updateDoc(doc(db, 'users', userId), payload);
 }
 
 export async function removeAdminUser(userId: string): Promise<void> {
-  await updateDoc(doc(db, 'users', userId), {
-    role: 'customer',
-    status: 'inactive',
-    updatedAt: Timestamp.now(),
-  });
+  await updateDoc(doc(db, 'users', userId), { role: 'customer', status: 'inactive', updatedAt: Timestamp.now() });
 }
 
 export async function findUserByEmail(email: string): Promise<AdminUser | null> {
@@ -148,13 +101,23 @@ export async function findUserByEmail(email: string): Promise<AdminUser | null> 
   if (snapshot.empty) return null;
   const d = snapshot.docs[0];
   const data = d.data();
-  return {
-    id: d.id,
-    email: data.email,
-    displayName: data.displayName ?? data.fullName ?? '',
-    phoneNumber: data.phoneNumber ?? '',
-    status: data.status ?? 'active',
-    role: data.role,
-    createdAt: data.createdAt,
-  };
+  return { id: d.id, ...data } as AdminUser;
+}
+
+export async function inviteUserByEmail(email: string, role: UserRole): Promise<void> {
+  const normalized = email.trim().toLowerCase();
+  await setDoc(doc(db, 'user_invites', normalized), { email: normalized, role, createdAt: Timestamp.now() });
+}
+
+// --- PROFILE MANAGEMENT FUNCTIONS ---
+
+export async function getUserProfile(uid: string): Promise<AdminUser | null> {
+  const docRef = doc(db, 'users', uid);
+  const docSnap = await getDoc(docRef);
+  return docSnap.exists() ? (docSnap.data() as AdminUser) : null;
+}
+
+export async function updateUserProfile(uid: string, data: any): Promise<void> {
+  const userRef = doc(db, 'users', uid);
+  await setDoc(userRef, data, { merge: true });
 }

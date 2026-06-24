@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com', // Cloudinary පින්තූර පෙන්වීමට මෙය අනිවාර්යයි
+      },
     ],
   },
 };
