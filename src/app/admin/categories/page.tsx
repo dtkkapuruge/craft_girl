@@ -6,7 +6,10 @@ import { useAuth } from '@/context/AuthContext';
 import {
   fetchAllCategories,
   createCategory,
+  deleteCategory,
+  updateCategory,
   type Category,
+  type CategoryInput,
 } from '@/lib/categoryService';
 import { fetchAllProducts } from '@/lib/productService';
 import type { Product } from '@/lib/products';
@@ -20,6 +23,8 @@ import {
   Sparkles,
   Tag,
   FileText,
+  Pencil,
+  Trash2,
 } from 'lucide-react';
 
 // ─── New Category Modal ───────────────────────────────────────────────────────
