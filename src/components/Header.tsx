@@ -174,7 +174,7 @@ export default function Header() {
                       ))}
                       <div className="border-t border-[#E5E0D8] mt-2 pt-2">
                         <Link
-                          href="/home"
+                          href="/category/all-products"
                           onClick={() => setShopMenuOpen(false)}
                           className="flex items-center gap-2 px-4 py-2.5 text-sm text-[#442852] font-semibold hover:bg-[#F9F6F0] transition-colors"
                         >
@@ -255,13 +255,25 @@ export default function Header() {
                     <p className="text-xs text-gray-500 truncate">{user.email}</p>
                   </div>
                   {!isAdminOrStaff ? (
-                    <Link
-                      href="/profile"
-                      onClick={() => setIsProfileMenuOpen(false)}
-                      className="block px-4 py-2 text-sm text-[#2D2D2D] hover:bg-[#F9F6F0] hover:text-[#442852]"
-                    >
-                      My Profile & Orders
-                    </Link>
+                    <>
+                      <Link
+                        href="/profile"
+                        onClick={() => setIsProfileMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-[#2D2D2D] hover:bg-[#F9F6F0] hover:text-[#442852]"
+                      >
+                        My Profile & Orders
+                      </Link>
+                      <button
+                        onClick={async () => {
+                          setIsProfileMenuOpen(false);
+                          await signOut();
+                          router.push('/home');
+                        }}
+                        className="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        Sign Out
+                      </button>
+                    </>
                   ) : (
                     <>
                       <Link

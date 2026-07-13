@@ -191,41 +191,229 @@ function NewCategoryModal({ onClose, onCreate }: NewCategoryModalProps) {
   );
 }
 
+// ─── Edit Category Modal ───────────────────────────────────────────────────────
+
+interface EditCategoryModalProps {
+  category: Category;
+  onClose: () => void;
+  onUpdate: (cat: Category) => void;
+}
+
+function EditCategoryModal({ category, onClose, onUpdate }: EditCategoryModalProps) {
+  const [label, setLabel] = useState(category.label);
+  const [description, setDescription] = useState(category.description || '');
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!label.trim()) return;
+    setSaving(true);
+    try {
+      await updateCategory(category.key, { label, description });
+      toast.success(`Category "${label}" updated!`);
+      onUpdate({ ...category, label: label.trim(), description: description.trim() });
+    } catch (err: any) {
+      console.error(err);
+      toast.error('Failed to update category.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-zinc-900/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-md rounded-3xl border border-purple-100/60 bg-white shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-[#FDFBF7] to-purple-50/40 px-6 py-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#442852]/10 text-[#442852]">
+              <Pencil className="h-4 w-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-gray-900 tracking-tight">Edit Category</h2>
+              <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+                Update category details for key: <span className="font-mono text-purple-700 font-semibold">{category.key}</span>
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          <div>
+            <label className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">
+              <Tag className="w-3 h-3" />
+              Category Name
+            </label>
+            <input
+              required
+              autoFocus
+              type="text"
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 focus:border-[#442852] focus:outline-none focus:ring-1 focus:ring-[#442852]/30 transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">
+              <FileText className="w-3 h-3" />
+              Description
+            </label>
+            <textarea
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Describe what products belong in this category..."
+              className="w-full resize-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-300 focus:border-[#442852] focus:outline-none focus:ring-1 focus:ring-[#442852]/30 transition-all leading-relaxed"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-1 border-t border-gray-100">
+            <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving || !label.trim()}
+              className="flex-1 rounded-xl bg-[#442852] py-2.5 text-sm font-bold text-white hover:bg-[#321c3d] shadow transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ─── Delete Confirmation Modal ─────────────────────────────────────────────────
+
+interface DeleteConfirmModalProps {
+  category: Category;
+  count: number;
+  onClose: () => void;
+  onConfirm: () => Promise<void>;
+}
+
+function DeleteConfirmModal({ category, count, onClose, onConfirm }: DeleteConfirmModalProps) {
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    await onConfirm();
+    setDeleting(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-zinc-900/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-md rounded-3xl border border-rose-100 bg-white shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="flex items-center justify-between border-b border-gray-100 bg-rose-50/20 px-6 py-5">
+          <div className="flex items-center gap-3 text-rose-600">
+            <AlertTriangle className="w-5 h-5 shrink-0" />
+            <h2 className="text-sm font-bold text-gray-900 tracking-tight">Delete Category</h2>
+          </div>
+          <button onClick={onClose} className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 transition-colors">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <p className="text-sm text-gray-650 leading-relaxed font-medium">
+            Are you sure you want to delete the category <span className="font-extrabold text-gray-950">"{category.label}"</span>? This action is permanent and cannot be undone.
+          </p>
+
+          {count > 0 && (
+            <div className="flex items-start gap-2.5 rounded-2xl bg-rose-50 border border-rose-100 px-4 py-3.5 text-xs text-rose-800 font-semibold">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
+              <span>
+                WARNING: There are currently <span className="font-extrabold">{count} product(s)</span> assigned to this category. Deleting it will leave these products uncategorized in your database.
+              </span>
+            </div>
+          )}
+
+          <div className="flex gap-3 pt-2 border-t border-gray-100">
+            <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all">
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="flex-1 rounded-xl bg-rose-600 hover:bg-rose-700 py-2.5 text-sm font-bold text-white shadow transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Delete Category'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Category Card ────────────────────────────────────────────────────────────
 
 function CategoryCard({
   cat,
   count,
   isNew,
+  canManage,
+  onEdit,
+  onDelete,
 }: {
   cat: Category;
   count: number;
   isNew?: boolean;
+  canManage: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
 }) {
   return (
     <div
-      className={`bg-white rounded-3xl border p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group ${
+      className={`bg-white rounded-3xl border p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group relative ${
         isNew
           ? 'border-purple-200 ring-2 ring-[#442852]/10 animate-in fade-in zoom-in-95 duration-300'
           : 'border-gray-150'
       }`}
     >
       <div className="space-y-4">
-        {/* Icon + badge row */}
+        {/* Icon + badge + controls row */}
         <div className="flex items-start justify-between">
           <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center border border-purple-100 group-hover:bg-purple-100 transition-colors">
             <Folder className="w-5 h-5" />
           </div>
-          {isNew && (
-            <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 uppercase tracking-wider">
-              New
-            </span>
-          )}
-          {cat.isCustom && !isNew && (
-            <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 uppercase tracking-wider">
-              Custom
-            </span>
-          )}
+          <div className="flex items-center gap-1.5">
+            {isNew && (
+              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 uppercase tracking-wider">
+                New
+              </span>
+            )}
+            {cat.isCustom && !isNew && (
+              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 uppercase tracking-wider">
+                Custom
+              </span>
+            )}
+            {canManage && (
+              <div className="flex items-center gap-1 ml-2">
+                <button
+                  onClick={onEdit}
+                  className="p-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 text-gray-500 hover:text-[#442852] transition-colors"
+                  title="Edit category"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={onDelete}
+                  className="p-1.5 rounded-lg border border-gray-100 hover:bg-rose-50 text-gray-500 hover:text-rose-600 transition-colors"
+                  title="Delete category"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Name + key */}
@@ -257,12 +445,16 @@ function CategoryCard({
 
 function CategoriesContent() {
   const { role } = useAuth();
-  const canCreate = role === 'super-admin' || role === 'admin';
+  const canManage = role === 'super-admin' || role === 'admin';
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  
   const [showModal, setShowModal] = useState(false);
+  const [editCat, setEditCat] = useState<Category | null>(null);
+  const [deleteCat, setDeleteCat] = useState<Category | null>(null);
+  
   const [newlyCreatedIds, setNewlyCreatedIds] = useState<Set<string>>(new Set());
 
   const getProductCount = (catKey: string) =>
@@ -287,7 +479,6 @@ function CategoriesContent() {
   }, [loadData]);
 
   const handleCategoryCreated = (cat: Category) => {
-    // Optimistically prepend to the list and mark as "new"
     setCategories((prev) => {
       const exists = prev.some((c) => c.id === cat.id);
       return exists ? prev : [...prev, cat];
@@ -295,7 +486,6 @@ function CategoriesContent() {
     setNewlyCreatedIds((prev) => new Set(prev).add(cat.id));
     setShowModal(false);
 
-    // Remove the "new" highlight after 4 seconds
     setTimeout(() => {
       setNewlyCreatedIds((prev) => {
         const next = new Set(prev);
@@ -305,13 +495,49 @@ function CategoriesContent() {
     }, 4000);
   };
 
+  const handleCategoryUpdated = (updatedCat: Category) => {
+    setCategories((prev) => prev.map((c) => (c.key === updatedCat.key ? updatedCat : c)));
+    setEditCat(null);
+  };
+
+  const handleCategoryDeleted = async () => {
+    if (!deleteCat) return;
+    try {
+      await deleteCategory(deleteCat.key);
+      setCategories((prev) => prev.filter((c) => c.key !== deleteCat.key));
+      toast.success(`Category "${deleteCat.label}" deleted!`);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to delete category.');
+    } finally {
+      setDeleteCat(null);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      {/* Modal */}
+      {/* Modals */}
       {showModal && (
         <NewCategoryModal
           onClose={() => setShowModal(false)}
           onCreate={handleCategoryCreated}
+        />
+      )}
+
+      {editCat && (
+        <EditCategoryModal
+          category={editCat}
+          onClose={() => setEditCat(null)}
+          onUpdate={handleCategoryUpdated}
+        />
+      )}
+
+      {deleteCat && (
+        <DeleteConfirmModal
+          category={deleteCat}
+          count={getProductCount(deleteCat.key)}
+          onClose={() => setDeleteCat(null)}
+          onConfirm={handleCategoryDeleted}
         />
       )}
 
@@ -332,7 +558,7 @@ function CategoriesContent() {
         </div>
 
         {/* + New Category button — only for admin & super-admin */}
-        {canCreate && (
+        {canManage && (
           <button
             onClick={() => setShowModal(true)}
             className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-[#442852] px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-[#321c3d] active:scale-95 transition-all"
@@ -363,6 +589,9 @@ function CategoriesContent() {
               cat={cat}
               count={getProductCount(cat.key)}
               isNew={newlyCreatedIds.has(cat.id)}
+              canManage={canManage}
+              onEdit={() => setEditCat(cat)}
+              onDelete={() => setDeleteCat(cat)}
             />
           ))}
         </div>

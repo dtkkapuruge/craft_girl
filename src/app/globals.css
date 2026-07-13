@@ -123,3 +123,47 @@ body {
 .transition-smooth {
   @apply transition-all duration-300 ease-in-out;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbars for Premium Aesthetics */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E5E0D8;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B292C7;
+}
+
+/* Page entrance animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Responsive table wrappers helper */
+table {
+  width: 100%;
+}

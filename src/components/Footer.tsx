@@ -74,7 +74,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/" className="text-sm text-[#E5E0D8]/80 hover:text-white transition-colors">
+                <Link href="/category/all-products" className="text-sm text-[#E5E0D8]/80 hover:text-white transition-colors">
                   All Products
                 </Link>
               </li>

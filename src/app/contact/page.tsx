@@ -1,10 +1,8 @@
-import { MapPin, Phone, MessageCircle } from 'lucide-react';
-import Link from 'next/link';
+'use client';
 
-export const metadata = {
-  title: 'Contact Us | Craft Girly Store',
-  description: 'Get in touch with Craft Girly Store via WhatsApp, phone, or visit us in Eheliyagoda, Sri Lanka.',
-};
+import { MapPin, Phone, MessageCircle, ChevronDown, HelpCircle } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
 const WHATSAPP_NUMBER = '94766722187';
 const WHATSAPP_MESSAGE = encodeURIComponent(
@@ -12,7 +10,32 @@ const WHATSAPP_MESSAGE = encodeURIComponent(
 );
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`;
 
+const FAQS = [
+  {
+    question: "Do you offer Cash on Delivery (COD)?",
+    answer: "Yes! We support Cash on Delivery (COD) islandwide across Sri Lanka, so you can pay conveniently at your doorstep."
+  },
+  {
+    question: "How long does delivery take?",
+    answer: "Our standard delivery takes 3 to 5 business days. For customized orders, resin flower preservation, or custom jewelry, it may take 7 to 10 days to craft and cure before dispatch."
+  },
+  {
+    question: "Can I customize a product or place a special request?",
+    answer: "Absolutely! Customization is our specialty. You can request specific flowers, name lettering, color themes, or design layouts. The best way to discuss custom orders is to reach out directly via our WhatsApp link!"
+  },
+  {
+    question: "What is your return and exchange policy?",
+    answer: "Since our products are individually handmade and personalized, we generally do not accept returns or exchanges unless the item arrives damaged. If your product is damaged during transit, please notify us within 24 hours of delivery with pictures so we can send a replacement."
+  }
+];
+
 export default function ContactPage() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggleFAQ = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   return (
     <div className="bg-[#F9F6F0] min-h-screen">
       <section className="bg-[#442852] text-white py-16 px-4 text-center">
@@ -60,7 +83,6 @@ export default function ContactPage() {
             </a>
           </div>
           <div className="bg-white rounded-2xl border border-[#E5E0D8] p-6">
-            {/* Inline SVG for Facebook */}
             <svg className="h-5 w-5 text-[#442852] mb-3 fill-current" viewBox="0 0 24 24">
               <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/>
             </svg>
@@ -76,7 +98,38 @@ export default function ContactPage() {
           </div>
         </div>
 
-        <p className="text-center mt-10 text-sm text-gray-500">
+        {/* FAQ Accordion Section */}
+        <div className="mt-16 bg-white rounded-3xl border border-[#E5E0D8] p-8 md:p-10 shadow-sm text-left">
+          <div className="flex items-center gap-3 mb-8">
+            <HelpCircle className="w-6 h-6 text-[#442852]" />
+            <h2 className="text-2xl font-extrabold text-[#2D2D2D]">Frequently Asked Questions</h2>
+          </div>
+          <div className="space-y-4">
+            {FAQS.map((faq, idx) => {
+              const isOpen = openIndex === idx;
+              return (
+                <div key={idx} className="border-b border-[#E5E0D8] last:border-b-0 pb-4 last:pb-0">
+                  <button
+                    onClick={() => toggleFAQ(idx)}
+                    className="w-full flex items-center justify-between text-left py-3 font-bold text-gray-800 hover:text-[#442852] transition-colors focus:outline-none"
+                  >
+                    <span>{faq.question}</span>
+                    <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#442852]' : ''}`} />
+                  </button>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      isOpen ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <p className="text-sm text-gray-500 leading-relaxed pl-1">{faq.answer}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <p className="text-center mt-12 text-sm text-gray-500">
           Or browse our{' '}
           <Link href="/about" className="text-[#442852] font-medium hover:underline">
             About page

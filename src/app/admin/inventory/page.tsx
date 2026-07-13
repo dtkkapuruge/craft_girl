@@ -141,6 +141,38 @@ function InventoryContent() {
     }
   };
 
+  // Set finished product stock directly
+  const setProductStock = async (productId: string, newStock: number) => {
+    const targetStock = Math.max(0, newStock);
+    setProducts(prev => prev.map(p => p.id === productId ? { ...p, stockCount: targetStock } : p));
+    try {
+      const docRef = doc(db, 'products', productId);
+      try {
+        await updateDoc(docRef, { stockCount: targetStock, updatedAt: Timestamp.now() });
+      } catch {
+        const product = products.find(p => p.id === productId);
+        if (product) {
+          await setDoc(docRef, {
+            name: product.name,
+            description: product.description || '',
+            price: product.price,
+            category: product.category,
+            image: product.image,
+            rating: product.rating,
+            reviews: product.reviews,
+            stockCount: targetStock,
+            createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now(),
+          });
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update stock quantity on server.');
+      loadProducts();
+    }
+  };
+
   // Adjust raw material quantity inline
   const adjustRawQuantity = async (rawId: string, currentQty: number, delta: number) => {
     const newQty = Math.max(0, currentQty + delta);
@@ -148,6 +180,22 @@ function InventoryContent() {
     try {
       await updateDoc(doc(db, 'raw_materials', rawId), {
         quantity: newQty,
+        lastUpdated: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update raw material on server.');
+      loadRawMaterials();
+    }
+  };
+
+  // Set raw material quantity directly
+  const setRawQuantity = async (rawId: string, newQty: number) => {
+    const targetQty = Math.max(0, newQty);
+    setRawMaterials(prev => prev.map(r => r.id === rawId ? { ...r, quantity: targetQty } : r));
+    try {
+      await updateDoc(doc(db, 'raw_materials', rawId), {
+        quantity: targetQty,
         lastUpdated: new Date().toISOString()
       });
     } catch (err) {
@@ -297,17 +345,24 @@ function InventoryContent() {
                           <div className="flex items-center justify-center gap-1.5">
                             <button
                               onClick={() => adjustProductStock(p.id, stock, -1)}
-                              className="w-8 h-8 rounded-lg border border-gray-200 hover:bg-rose-50 hover:border-rose-200 text-gray-500 hover:text-rose-600 flex items-center justify-center transition-colors active:scale-95"
+                              className="w-8 h-8 rounded-lg border border-gray-250 hover:bg-rose-50 hover:border-rose-200 text-gray-500 hover:text-rose-600 flex items-center justify-center transition-colors active:scale-95 shrink-0"
                               title="Decrement Stock"
                             >
-                              <Minus className="w-4.5 h-4.5" />
+                              <Minus className="w-4 h-4" />
                             </button>
+                            <input
+                              type="number"
+                              min={0}
+                              value={stock}
+                              onChange={(e) => setProductStock(p.id, Math.max(0, parseInt(e.target.value) || 0))}
+                              className="w-16 text-center rounded-lg border border-gray-250 bg-white py-1 px-1.5 text-xs font-semibold text-gray-800 focus:outline-none focus:ring-1 focus:ring-purple-650 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
                             <button
                               onClick={() => adjustProductStock(p.id, stock, 1)}
-                              className="w-8 h-8 rounded-lg border border-gray-200 hover:bg-emerald-50 hover:border-emerald-200 text-gray-500 hover:text-emerald-600 flex items-center justify-center transition-colors active:scale-95"
+                              className="w-8 h-8 rounded-lg border border-gray-250 hover:bg-emerald-50 hover:border-emerald-200 text-gray-500 hover:text-emerald-600 flex items-center justify-center transition-colors active:scale-95 shrink-0"
                               title="Increment Stock"
                             >
-                              <Plus className="w-4.5 h-4.5" />
+                              <Plus className="w-4 h-4" />
                             </button>
                           </div>
                         </td>
@@ -355,13 +410,20 @@ function InventoryContent() {
                           <div className="flex items-center justify-center gap-1.5">
                             <button
                               onClick={() => adjustRawQuantity(rm.id, rm.quantity, -1)}
-                              className="w-8 h-8 rounded-lg border border-gray-200 hover:bg-rose-50 hover:border-rose-200 text-gray-500 hover:text-rose-600 flex items-center justify-center transition-colors active:scale-95"
+                              className="w-8 h-8 rounded-lg border border-gray-250 hover:bg-rose-50 hover:border-rose-200 text-gray-500 hover:text-rose-600 flex items-center justify-center transition-colors active:scale-95 shrink-0"
                             >
                               <Minus className="w-4 h-4" />
                             </button>
+                            <input
+                              type="number"
+                              min={0}
+                              value={rm.quantity}
+                              onChange={(e) => setRawQuantity(rm.id, Math.max(0, parseInt(e.target.value) || 0))}
+                              className="w-16 text-center rounded-lg border border-gray-250 bg-white py-1 px-1.5 text-xs font-semibold text-gray-800 focus:outline-none focus:ring-1 focus:ring-purple-650 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
                             <button
                               onClick={() => adjustRawQuantity(rm.id, rm.quantity, 1)}
-                              className="w-8 h-8 rounded-lg border border-gray-200 hover:bg-emerald-50 hover:border-emerald-200 text-gray-500 hover:text-emerald-600 flex items-center justify-center transition-colors active:scale-95"
+                              className="w-8 h-8 rounded-lg border border-gray-250 hover:bg-emerald-50 hover:border-emerald-200 text-gray-500 hover:text-emerald-600 flex items-center justify-center transition-colors active:scale-95 shrink-0"
                             >
                               <Plus className="w-4 h-4" />
                             </button>

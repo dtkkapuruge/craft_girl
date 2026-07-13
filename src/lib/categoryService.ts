@@ -128,3 +128,14 @@ export async function createCategory(input: CategoryInput): Promise<Category> {
 export async function deleteCategory(key: string): Promise<void> {
   await deleteDoc(doc(db, 'categories', key));
 }
+
+/**
+ * Update an existing category document in Firestore.
+ */
+export async function updateCategory(key: string, input: Partial<CategoryInput>): Promise<void> {
+  const docRef = doc(db, 'categories', key);
+  await setDoc(docRef, {
+    ...input,
+    updatedAt: new Date().toISOString(),
+  }, { merge: true });
+}

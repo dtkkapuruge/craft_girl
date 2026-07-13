@@ -148,7 +148,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    const credential = await signInWithPopup(auth, provider);
+    const userRole = await resolveUserRole(credential.user);
+    setRole(userRole);
+    const isAdminUser = userRole === 'admin' || userRole === 'super-admin';
+    setIsAdmin(isAdminUser);
+    const fetchedPerms = await fetchRolePermissions(userRole);
+    setPermissions(fetchedPerms);
+    if (hasDashboardAccess(userRole, fetchedPerms)) {
+      document.cookie = 'admin_session=true; path=/; max-age=86400';
+    } else {
+      document.cookie = 'admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    }
+    setUser(credential.user);
     setAuthModalOpen(false);
   };
 
@@ -163,13 +175,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       role: 'customer',
       createdAt: new Date().toISOString(),
     });
-    // Note: modal close is handled by the calling component (AuthModal/LoginPage)
-    // to avoid race conditions on mobile where UI updates before Firestore completes
+    setRole('customer');
+    setIsAdmin(false);
+    const fetchedPerms = await fetchRolePermissions('customer');
+    setPermissions(fetchedPerms);
+    setUser(credential.user);
+    setAuthModalOpen(false);
   };
 
   const signInWithEmail = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
-    // Note: modal close is handled by the calling component
+    const credential = await signInWithEmailAndPassword(auth, email, password);
+    const userRole = await resolveUserRole(credential.user);
+    setRole(userRole);
+    const isAdminUser = userRole === 'admin' || userRole === 'super-admin';
+    setIsAdmin(isAdminUser);
+    const fetchedPerms = await fetchRolePermissions(userRole);
+    setPermissions(fetchedPerms);
+    if (hasDashboardAccess(userRole, fetchedPerms)) {
+      document.cookie = 'admin_session=true; path=/; max-age=86400';
+    } else {
+      document.cookie = 'admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    }
+    setUser(credential.user);
+    setAuthModalOpen(false);
   };
 
   // Legacy mock admin login (kept for admin panel access)

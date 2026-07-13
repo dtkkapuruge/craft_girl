@@ -29,10 +29,15 @@ export default function CategoryPage() {
   }, []);
 
   const resolvedSlug = resolveCategorySlug(slug);
-  const categoryName = getCategoryLabel(resolvedSlug);
+  const categoryName = slug === 'all-products' || slug === 'all' ? 'All Products' : getCategoryLabel(resolvedSlug);
 
   const baseProducts = useMemo(
-    () => allProducts.filter((p) => p.category === resolvedSlug || p.category === slug),
+    () => {
+      if (slug === 'all-products' || slug === 'all') {
+        return allProducts;
+      }
+      return allProducts.filter((p) => p.category === resolvedSlug || p.category === slug);
+    },
     [allProducts, resolvedSlug, slug]
   );
 
