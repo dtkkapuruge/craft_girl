@@ -154,7 +154,7 @@ export default function Home() {
     <div className="bg-[#FAFAF8] min-h-screen text-[#0A0A0A] selection:bg-[#0A0A0A]/10 selection:text-[#0A0A0A] overflow-hidden">
       
       {/* ─── Hero Section (High-End Auto-Playing Slider) ─── */}
-      <section className="relative w-full aspect-[16/7] md:aspect-[16/5] overflow-hidden bg-black rounded-none">
+      <section className="relative w-full h-screen overflow-hidden bg-black rounded-none">
         {dynamicSlides.map((slide, idx) => {
           const isActive = idx === currentSlide;
           return (
@@ -171,7 +171,7 @@ export default function Home() {
                   alt={slide.title}
                   fill
                   priority={idx === 0}
-                  className={`object-cover w-full h-full opacity-60 rounded-none ${
+                  className={`object-cover object-center w-full h-full opacity-60 rounded-none ${
                     isActive ? 'hero-img-ken' : ''
                   }`}
                 />
