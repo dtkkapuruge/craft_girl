@@ -269,7 +269,7 @@ function DashboardContent() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Metric Blocks */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {metrics.map((m, idx) => {
           const Icon = m.icon;
           return (
@@ -306,11 +306,12 @@ function DashboardContent() {
               <p className="text-xs font-semibold">No product sales data yet</p>
             </div>
           ) : (
-            <div className="h-64 flex items-end justify-between px-4 pb-2 border-b border-gray-100">
-              {topSelling.map((item, idx) => {
-                const percentage = Math.max(10, Math.round((item.quantity / maxSales) * 90));
-                return (
-                  <div key={idx} className="flex flex-col items-center justify-end h-full group w-1/5 relative">
+            <div className="w-full overflow-x-auto pb-4">
+              <div className="h-64 flex items-end justify-between px-4 pb-2 border-b border-gray-100 min-w-[450px]">
+                {topSelling.map((item, idx) => {
+                  const percentage = Math.max(10, Math.round((item.quantity / maxSales) * 90));
+                  return (
+                    <div key={idx} className="flex flex-col items-center justify-end h-full group w-1/5 relative">
                     {/* Count tooltip on hover */}
                     <div className="absolute -top-8 bg-gray-800 text-white text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                       {item.quantity} sold
@@ -326,6 +327,7 @@ function DashboardContent() {
                   </div>
                 );
               })}
+              </div>
             </div>
           )}
         </div>
@@ -365,12 +367,12 @@ function DashboardContent() {
 
       {/* Recent Orders Log Table */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+        <div className="p-4 sm:p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="font-bold text-gray-800 text-lg">Recent Orders Log</h3>
             <p className="text-xs text-gray-500">Latest activity from the customer site</p>
           </div>
-          <Link href="/admin/orders" className="text-xs font-bold text-[#582da8] hover:underline flex items-center gap-1">
+          <Link href="/admin/orders" className="text-xs font-bold text-[#582da8] hover:underline flex items-center gap-1 sm:self-auto self-start">
             View All Orders <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -385,33 +387,33 @@ function DashboardContent() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">
-                  <th className="px-6 py-4">Order ID</th>
-                  <th className="px-6 py-4">Customer Name</th>
-                  <th className="px-6 py-4">Date</th>
-                  <th className="px-6 py-4">Total</th>
-                  <th className="px-6 py-4">Payment</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Order ID</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Customer Name</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Date</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Total</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Payment</th>
+                  <th className="px-6 py-4 whitespace-nowrap">Status</th>
+                  <th className="px-6 py-4 text-right whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm text-gray-600 font-medium">
                 {recentOrders.map((ord) => (
                   <tr key={ord.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 text-gray-800 font-bold">{ord.orderNumber}</td>
-                    <td className="px-6 py-4">{ord.customer.name}</td>
-                    <td className="px-6 py-4 text-gray-500 text-xs">{formatDate(ord.createdAt)}</td>
-                    <td className="px-6 py-4 text-gray-900 font-semibold">Rs. {ord.totalAmount.toLocaleString('en-LK')}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-gray-800 font-bold whitespace-nowrap">{ord.orderNumber}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{ord.customer.name}</td>
+                    <td className="px-6 py-4 text-gray-500 text-xs whitespace-nowrap">{formatDate(ord.createdAt)}</td>
+                    <td className="px-6 py-4 text-gray-900 font-semibold whitespace-nowrap">Rs. {ord.totalAmount.toLocaleString('en-LK')}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${getPaymentStyles(ord.paymentStatus)}`}>
                         {ord.paymentStatus}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getStatusStyles(ord.status)}`}>
                         {ord.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-right whitespace-nowrap">
                       <button
                         onClick={() => setSelectedOrder(ord)}
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-500 hover:text-gray-800 text-xs transition-colors"

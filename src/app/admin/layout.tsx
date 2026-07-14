@@ -71,8 +71,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex min-h-screen bg-[#FDFBF7]">
-      {/* Sidebar - වම් පැත්තේ මෙනු එක */}
-      <aside className="w-68 bg-[#160b24] text-gray-300 flex flex-col justify-between shrink-0 border-r border-[#2d1b46]/40 shadow-xl">
+      {/* Sidebar - Desktop Only */}
+      <aside className="hidden md:flex w-68 bg-[#160b24] text-gray-300 flex-col justify-between shrink-0 border-r border-[#2d1b46]/40 shadow-xl">
         <div className="p-6">
           <div className="flex items-center gap-3 mb-10 pb-6 border-b border-[#2d1b46]/60">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-tr from-[#7f56d9] to-[#b292c7]">
@@ -121,7 +121,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Status Bar */}
-        <header className="flex items-center justify-between bg-white border-b border-gray-150 px-8 py-4 shadow-sm">
+        <header className="flex items-center justify-between bg-white border-b border-gray-150 px-4 md:px-8 py-4 shadow-sm">
           <div className="flex items-center gap-2">
             <span className="text-md font-semibold text-gray-800 tracking-tight">{getPageTitle(pathname)}</span>
           </div>
@@ -132,12 +132,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              <span className="text-[11px] font-bold text-emerald-800">Server status: Online</span>
+              <span className="hidden sm:inline text-[11px] font-bold text-emerald-800">Server status: Online</span>
+              <span className="sm:hidden text-[11px] font-bold text-emerald-800">Online</span>
             </div>
 
             {/* User display details */}
             {user && (
-              <div className="flex items-center gap-3 border-l pl-4 border-gray-200">
+              <div className="hidden sm:flex items-center gap-3 border-l pl-4 border-gray-200">
                 <div className="text-right">
                   <p className="text-xs font-bold text-gray-800">{user.displayName || 'Admin'}</p>
                   <p className="text-[10px] text-gray-500 truncate max-w-[120px]">{user.email}</p>
@@ -151,8 +152,37 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* Dynamic page children */}
-        <main className="flex-1 p-8 overflow-y-auto">{children}</main>
+        <main className="flex-1 p-4 md:p-8 overflow-y-auto pb-24 md:pb-8">{children}</main>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#160b24] border-t border-[#2d1b46]/40 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-50 flex items-center justify-around px-2 py-2 pb-safe">
+        {filteredMenuItems.slice(0, 4).map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center justify-center w-14 h-12 rounded-xl transition-all ${
+                isActive ? 'text-white' : 'text-purple-400 hover:text-purple-300'
+              }`}
+            >
+              <div className={`p-1.5 rounded-lg ${isActive ? 'bg-gradient-to-r from-[#442852] to-[#582da8] shadow-md' : ''}`}>
+                <Icon className="w-5 h-5 shrink-0" />
+              </div>
+            </Link>
+          );
+        })}
+        <button
+          onClick={handleSignOut}
+          className="flex flex-col items-center justify-center w-14 h-12 rounded-xl text-rose-400 hover:text-rose-300"
+        >
+          <div className="p-1.5 rounded-lg">
+             <LogOut className="w-5 h-5 shrink-0" />
+          </div>
+        </button>
+      </nav>
     </div>
   );
 }

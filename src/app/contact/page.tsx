@@ -37,91 +37,106 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="bg-[#F9F6F0] min-h-screen">
-      <section className="bg-[#442852] text-white py-16 px-4 text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-4">Contact Us</h1>
-        <p className="text-[#E5E0D8] max-w-lg mx-auto">
-          We&apos;d love to hear from you! Reach out for custom orders, questions, or just to say hello.
-        </p>
+    <div className="bg-[#FAFAF8] min-h-screen text-[#0A0A0A] selection:bg-[#442852]/10 selection:text-[#442852]">
+      
+      {/* Editorial Header Banner */}
+      <section className="bg-[#FAFAF8] py-16 px-4 text-center border-b border-[#E8E4DF]">
+        <div className="max-w-3xl mx-auto space-y-4">
+          <span className="text-[10px] font-bold tracking-[0.25em] text-[#9B9B9B] uppercase">
+            GET IN TOUCH
+          </span>
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-wider text-[#442852] font-serif uppercase">
+            CONTACT US
+          </h1>
+          <div className="h-[1px] w-12 bg-[#442852] mx-auto mt-2"></div>
+          <p className="text-xs uppercase tracking-widest text-[#6B6B6B] leading-relaxed max-w-lg mx-auto mt-4">
+            We&apos;d love to hear from you. Reach out for custom orders, flower preservation requests, or inquiries about our jewelry.
+          </p>
+        </div>
       </section>
 
+      {/* Main Content Area */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 py-16">
-        <div className="bg-white rounded-3xl border border-[#E5E0D8] p-8 md:p-12 shadow-sm text-center">
-          <MessageCircle className="h-10 w-10 text-[#25D366] mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-[#2D2D2D] mb-2">Chat on WhatsApp</h2>
-          <p className="text-gray-500 mb-8 max-w-md mx-auto">
-            The fastest way to reach us! Tap below to start a conversation on WhatsApp.
+        
+        {/* WhatsApp Block */}
+        <div className="bg-white border border-[#E8E4DF] p-8 md:p-12 text-center rounded-none shadow-sm">
+          <MessageCircle className="h-8 w-8 text-[#442852] mx-auto mb-4" />
+          <h2 className="text-sm font-bold tracking-[0.2em] text-[#0A0A0A] uppercase mb-2">CHAT ON WHATSAPP</h2>
+          <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-6 max-w-md mx-auto leading-relaxed">
+            The fastest way to reach us. Tap below to start a direct consultation on customized crafts and keepsake designs.
           </p>
 
           <a
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold text-lg px-10 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all active:scale-95"
+            className="inline-flex items-center justify-center bg-[#0A0A0A] hover:bg-[#222222] text-white text-[10px] font-bold tracking-[0.25em] uppercase px-8 py-3.5 transition-colors rounded-none shadow-sm"
           >
-            <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current" aria-hidden="true">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.884 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
             Message on WhatsApp
           </a>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-          <div className="bg-white rounded-2xl border border-[#E5E0D8] p-6">
-            <MapPin className="h-5 w-5 text-[#442852] mb-3" />
-            <h3 className="font-bold text-[#2D2D2D] mb-2">Address</h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
+        {/* Directory details grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          
+          <div className="bg-white border border-[#E8E4DF] p-6 rounded-none space-y-3">
+            <MapPin className="h-4.5 w-4.5 text-[#442852]" />
+            <h3 className="text-xs font-bold uppercase tracking-widest text-[#0A0A0A]">Address</h3>
+            <p className="text-[10px] text-gray-500 uppercase tracking-wider leading-relaxed">
               244/B Deheragoda Ellawala,<br />
               Eheliyagoda, Sri Lanka, 70606
             </p>
           </div>
-          <div className="bg-white rounded-2xl border border-[#E5E0D8] p-6">
-            <Phone className="h-5 w-5 text-[#442852] mb-3" />
-            <h3 className="font-bold text-[#2D2D2D] mb-2">Phone</h3>
-            <a href="tel:+94766722187" className="text-sm text-[#442852] font-semibold hover:underline">
+
+          <div className="bg-white border border-[#E8E4DF] p-6 rounded-none space-y-3">
+            <Phone className="h-4.5 w-4.5 text-[#442852]" />
+            <h3 className="text-xs font-bold uppercase tracking-widest text-[#0A0A0A]">Phone</h3>
+            <a href="tel:+94766722187" className="block text-[10px] text-[#442852] font-bold tracking-widest hover:underline">
               076 672 2187
             </a>
           </div>
-          <div className="bg-white rounded-2xl border border-[#E5E0D8] p-6">
-            <svg className="h-5 w-5 text-[#442852] mb-3 fill-current" viewBox="0 0 24 24">
+
+          <div className="bg-white border border-[#E8E4DF] p-6 rounded-none space-y-3">
+            <svg className="h-4.5 w-4.5 text-[#442852] fill-current" viewBox="0 0 24 24">
               <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/>
             </svg>
-            <h3 className="font-bold text-[#2D2D2D] mb-2">Facebook</h3>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-[#0A0A0A]">Facebook</h3>
             <a
               href="https://www.facebook.com/profile.php?id=100086577828998"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-[#442852] font-semibold hover:underline"
+              className="block text-[10px] text-[#442852] font-bold tracking-widest hover:underline"
             >
               Craft Girly Store
             </a>
           </div>
+
         </div>
 
         {/* FAQ Accordion Section */}
-        <div className="mt-16 bg-white rounded-3xl border border-[#E5E0D8] p-8 md:p-10 shadow-sm text-left">
+        <div className="mt-16 bg-white border border-[#E8E4DF] p-8 md:p-10 rounded-none shadow-sm text-left">
           <div className="flex items-center gap-3 mb-8">
-            <HelpCircle className="w-6 h-6 text-[#442852]" />
-            <h2 className="text-2xl font-extrabold text-[#2D2D2D]">Frequently Asked Questions</h2>
+            <HelpCircle className="w-5 h-5 text-[#442852]" />
+            <h2 className="text-xs font-bold tracking-[0.2em] text-[#0A0A0A] uppercase">FREQUENTLY ASKED QUESTIONS</h2>
           </div>
           <div className="space-y-4">
             {FAQS.map((faq, idx) => {
               const isOpen = openIndex === idx;
               return (
-                <div key={idx} className="border-b border-[#E5E0D8] last:border-b-0 pb-4 last:pb-0">
+                <div key={idx} className="border-b border-[#E8E4DF] last:border-b-0 pb-4 last:pb-0">
                   <button
                     onClick={() => toggleFAQ(idx)}
-                    className="w-full flex items-center justify-between text-left py-3 font-bold text-gray-800 hover:text-[#442852] transition-colors focus:outline-none"
+                    className="w-full flex items-center justify-between text-left py-3 text-xs font-bold tracking-wider text-[#0A0A0A] hover:text-[#442852] transition-colors focus:outline-none uppercase"
                   >
                     <span>{faq.question}</span>
-                    <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#442852]' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#442852]' : ''}`} />
                   </button>
                   <div
                     className={`overflow-hidden transition-all duration-300 ${
                       isOpen ? 'max-h-40 opacity-100 mt-2' : 'max-h-0 opacity-0'
                     }`}
                   >
-                    <p className="text-sm text-gray-500 leading-relaxed pl-1">{faq.answer}</p>
+                    <p className="text-[10px] text-[#6B6B6B] uppercase tracking-wide leading-relaxed pl-1">{faq.answer}</p>
                   </div>
                 </div>
               );
@@ -129,12 +144,12 @@ export default function ContactPage() {
           </div>
         </div>
 
-        <p className="text-center mt-12 text-sm text-gray-500">
+        <p className="text-center mt-12 text-[10px] font-bold uppercase tracking-widest text-[#9B9B9B]">
           Or browse our{' '}
-          <Link href="/about" className="text-[#442852] font-medium hover:underline">
+          <Link href="/about" className="text-[#442852] hover:underline">
             About page
           </Link>{' '}
-          to learn more about what we create.
+          to learn more about our story.
         </p>
       </section>
     </div>

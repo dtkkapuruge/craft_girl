@@ -1,86 +1,140 @@
-import Link from 'next/link';
-import { Heart, Sparkles, Palette, Flower2, Gem, Gift } from 'lucide-react';
+'use client';
 
-export const metadata = {
-  title: 'About Us | Craft Girly Store',
-  description: 'Handmade art and craft shop specializing in resin items, flower preservation, jewellery, and chocolate boxes.',
-};
+import Link from 'next/link';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { fetchLayoutSettings } from '@/lib/layoutService';
 
 const SPECIALTIES = [
-  { icon: Palette, title: 'Resin Art', desc: 'Custom resin pieces crafted with precision and love.' },
-  { icon: Flower2, title: 'Flower Preservation', desc: 'Preserve your precious moments in timeless resin keepsakes.' },
-  { icon: Gem, title: 'Handmade Jewellery', desc: 'Unique jewellery pieces with personal touches and custom engravings.' },
-  { icon: Gift, title: 'Chocolate Boxes', desc: 'Beautifully curated chocolate boxes for every special occasion.' },
+  { title: 'RESIN ARTISTRY', desc: 'Custom curated resin works shaped with artistic precision.' },
+  { title: 'FLOWER KEEPSAKES', desc: 'Preserving wedding and event florals in clear, enduring resin.' },
+  { title: 'HANDMADE ACCENTS', desc: 'Bespoke custom engravings and personal style-focused jewelry.' },
+  { title: 'CURATED BOXES', desc: 'Stunningly packaged gift selections tailored for your occasions.' },
 ];
 
 export default function AboutPage() {
+  const [aboutImage, setAboutImage] = useState('https://images.unsplash.com/photo-1597481499750-3e6b22637e12?q=80&w=800&auto=format&fit=crop');
+  
+  // Set up intersection observer for scroll reveals
+  useEffect(() => {
+    fetchLayoutSettings().then((settings) => {
+      if (settings.aboutUsImage) setAboutImage(settings.aboutUsImage);
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    const elements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+
   return (
-    <div className="bg-[#F9F6F0] min-h-screen">
-      <section className="relative bg-[#442852] text-white py-20 px-4 overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#CBB0DC]/30 to-transparent" />
-        </div>
-        <div className="relative max-w-3xl mx-auto text-center">
-          <p className="text-[#CBB0DC] text-sm font-medium tracking-widest uppercase mb-4">
-            Our Story
-          </p>
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
-            Handmade Items 🥰❤️
+    <div className="bg-[#FAFAF8] min-h-screen text-[#0A0A0A] selection:bg-[#0A0A0A]/10 selection:text-[#0A0A0A]">
+      
+      {/* ─── Hero Header Strip ─── */}
+      <section className="border-b border-[#E8E4DF] bg-white py-16 px-4">
+        <div className="max-w-3xl mx-auto text-center space-y-4">
+          <span className="text-[10px] font-bold tracking-[0.25em] text-[#9B9B9B] uppercase">
+            WHO WE ARE
+          </span>
+          <h1 className="text-2xl md:text-4xl font-bold tracking-[0.2em] uppercase text-[#0A0A0A]">
+            CRAFT GIRLY STUDIO
           </h1>
-          <p className="text-lg text-[#E5E0D8] leading-relaxed">
-            Welcome to Craft Girly Store — an Art and Craft shop born from passion, creativity, and love for handmade beauty.
+          <div className="h-[1px] w-12 bg-black mx-auto"></div>
+          <p className="text-xs uppercase tracking-widest text-[#6B6B6B] leading-relaxed max-w-xl mx-auto">
+            A premium Sri Lankan studio dedicated to resin craftsmanship, memory preservation, and fine handmade creations.
           </p>
         </div>
       </section>
 
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 py-16">
-        <div className="bg-white rounded-3xl border border-[#E5E0D8] p-8 md:p-12 shadow-sm">
-          <div className="flex items-center gap-2 mb-6">
-            <Heart className="h-5 w-5 text-[#442852]" />
-            <h2 className="text-2xl font-bold text-[#2D2D2D]">Who We Are</h2>
+      {/* ─── Editorial Split-Screen Story Section (Usha's Style) ─── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          
+          {/* Left Column: Large Rectangular Image (Reveals left to right) */}
+          <div className="reveal-left relative h-[450px] sm:h-[600px] border border-[#E8E4DF] bg-white">
+            <Image
+              src={aboutImage}
+              alt="Premium Resin Craftsmanship"
+              fill
+              className="object-cover rounded-none"
+            />
           </div>
-          <p className="text-[#2D2D2D] leading-relaxed mb-4">
-            Craft Girly Store is a boutique Art and Craft shop based in Sri Lanka, specializing in beautifully handmade items
-            that celebrate creativity and personal expression. Every piece we create is crafted with care, attention to detail,
-            and a whole lot of love.
-          </p>
-          <p className="text-[#5A5A5A] leading-relaxed">
-            From stunning resin art and preserved flower keepsakes to elegant handmade jewellery and curated chocolate boxes,
-            we pour our heart into every creation. Our mission is to bring joy, beauty, and a personal touch to your everyday
-            life and special moments.
-          </p>
+
+          {/* Right Column: Editorial Text Blocks (Staggered scroll reveal) */}
+          <div className="space-y-12">
+            
+            <div className="reveal reveal-d1 space-y-4">
+              <span className="text-[9px] font-bold tracking-[0.3em] text-gray-405 text-gray-400">01 / BRAND MISSION</span>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-[0.2em] uppercase text-[#0A0A0A]">
+                THE ART OF PRESERVATION
+              </h2>
+              <div className="h-[1px] w-8 bg-black"></div>
+              <p className="text-xs uppercase tracking-widest leading-loose text-[#6B6B6B]">
+                Craft Girly Store is a boutique studio specializing in transforming transient life moments into solid keepsakes. We preserve bridal bouquets, anniversary florals, and memorable tokens inside premium, optical-grade resin that prevents yellowing.
+              </p>
+            </div>
+
+            <div className="reveal reveal-d2 space-y-4">
+              <span className="text-[9px] font-bold tracking-[0.3em] text-gray-400">02 / CRAFTSMANSHIP</span>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-[0.2em] uppercase text-[#0A0A0A]">
+                HANDCRAFTED WITH LOVE
+              </h2>
+              <div className="h-[1px] w-8 bg-black"></div>
+              <p className="text-xs uppercase tracking-widest leading-loose text-[#6B6B6B]">
+                Every single piece we design undergoes a meticulous curing, polishing, and setting cycle inside our studio. From initial flower drying to final resin curing, we pay absolute attention to detail, bubble removal, and structural clarity.
+              </p>
+            </div>
+
+          </div>
+
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
-        <div className="text-center mb-10">
-          <Sparkles className="h-6 w-6 text-[#442852] mx-auto mb-3" />
-          <h2 className="text-2xl font-bold text-[#2D2D2D]">What We Specialize In</h2>
+      {/* ─── Specialties Grid (Minimalist list cards) ─── */}
+      <section className="border-t border-[#E8E4DF] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-16 space-y-2">
+          <span className="text-[10px] font-bold tracking-[0.25em] text-[#9B9B9B] uppercase">STUDIO STRENGTHS</span>
+          <h2 className="text-2xl font-bold tracking-[0.2em] text-[#0A0A0A] uppercase">OUR AREAS OF EXPERTISE</h2>
         </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {SPECIALTIES.map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="bg-white rounded-2xl border border-[#E5E0D8] p-6 text-center hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 bg-[#F9F6F0] rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icon className="h-5 w-5 text-[#442852]" />
-              </div>
-              <h3 className="font-bold text-[#2D2D2D] mb-2">{title}</h3>
-              <p className="text-sm text-gray-500">{desc}</p>
+          {SPECIALTIES.map(({ title, desc }) => (
+            <div key={title} className="bg-white border border-[#E8E4DF] p-8 space-y-4 hover:border-black transition-colors duration-300 rounded-none text-left">
+              <div className="h-[1px] w-6 bg-black"></div>
+              <h3 className="font-extrabold text-xs tracking-widest text-[#0A0A0A] uppercase">{title}</h3>
+              <p className="text-[10px] text-[#6B6B6B] uppercase tracking-wider leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="bg-white border-t border-[#E5E0D8] py-12">
-        <div className="max-w-2xl mx-auto text-center px-4">
-          <p className="text-[#442852] font-semibold text-lg mb-4">Ready to explore our handmade collection?</p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 bg-[#442852] text-white px-8 py-3 rounded-xl font-medium hover:bg-[#321c3d] transition-all"
-          >
-            Shop Now
-          </Link>
+      {/* ─── CTA Section ─── */}
+      <section className="bg-white border-t border-[#E8E4DF] py-16">
+        <div className="max-w-2xl mx-auto text-center px-4 space-y-6">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#6B6B6B]">
+            DISCOVER THE FULL HANDMADE CATALOGUE
+          </p>
+          <div className="pt-2">
+            <Link
+              href="/category/all-products"
+              className="inline-flex items-center justify-center bg-[#0A0A0A] text-white px-10 py-4 text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-[#222222] transition-colors rounded-none"
+            >
+              SHOP NEW RELEASES
+            </Link>
+          </div>
         </div>
       </section>
+
     </div>
   );
 }

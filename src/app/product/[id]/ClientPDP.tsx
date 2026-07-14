@@ -7,7 +7,7 @@ import { trackEvent } from '@/components/PixelTracker';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { ShoppingBag, ShoppingCart, ChevronRight, Sparkles, Truck, ShieldCheck, Star, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, ShoppingCart, ChevronRight, Sparkles, Truck, ShieldCheck, Star, ArrowLeft, Gift } from 'lucide-react';
 
 interface Product {
   id: string;
@@ -41,6 +41,9 @@ export default function ClientPDP({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState('');
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [isGifting, setIsGifting] = useState(false);
+  const [giftMessage, setGiftMessage] = useState('');
+  const [giftPackaging, setGiftPackaging] = useState('signature-wax');
 
   useEffect(() => {
     trackEvent('ViewContent', {
@@ -276,6 +279,64 @@ export default function ClientPDP({ product }: { product: Product }) {
                 {error && <p className="mt-1 text-xs font-semibold text-rose-600">{error}</p>}
               </div>
             )}
+
+            {/* Gifting Option */}
+            <div className="border border-[#E5E0D8] bg-white rounded-none p-4">
+              <label className="flex items-center cursor-pointer gap-2">
+                <input 
+                  type="checkbox" 
+                  checked={isGifting}
+                  onChange={(e) => setIsGifting(e.target.checked)}
+                  className="w-4 h-4 text-[#442852] border-gray-300 rounded-none focus:ring-[#442852] focus:ring-offset-0 bg-transparent cursor-pointer"
+                />
+                <span className="text-xs font-extrabold text-[#0A0A0A] uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Gift className="w-4 h-4 text-[#442852]" />
+                  Send as a Luxury Gift
+                </span>
+              </label>
+
+              {isGifting && (
+                <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 border-t border-[#E5E0D8] pt-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-[#0A0A0A] mb-2 uppercase tracking-widest">Handwritten Gift Message</label>
+                    <textarea
+                      value={giftMessage}
+                      onChange={(e) => setGiftMessage(e.target.value)}
+                      placeholder="Write your personalized message here..."
+                      rows={3}
+                      className="w-full rounded-none border border-[#C4BFBA] bg-white px-3 py-2 text-xs text-[#0A0A0A] placeholder-gray-400 focus:border-[#442852] focus:outline-none focus:ring-0 transition-all resize-none uppercase tracking-wide"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-[#0A0A0A] mb-2 uppercase tracking-widest">Packaging Selection</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setGiftPackaging('signature-wax')}
+                        className={`border rounded-none p-2.5 text-[9px] font-extrabold uppercase tracking-widest text-center transition-colors ${
+                          giftPackaging === 'signature-wax' 
+                            ? 'border-[#442852] bg-[#442852] text-white' 
+                            : 'border-[#E5E0D8] text-[#6B6B6B] hover:border-[#442852] hover:text-[#442852]'
+                        }`}
+                      >
+                        Signature Wax Seal
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setGiftPackaging('custom-ribbon')}
+                        className={`border rounded-none p-2.5 text-[9px] font-extrabold uppercase tracking-widest text-center transition-colors ${
+                          giftPackaging === 'custom-ribbon' 
+                            ? 'border-[#442852] bg-[#442852] text-white' 
+                            : 'border-[#E5E0D8] text-[#6B6B6B] hover:border-[#442852] hover:text-[#442852]'
+                        }`}
+                      >
+                        Custom Ribbon
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Quantity */}
             <div className="flex items-center gap-4">

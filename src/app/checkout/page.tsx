@@ -67,6 +67,17 @@ export default function CheckoutPage() {
 
     try {
       const orderNumber = `CGS-${Math.floor(100000 + Math.random() * 900000)}`;
+      
+      let giftingDetails = null;
+      try {
+        const giftStr = localStorage.getItem('checkout_gifting');
+        if (giftStr) {
+          giftingDetails = JSON.parse(giftStr);
+        }
+      } catch (err) {
+        console.error('Failed to parse gifting details:', err);
+      }
+
       const orderData = {
         orderNumber,
         userId: user?.uid || null,
@@ -89,6 +100,7 @@ export default function CheckoutPage() {
         paymentStatus: paymentMethod === 'COD' ? 'Pending COD' : 'awaiting_payment',
         status: 'Pending',
         notes: formData.notes,
+        gifting: giftingDetails,
         createdAt: serverTimestamp(),
       };
 
@@ -100,6 +112,8 @@ export default function CheckoutPage() {
         value: cartTotal,
         currency: 'LKR',
       });
+
+      localStorage.removeItem('checkout_gifting');
 
       toast.success('Order placed successfully!');
       clearCart();
@@ -114,10 +128,10 @@ export default function CheckoutPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-[#F9F6F0] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center p-4">
         <div className="text-center">
-          <Loader2 className="w-10 h-10 text-[#442852] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">Redirecting to login...</p>
+          <Loader2 className="w-10 h-10 text-[#0A0A0A] animate-spin mx-auto mb-4" />
+          <p className="text-xs text-[#888] uppercase tracking-[0.15em]">Redirecting to login...</p>
         </div>
       </div>
     );
@@ -125,29 +139,30 @@ export default function CheckoutPage() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-[#F9F6F0] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center p-4">
         <div className="text-center">
-          <Loader2 className="w-10 h-10 text-[#442852] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Redirecting to store...</p>
+          <Loader2 className="w-10 h-10 text-[#0A0A0A] animate-spin mx-auto mb-4" />
+          <p className="text-xs text-[#888] uppercase tracking-[0.15em]">Redirecting to store...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F9F6F0] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FAFAF8] py-8 px-4 sm:px-6 lg:px-8">
+      {/* Page Header */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-[#888] mb-2">Secure Checkout</p>
+        <h1 className="text-2xl font-serif font-normal text-[#0A0A0A] tracking-wide">Complete Your Order</h1>
+      </div>
+
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Column: Form */}
-        <div className="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-[#E5E0D8] overflow-hidden">
+        <div className="lg:col-span-7 bg-white border border-[#E8E4DE] overflow-hidden">
           <div className="p-6 md:p-8">
-            <h1 className="text-2xl font-bold text-[#2D2D2D] mb-6 flex items-center gap-2">
-              <CheckCircle className="w-6 h-6 text-[#442852]" />
-              Secure Checkout
-            </h1>
-
             {status === 'error' && (
-              <div className="mb-6 bg-red-50 text-red-700 p-4 rounded-lg flex items-start gap-3 text-sm border border-red-200">
+              <div className="mb-6 bg-red-50 text-red-700 p-4 flex items-start gap-3 text-xs border border-red-200">
                 <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
                 <p>{errorMessage}</p>
               </div>
@@ -155,10 +170,10 @@ export default function CheckoutPage() {
 
             <form onSubmit={handleSubmit} className="space-y-8">
               <div>
-                <h2 className="text-lg font-semibold text-[#2D2D2D] mb-4">Shipping Details</h2>
+                <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-[#0A0A0A] mb-6 pb-3 border-b border-[#E8E4DE]">Shipping Details</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-2">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <label htmlFor="name" className="block text-[10px] font-medium text-[#888] uppercase tracking-[0.15em] mb-2">Full Name</label>
                     <input
                       type="text"
                       id="name"
@@ -166,13 +181,13 @@ export default function CheckoutPage() {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-[#D1C9C0] rounded-lg focus:ring-2 focus:ring-[#CBB0DC] focus:border-[#442852] outline-none transition-shadow"
+                      className="w-full px-4 py-3 border border-[#E8E4DE] focus:border-[#0A0A0A] outline-none transition-colors text-sm tracking-wide bg-transparent"
                       placeholder="Jane Doe"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <label htmlFor="phone" className="block text-[10px] font-medium text-[#888] uppercase tracking-[0.15em] mb-2">Phone Number</label>
                     <input
                       type="tel"
                       id="phone"
@@ -180,13 +195,13 @@ export default function CheckoutPage() {
                       required
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-[#D1C9C0] rounded-lg focus:ring-2 focus:ring-[#CBB0DC] focus:border-[#442852] outline-none transition-shadow"
+                      className="w-full px-4 py-3 border border-[#E8E4DE] focus:border-[#0A0A0A] outline-none transition-colors text-sm tracking-wide bg-transparent"
                       placeholder="07X XXX XXXX"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+                    <label htmlFor="address" className="block text-[10px] font-medium text-[#888] uppercase tracking-[0.15em] mb-2">Street Address</label>
                     <input
                       type="text"
                       id="address"
@@ -194,13 +209,13 @@ export default function CheckoutPage() {
                       required
                       value={formData.address}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-[#D1C9C0] rounded-lg focus:ring-2 focus:ring-[#CBB0DC] focus:border-[#442852] outline-none transition-shadow"
-                      placeholder="123 Resin Art Street"
+                      className="w-full px-4 py-3 border border-[#E8E4DE] focus:border-[#0A0A0A] outline-none transition-colors text-sm tracking-wide bg-transparent"
+                      placeholder="123 Craft Street"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">City / District</label>
+                    <label htmlFor="city" className="block text-[10px] font-medium text-[#888] uppercase tracking-[0.15em] mb-2">City / District</label>
                     <input
                       type="text"
                       id="city"
@@ -208,20 +223,20 @@ export default function CheckoutPage() {
                       required
                       value={formData.city}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-[#D1C9C0] rounded-lg focus:ring-2 focus:ring-[#CBB0DC] focus:border-[#442852] outline-none transition-shadow"
+                      className="w-full px-4 py-3 border border-[#E8E4DE] focus:border-[#0A0A0A] outline-none transition-colors text-sm tracking-wide bg-transparent"
                       placeholder="Colombo"
                     />
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">Order Notes (Optional)</label>
+                    <label htmlFor="notes" className="block text-[10px] font-medium text-[#888] uppercase tracking-[0.15em] mb-2">Order Notes (Optional)</label>
                     <textarea
                       id="notes"
                       name="notes"
                       rows={3}
                       value={formData.notes}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-[#D1C9C0] rounded-lg focus:ring-2 focus:ring-[#CBB0DC] focus:border-[#442852] outline-none transition-shadow"
+                      className="w-full px-4 py-3 border border-[#E8E4DE] focus:border-[#0A0A0A] outline-none transition-colors text-sm tracking-wide bg-transparent resize-none"
                       placeholder="Special instructions for delivery or custom requests..."
                     />
                   </div>
@@ -229,11 +244,11 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment Method */}
-              <div className="border-t border-[#E5E0D8] pt-6">
-                <h2 className="text-lg font-semibold text-[#2D2D2D] mb-4">Payment Method</h2>
+              <div className="border-t border-[#E8E4DE] pt-6">
+                <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-[#0A0A0A] mb-6 pb-3 border-b border-[#E8E4DE]">Payment Method</h2>
                 <div className="space-y-3">
                   {/* COD */}
-                  <label className={`block p-4 rounded-xl border-2 cursor-pointer transition-colors ${paymentMethod === 'COD' ? 'border-[#442852] bg-[#F9F6F0]' : 'border-[#E5E0D8] hover:border-[#CBB0DC]'}`}>
+                  <label className={`block p-4 border cursor-pointer transition-colors ${paymentMethod === 'COD' ? 'border-[#0A0A0A] bg-[#FAFAF8]' : 'border-[#E8E4DE] hover:border-[#999]'}`}>
                     <div className="flex items-center">
                       <input
                         type="radio"
@@ -241,20 +256,20 @@ export default function CheckoutPage() {
                         value="COD"
                         checked={paymentMethod === 'COD'}
                         onChange={() => setPaymentMethod('COD')}
-                        className="h-4 w-4 text-[#442852] border-gray-300 focus:ring-[#442852]"
+                        className="h-4 w-4 text-[#0A0A0A] border-gray-300 focus:ring-[#0A0A0A]"
                       />
-                      <Banknote className={`w-6 h-6 ml-4 ${paymentMethod === 'COD' ? 'text-[#442852]' : 'text-gray-400'}`} />
-                      <span className="ml-3 block font-bold text-[#2D2D2D] text-sm">Cash on Delivery (COD)</span>
+                      <Banknote className={`w-5 h-5 ml-4 ${paymentMethod === 'COD' ? 'text-[#0A0A0A]' : 'text-[#999]'}`} />
+                      <span className="ml-3 block text-xs font-medium text-[#0A0A0A] uppercase tracking-[0.1em]">Cash on Delivery</span>
                     </div>
                     {paymentMethod === 'COD' && (
-                      <p className="ml-11 mt-2 text-xs text-gray-500">
-                        Pay with cash upon delivery. Perfect for first-time buyers!
+                      <p className="ml-11 mt-2 text-[11px] text-[#888] tracking-wide">
+                        Pay with cash upon delivery. Perfect for first-time buyers.
                       </p>
                     )}
                   </label>
 
                   {/* CARD */}
-                  <label className={`block p-4 rounded-xl border-2 cursor-pointer transition-colors ${paymentMethod === 'CARD' ? 'border-[#442852] bg-[#F9F6F0]' : 'border-[#E5E0D8] hover:border-[#CBB0DC]'}`}>
+                  <label className={`block p-4 border cursor-pointer transition-colors ${paymentMethod === 'CARD' ? 'border-[#0A0A0A] bg-[#FAFAF8]' : 'border-[#E8E4DE] hover:border-[#999]'}`}>
                     <div className="flex items-center">
                       <input
                         type="radio"
@@ -262,20 +277,20 @@ export default function CheckoutPage() {
                         value="CARD"
                         checked={paymentMethod === 'CARD'}
                         onChange={() => setPaymentMethod('CARD')}
-                        className="h-4 w-4 text-[#442852] border-gray-300 focus:ring-[#442852]"
+                        className="h-4 w-4 text-[#0A0A0A] border-gray-300 focus:ring-[#0A0A0A]"
                       />
-                      <CreditCard className={`w-6 h-6 ml-4 ${paymentMethod === 'CARD' ? 'text-[#442852]' : 'text-gray-400'}`} />
-                      <span className="ml-3 block font-bold text-[#2D2D2D] text-sm">Credit / Debit Card</span>
+                      <CreditCard className={`w-5 h-5 ml-4 ${paymentMethod === 'CARD' ? 'text-[#0A0A0A]' : 'text-[#999]'}`} />
+                      <span className="ml-3 block text-xs font-medium text-[#0A0A0A] uppercase tracking-[0.1em]">Credit / Debit Card</span>
                     </div>
                     {paymentMethod === 'CARD' && (
-                      <p className="ml-11 mt-2 text-xs text-gray-500">
+                      <p className="ml-11 mt-2 text-[11px] text-[#888] tracking-wide">
                         You will be redirected to our secure payment gateway after placing your order.
                       </p>
                     )}
                   </label>
 
                   {/* BANK TRANSFER */}
-                  <label className={`block p-4 rounded-xl border-2 cursor-pointer transition-colors ${paymentMethod === 'BANK' ? 'border-[#442852] bg-[#F9F6F0]' : 'border-[#E5E0D8] hover:border-[#CBB0DC]'}`}>
+                  <label className={`block p-4 border cursor-pointer transition-colors ${paymentMethod === 'BANK' ? 'border-[#0A0A0A] bg-[#FAFAF8]' : 'border-[#E8E4DE] hover:border-[#999]'}`}>
                     <div className="flex items-center">
                       <input
                         type="radio"
@@ -283,23 +298,23 @@ export default function CheckoutPage() {
                         value="BANK"
                         checked={paymentMethod === 'BANK'}
                         onChange={() => setPaymentMethod('BANK')}
-                        className="h-4 w-4 text-[#442852] border-gray-300 focus:ring-[#442852]"
+                        className="h-4 w-4 text-[#0A0A0A] border-gray-300 focus:ring-[#0A0A0A]"
                       />
-                      <Building className={`w-6 h-6 ml-4 ${paymentMethod === 'BANK' ? 'text-[#442852]' : 'text-gray-400'}`} />
-                      <span className="ml-3 block font-bold text-[#2D2D2D] text-sm">Manual Bank Transfer</span>
+                      <Building className={`w-5 h-5 ml-4 ${paymentMethod === 'BANK' ? 'text-[#0A0A0A]' : 'text-[#999]'}`} />
+                      <span className="ml-3 block text-xs font-medium text-[#0A0A0A] uppercase tracking-[0.1em]">Manual Bank Transfer</span>
                     </div>
                     {paymentMethod === 'BANK' && (
                       <div className="ml-11 mt-4 space-y-4">
-                        <div className="p-4 bg-white rounded-lg border border-[#CBB0DC]">
-                          <p className="text-sm font-semibold text-[#442852] mb-2">Our Bank Details:</p>
-                          <p className="text-sm text-gray-600">Bank: Commercial Bank</p>
-                          <p className="text-sm text-gray-600">Account Name: Craft Girly Store</p>
-                          <p className="text-sm text-gray-600 mb-2">Account No: 1234 5678 9012</p>
-                          <p className="text-xs text-gray-500 italic">Please transfer the total amount and upload your slip below.</p>
+                        <div className="p-4 bg-white border border-[#E8E4DE]">
+                          <p className="text-[10px] font-medium text-[#0A0A0A] uppercase tracking-[0.15em] mb-3">Our Bank Details</p>
+                          <p className="text-xs text-[#6B6B6B] tracking-wide">Bank: Commercial Bank</p>
+                          <p className="text-xs text-[#6B6B6B] tracking-wide">Account Name: Craft Girly Store</p>
+                          <p className="text-xs text-[#6B6B6B] tracking-wide mb-3">Account No: 1234 5678 9012</p>
+                          <p className="text-[10px] text-[#888] italic tracking-wide">Please transfer the total amount and upload your slip below.</p>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Upload Payment Slip</label>
-                          <input type="file" accept="image/*" className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#F9F6F0] file:text-[#442852] hover:file:bg-[#E5E0D8] transition-colors"/>
+                          <label className="block text-[10px] font-medium text-[#888] uppercase tracking-[0.15em] mb-2">Upload Payment Slip</label>
+                          <input type="file" accept="image/*" className="w-full text-xs text-[#6B6B6B] file:mr-4 file:py-2 file:px-4 file:border file:border-[#E8E4DE] file:text-xs file:font-medium file:bg-[#FAFAF8] file:text-[#0A0A0A] hover:file:bg-[#F0EDE8] file:uppercase file:tracking-wider transition-colors file:cursor-pointer"/>
                         </div>
                       </div>
                     )}
@@ -311,7 +326,7 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={status === 'submitting'}
-                className="w-full bg-[#442852] text-white py-4 px-6 rounded-xl font-bold text-base hover:bg-[#321c3d] disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-md flex items-center justify-center gap-2"
+                className="w-full bg-[#0A0A0A] text-white py-4 px-6 text-xs font-medium uppercase tracking-[0.15em] hover:bg-[#1a1a1a] disabled:opacity-70 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
               >
                 {status === 'submitting' ? (
                   <><Loader2 className="w-5 h-5 animate-spin" />Processing...</>
@@ -320,7 +335,7 @@ export default function CheckoutPage() {
                 )}
               </button>
               
-              <p className="text-xs text-center text-gray-500 mt-4">
+              <p className="text-[10px] text-center text-[#888] tracking-wide">
                 By placing your order, you agree to our Terms of Service and Privacy Policy.
               </p>
             </form>
@@ -329,19 +344,19 @@ export default function CheckoutPage() {
 
         {/* Right Column: Order Summary */}
         <div className="lg:col-span-5">
-          <div className="bg-white rounded-2xl shadow-sm border border-[#E5E0D8] overflow-hidden sticky top-24">
-            <div className="p-5 border-b border-[#E5E0D8] bg-[#F9F6F0]">
-              <h2 className="text-base font-bold text-[#2D2D2D] flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-[#442852]" />
+          <div className="bg-white border border-[#E8E4DE] overflow-hidden sticky top-24">
+            <div className="p-5 border-b border-[#E8E4DE] bg-[#FAFAF8]">
+              <h2 className="text-xs font-medium text-[#0A0A0A] uppercase tracking-[0.15em] flex items-center gap-2">
+                <ShoppingBag className="w-4 h-4" />
                 Order Summary
               </h2>
             </div>
             
             <div className="p-5">
-              <ul className="divide-y divide-[#E5E0D8] mb-4">
+              <ul className="divide-y divide-[#E8E4DE] mb-4">
                 {cartItems.map((item) => (
                   <li key={`${item.id}-${item.variant || 'base'}`} className="py-3 flex gap-3">
-                    <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-[#E5E0D8]">
+                    <div className="w-14 h-14 overflow-hidden bg-[#F5F3EF] flex-shrink-0 border border-[#E8E4DE]">
                       <Image
                         src={item.image}
                         alt={item.name}
@@ -351,29 +366,29 @@ export default function CheckoutPage() {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-[#2D2D2D] text-sm leading-tight line-clamp-2">{item.name}</h4>
-                      {item.variant && <p className="text-xs text-gray-400 mt-0.5">{item.variant}</p>}
+                      <h4 className="text-xs font-medium text-[#0A0A0A] leading-tight line-clamp-2 tracking-wide">{item.name}</h4>
+                      {item.variant && <p className="text-[10px] text-[#888] mt-0.5 tracking-wide">{item.variant}</p>}
                       <div className="flex justify-between items-center mt-1.5">
-                        <span className="text-xs text-gray-400">Qty: {item.quantity}</span>
-                        <span className="font-semibold text-[#442852] text-sm">Rs. {(item.price * item.quantity).toLocaleString()}</span>
+                        <span className="text-[10px] text-[#888] tracking-wide">Qty: {item.quantity}</span>
+                        <span className="text-xs font-medium text-[#0A0A0A]">Rs. {(item.price * item.quantity).toLocaleString()}</span>
                       </div>
                     </div>
                   </li>
                 ))}
               </ul>
 
-              <div className="space-y-2 text-sm border-t border-[#E5E0D8] pt-4">
-                <div className="flex justify-between text-gray-600">
+              <div className="space-y-2 text-xs border-t border-[#E8E4DE] pt-4">
+                <div className="flex justify-between text-[#6B6B6B] tracking-wide">
                   <span>Subtotal</span>
                   <span>Rs. {cartTotal.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-[#6B6B6B] tracking-wide">
                   <span>Shipping</span>
                   <span>Calculated later</span>
                 </div>
-                <div className="flex justify-between items-center font-bold text-[#2D2D2D] pt-3 border-t border-[#E5E0D8]">
-                  <span>Total</span>
-                  <span className="text-[#442852] text-lg">Rs. {cartTotal.toLocaleString()}</span>
+                <div className="flex justify-between items-center font-medium text-[#0A0A0A] pt-3 border-t border-[#E8E4DE]">
+                  <span className="text-xs uppercase tracking-[0.1em]">Total</span>
+                  <span className="text-base font-serif">Rs. {cartTotal.toLocaleString()}</span>
                 </div>
               </div>
             </div>
