@@ -154,7 +154,7 @@ export default function Home() {
     <div className="bg-[#FAFAF8] min-h-screen text-[#0A0A0A] selection:bg-[#0A0A0A]/10 selection:text-[#0A0A0A] overflow-hidden">
       
       {/* ─── Hero Section (High-End Auto-Playing Slider) ─── */}
-      <section className="relative h-[90vh] md:h-screen w-full overflow-hidden bg-black rounded-none">
+      <section className="relative w-full aspect-[16/7] md:aspect-[16/5] overflow-hidden bg-black rounded-none">
         {dynamicSlides.map((slide, idx) => {
           const isActive = idx === currentSlide;
           return (
@@ -233,14 +233,14 @@ export default function Home() {
             <Link
               key={cat.key}
               href={`/category/${cat.key}`}
-              className="group relative h-80 overflow-hidden border border-[#E8E4DF] hover:border-black transition-colors duration-300 rounded-none bg-white"
+              className="group relative aspect-[4/5] w-full overflow-hidden border border-[#E8E4DF] hover:border-black transition-colors duration-300 rounded-none bg-white"
             >
               <Image
                 src={cat.image}
                 alt={cat.label}
                 fill
                 sizes="(max-width: 768px) 100vw, 25vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-105 rounded-none"
+                className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105 rounded-none"
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
               
@@ -288,12 +288,12 @@ export default function Home() {
         <div className="reveal grid grid-cols-1 lg:grid-cols-2 border border-[#E8E4DF] bg-white rounded-none shadow-sm overflow-hidden">
           
           {/* Left Visual side */}
-          <div className="relative h-96 lg:h-auto min-h-[400px]">
+          <div className="relative aspect-[4/5] lg:aspect-square w-full min-h-[400px]">
             <Image
               src="https://images.unsplash.com/photo-1610996841103-6f8dce4937bb?q=80&w=1200&auto=format&fit=crop"
               alt="Preserved event keepsake"
               fill
-              className="object-cover rounded-none"
+              className="object-cover w-full h-full rounded-none"
             />
             <div className="absolute inset-0 bg-[#0A0A0A]/10" />
           </div>

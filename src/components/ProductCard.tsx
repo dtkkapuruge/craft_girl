@@ -23,12 +23,12 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
   return (
     <div className="group bg-white border border-[#E8E4DF] overflow-hidden hover:border-[#0A0A0A] transition-colors duration-300 flex flex-col h-full rounded-none">
       {/* Image Container with sliding Quick Add bar */}
-      <Link href={`/product/${product.id}`} className="block relative aspect-[3/4] overflow-hidden bg-[#FAFAF8] shrink-0 rounded-none">
+      <Link href={`/product/${product.id}`} className="block relative aspect-[3/4] w-full overflow-hidden bg-neutral-50 shrink-0 rounded-none">
         <Image
           src={product.image}
           alt={product.name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-700 rounded-none"
+          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 rounded-none"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
         {outOfStock && (
