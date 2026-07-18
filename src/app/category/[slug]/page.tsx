@@ -260,7 +260,7 @@ export default function CategoryPage() {
   // Apply Sub-navigation filtering (All Creations | Best Sellers | New In)
   const subFilteredProducts = useMemo(() => {
     if (activeSubFilter === 'best') {
-      // Sort by sales count if available, otherwise fallback to rating then reviews then id
+      // Bulletproof sorting for Best Sellers
       return [...baseProducts].sort((a, b) => {
         const salesA = salesMap[a.name] ?? salesMap[a.id] ?? 0;
         const salesB = salesMap[b.name] ?? salesMap[b.id] ?? 0;
@@ -268,24 +268,20 @@ export default function CategoryPage() {
         const ratingA = (a as any).rating ?? 0;
         const ratingB = (b as any).rating ?? 0;
         if (ratingA !== ratingB) return ratingB - ratingA;
-        const reviewsA = (a as any).reviews ?? 0;
-        const reviewsB = (b as any).reviews ?? 0;
-        if (reviewsA !== reviewsB) return reviewsB - reviewsA;
-        // As final fallback, sort by numeric part of id (higher means newer)
-        const idNumA = parseInt(a.id.replace(/\D+/g, ''), 10) || 0;
-        const idNumB = parseInt(b.id.replace(/\D+/g, ''), 10) || 0;
-        return idNumB - idNumA;
+        // Fallback: price descending
+        return b.price - a.price;
       });
     }
     if (activeSubFilter === 'new') {
-      // Sort by creation time if present, otherwise fall back to numeric id descending (newest first)
+      // Bulletproof sorting for New In
       return [...baseProducts].sort((a, b) => {
-        const createdA = (a as any).created_at ? new Date((a as any).created_at).getTime() : 0;
-        const createdB = (b as any).created_at ? new Date((b as any).created_at).getTime() : 0;
-        if (createdA !== createdB) return createdB - createdA;
-        const idNumA = parseInt(a.id.replace(/\D+/g, ''), 10) || 0;
-        const idNumB = parseInt(b.id.replace(/\D+/g, ''), 10) || 0;
-        return idNumB - idNumA;
+        const createdA = (a as any).created_at ? new Date((a as any).created_at).getTime() : null;
+        const createdB = (b as any).created_at ? new Date((b as any).created_at).getTime() : null;
+        if (createdA != null && createdB != null) return createdB - createdA;
+        if (createdA != null) return -1;
+        if (createdB != null) return 1;
+        // Fallback: price ascending
+        return a.price - b.price;
       });
     }
     // Default: return base list (no additional sorting/filtering)
@@ -321,6 +317,7 @@ export default function CategoryPage() {
       currency: 'LKR',
     });
   };
+  const displayedProducts = sortedProducts;
 
   return (
     <div className="bg-[#FAFAF8] min-h-screen text-[#0A0A0A] selection:bg-[#442852]/10 selection:text-[#442852]">
@@ -442,7 +439,7 @@ export default function CategoryPage() {
 
           <div className="flex items-center gap-4 shrink-0">
             <p className="text-[9px] font-bold uppercase tracking-wider text-gray-400">
-              {loading ? 'LOADING…' : `${sortedProducts.length} PRODUCT${sortedProducts.length !== 1 ? 'S' : ''}`}
+              {loading ? 'LOADING…' : `${displayedProducts.length} PRODUCT${displayedProducts.length !== 1 ? 'S' : ''}`}
             </p>
 
             <div className="flex items-center gap-2">
@@ -501,7 +498,7 @@ export default function CategoryPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {sortedProducts.map((product) => (
+            {displayedProducts.map((product) => (
               <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
             ))}
           </div>
