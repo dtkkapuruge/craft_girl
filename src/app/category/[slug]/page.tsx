@@ -260,26 +260,35 @@ export default function CategoryPage() {
   // Apply Sub-navigation filtering (All Creations | Best Sellers | New In)
   const subFilteredProducts = useMemo(() => {
     if (activeSubFilter === 'best') {
+      // Sort by sales count if available, otherwise fallback to rating then reviews then id
       return [...baseProducts].sort((a, b) => {
-        const salesA = salesMap[a.name] || salesMap[a.id] || 0;
-        const salesB = salesMap[b.name] || salesMap[b.id] || 0;
-        if (salesB === salesA) {
-          const ratingA = (a as any).rating || a.reviews || 0;
-          const ratingB = (b as any).rating || b.reviews || 0;
-          if (ratingB !== ratingA) return ratingB - ratingA;
-          return String(b.id).localeCompare(String(a.id));
-        }
-        return salesB - salesA;
+        const salesA = salesMap[a.name] ?? salesMap[a.id] ?? 0;
+        const salesB = salesMap[b.name] ?? salesMap[b.id] ?? 0;
+        if (salesA !== salesB) return salesB - salesA;
+        const ratingA = (a as any).rating ?? 0;
+        const ratingB = (b as any).rating ?? 0;
+        if (ratingA !== ratingB) return ratingB - ratingA;
+        const reviewsA = (a as any).reviews ?? 0;
+        const reviewsB = (b as any).reviews ?? 0;
+        if (reviewsA !== reviewsB) return reviewsB - reviewsA;
+        // As final fallback, sort by numeric part of id (higher means newer)
+        const idNumA = parseInt(a.id.replace(/\D+/g, ''), 10) || 0;
+        const idNumB = parseInt(b.id.replace(/\D+/g, ''), 10) || 0;
+        return idNumB - idNumA;
       });
     }
     if (activeSubFilter === 'new') {
+      // Sort by creation time if present, otherwise fall back to numeric id descending (newest first)
       return [...baseProducts].sort((a, b) => {
-        const timeA = (a as any).created_at ? new Date((a as any).created_at).getTime() : 0;
-        const timeB = (b as any).created_at ? new Date((b as any).created_at).getTime() : 0;
-        if (timeA !== timeB) return timeB - timeA;
-        return String(b.id).localeCompare(String(a.id));
+        const createdA = (a as any).created_at ? new Date((a as any).created_at).getTime() : 0;
+        const createdB = (b as any).created_at ? new Date((b as any).created_at).getTime() : 0;
+        if (createdA !== createdB) return createdB - createdA;
+        const idNumA = parseInt(a.id.replace(/\D+/g, ''), 10) || 0;
+        const idNumB = parseInt(b.id.replace(/\D+/g, ''), 10) || 0;
+        return idNumB - idNumA;
       });
     }
+    // Default: return base list (no additional sorting/filtering)
     return baseProducts;
   }, [baseProducts, activeSubFilter, salesMap]);
 
