@@ -174,8 +174,10 @@ function formatDate(createdAt: Order['createdAt']) {
 }
 
 function normalizeOrder(id: string, data: any): Order {
-  const customer = data.customer || {};
-  const items = Array.isArray(data.items) ? data.items : [];
+  // Defensive extraction of customer details supporting both old and new schema
+  const oldCustomer = data.customer || {};
+  const newCustomer = data.customerDetails || {};
+  const itemsArray = Array.isArray(data.items) ? data.items : [];
 
   let parsedCreatedAt: Order['createdAt'] = { toDate: () => new Date() };
   if (data.createdAt) {
@@ -195,25 +197,26 @@ function normalizeOrder(id: string, data: any): Order {
     id,
     orderNumber: data.orderNumber || `CGS-${Math.floor(100000 + Math.random() * 900000)}`,
     customer: {
-      name: customer.name || 'Anonymous Customer',
-      phone: customer.phone || 'N/A',
-      address: customer.address || 'No address provided',
-      district: customer.district || 'N/A',
+      name: newCustomer.name || oldCustomer.name || data.name || data.customerName || "Anonymous Customer",
+      phone: newCustomer.phone || oldCustomer.phone || data.phone || "N/A",
+      address: newCustomer.address || oldCustomer.address || data.address || "No address provided",
+      district: newCustomer.city || oldCustomer.district || data.district || "N/A",
     },
-    items: items.map((item: any) => ({
-      productId: item.productId || '',
-      name: item.name || 'Unknown Item',
+    items: itemsArray.map((item: any) => ({
+      productId: item.productId || "",
+      name: item.title || item.name || item.productName || "Unknown Item",
       variantChosen: item.variantChosen || {},
       quantity: Number(item.quantity) || 1,
       price: Number(item.price) || 0,
     })),
-    totalAmount: Number(data.totalAmount) || 0,
-    status: data.status || 'Pending',
-    paymentMethod: data.paymentMethod || 'COD',
-    paymentStatus: data.paymentStatus || 'Pending COD',
+    totalAmount: Number(data.totalBill || data.total || data.totalAmount || 0),
+    status: data.status || "Pending",
+    paymentMethod: data.paymentMethod || "COD",
+    paymentStatus: data.paymentStatus || "Pending COD",
     createdAt: parsedCreatedAt,
   };
 }
+
 function getAccessDescription(role: string) {
   if (role === 'staff') return 'View-only access. Contact an administrator to modify orders.';
   if (role === 'admin') return 'You can update order statuses. Deletion requires super-admin access.';
