@@ -1,23 +1,46 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
-import { useSearchParams, useParams, useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { trackEvent } from '@/components/PixelTracker';
 import { CheckCircle2, ShoppingBag, Truck, Calendar, Heart, Loader2 } from 'lucide-react';
+import { db } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 function OrderSuccessContent() {
-  const searchParams = useSearchParams();
   const params = useParams();
   const router = useRouter();
 
   const orderId = params?.orderId as string;
-  const orderNumber = searchParams.get('num') || 'CGS-UNKNOWN';
-  const amountStr = searchParams.get('amt') || '0';
-  const totalAmount = parseFloat(amountStr);
 
-  // Trigger Purchase tracking on mount
+  const [orderNumber, setOrderNumber] = useState('CGS-UNKNOWN');
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch order data from Firestore
   useEffect(() => {
-    if (orderId && totalAmount > 0) {
+    if (!orderId) return;
+    const fetchOrder = async () => {
+      try {
+        const docRef = doc(db, 'orders', orderId);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          setOrderNumber(data?.orderNumber ?? data?.orderId ?? 'CGS-UNKNOWN');
+          setTotalAmount(data?.totalBill ?? data?.total ?? 0);
+        }
+      } catch (error) {
+        console.error('Failed to fetch order:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrder();
+  }, [orderId]);
+
+  // Trigger Purchase tracking when data is loaded
+  useEffect(() => {
+    if (!loading && orderId && totalAmount > 0) {
       trackEvent('Purchase', {
         content_name: `Order ${orderNumber}`,
         content_ids: [orderId],
@@ -25,7 +48,15 @@ function OrderSuccessContent() {
         currency: 'LKR',
       });
     }
-  }, [orderId, orderNumber, totalAmount]);
+  }, [loading, orderId, orderNumber, totalAmount]);
+
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 text-center">
+        <Loader2 className="w-12 h-12 text-[#442852] animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 text-center">
