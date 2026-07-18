@@ -136,7 +136,7 @@ export default function CheckoutPage() {
       toast.success('Order placed successfully!');
       clearCart();
       // Pass orderId and totalBill as query parameters so the success page can display them
-      router.push(`/checkout/success?orderId=${orderId}&total=${cartTotal}`);
+      router.push(`/checkout/success/${docRef.id}`);
     } catch (err: any) {
       console.error('Order submission failed:', err);
       setStatus('error');
