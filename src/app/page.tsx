@@ -8,7 +8,7 @@ import { trackEvent } from '@/components/PixelTracker';
 import { fetchAllProducts } from '@/lib/productService';
 import type { Product } from '@/lib/products';
 import ProductCard from '@/components/ProductCard';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Star, Truck, Wallet } from 'lucide-react';
 import { fetchLayoutSettings } from '@/lib/layoutService';
 
 const SLIDES = [
@@ -342,29 +342,32 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
             
-            <div className="space-y-3">
-              <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Premium Quality</h3>
-              <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
-              <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
-                Handcrafted with carefully curated materials and meticulous attention to details.
-              </p>
-            </div>
+            <div className="flex flex-col items-center text-center space-y-3">
+  <Star className="w-6 h-6 text-[#AB9266]" />
+  <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Premium Quality</h3>
+  <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
+  <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
+    Handcrafted with carefully curated materials and meticulous attention to details.
+  </p>
+</div>
 
-            <div className="space-y-3">
-              <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Islandwide Delivery</h3>
-              <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
-              <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
-                Safe packaging and reliable shipping to your doorstep across all Sri Lankan districts.
-              </p>
-            </div>
+            <div className="flex flex-col items-center text-center space-y-3">
+  <Truck className="w-6 h-6 text-[#AB9266]" />
+  <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Islandwide Delivery</h3>
+  <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
+  <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
+    Safe packaging and reliable shipping to your doorstep across all Sri Lankan districts.
+  </p>
+</div>
 
-            <div className="space-y-3">
-              <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Cash on Delivery</h3>
-              <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
-              <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
-                Pay conveniently in Cash only when you receive your handmade craft parcel.
-              </p>
-            </div>
+            <div className="flex flex-col items-center text-center space-y-3">
+  <Wallet className="w-6 h-6 text-[#AB9266]" />
+  <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Cash on Delivery</h3>
+  <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
+  <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
+    Pay conveniently in Cash only when you receive your handmade craft parcel.
+  </p>
+</div>
 
           </div>
         </div>
