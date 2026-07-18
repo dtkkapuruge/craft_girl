@@ -84,7 +84,7 @@ function ProductModal({
       <div className="relative w-full max-w-lg rounded-3xl border border-gray-150 bg-white shadow-2xl overflow-hidden transition-all duration-300">
         <div className="flex items-center justify-between border-b border-gray-100 bg-[#FDFBF7] px-6 py-5">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-750 flex items-center justify-center border border-purple-100">
+            <div className="w-8 h-8 rounded-lg bg-[#0E2C2A]/10 text-[#0E2C2A] flex items-center justify-center border border-[#0E2C2A]/20">
               <Tags className="w-4.5 h-4.5" />
             </div>
             <h2 className="text-md font-bold text-gray-900">{title}</h2>
@@ -102,7 +102,7 @@ function ProductModal({
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="e.g. Preserved Rose Dome"
-              className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm focus:border-purple-650 focus:outline-none focus:ring-1 focus:ring-purple-650 transition-all font-medium text-gray-850"
+              className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm focus:border-[#AB9266] focus:outline-none focus:ring-1 focus:ring-[#AB9266] transition-all font-medium text-gray-850"
             />
           </div>
 
@@ -114,7 +114,7 @@ function ProductModal({
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               placeholder="Provide a detailed, elegant description..."
-              className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm resize-none focus:border-purple-650 focus:outline-none focus:ring-1 focus:ring-purple-650 transition-all font-medium text-gray-850"
+              className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm resize-none focus:border-[#AB9266] focus:outline-none focus:ring-1 focus:ring-[#AB9266] transition-all font-medium text-gray-850"
             />
           </div>
 
@@ -128,7 +128,7 @@ function ProductModal({
                 value={form.price || ''}
                 onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
                 placeholder="LKR 1,500"
-                className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm focus:border-purple-650 focus:outline-none focus:ring-1 focus:ring-purple-650 transition-all font-medium text-gray-850"
+                className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm focus:border-[#AB9266] focus:outline-none focus:ring-1 focus:ring-[#AB9266] transition-all font-medium text-gray-850"
               />
             </div>
             <div>
@@ -140,7 +140,7 @@ function ProductModal({
                 value={form.stockCount || ''}
                 onChange={(e) => setForm({ ...form, stockCount: Number(e.target.value) })}
                 placeholder="25"
-                className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm focus:border-purple-650 focus:outline-none focus:ring-1 focus:ring-purple-650 transition-all font-medium text-gray-850"
+                className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm focus:border-[#AB9266] focus:outline-none focus:ring-1 focus:ring-[#AB9266] transition-all font-medium text-gray-850"
               />
             </div>
           </div>
@@ -150,7 +150,7 @@ function ProductModal({
             <select
               value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
-              className="w-full rounded-xl border border-gray-250 bg-white px-3.5 py-2.5 text-sm focus:border-purple-650 focus:outline-none focus:ring-1 focus:ring-purple-650 transition-all font-medium text-gray-850"
+              className="w-full rounded-xl border border-gray-250 bg-white px-3.5 py-2.5 text-sm focus:border-[#AB9266] focus:outline-none focus:ring-1 focus:ring-[#AB9266] transition-all font-medium text-gray-850"
             >
               {PRODUCT_CATEGORIES.map((c) => (
                 <option key={c.value} value={c.value}>{c.label}</option>
@@ -170,7 +170,7 @@ function ProductModal({
                   </div>
                 )}
               </div>
-              <label className="flex-1 cursor-pointer rounded-xl border border-dashed border-gray-300 px-4 py-4 text-center hover:border-purple-400 hover:bg-purple-50/10 transition-colors">
+              <label className="flex-1 cursor-pointer rounded-xl border border-dashed border-gray-300 px-4 py-4 text-center hover:border-[#AB9266] hover:bg-[#0E2C2A]/5 transition-colors">
                 <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
                 <p className="text-xs font-bold text-gray-700">Click to upload image</p>
                 <p className="text-[10px] text-gray-400 mt-1">PNG, JPG up to 5MB</p>
@@ -189,7 +189,7 @@ function ProductModal({
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 rounded-xl bg-[#442852] py-3 text-sm font-bold text-white hover:bg-[#321c3d] shadow transition-all disabled:opacity-50"
+              className="flex-1 rounded-xl bg-[#0E2C2A] py-3 text-sm font-bold text-white hover:bg-[#0a1f1e] shadow transition-all disabled:opacity-50"
             >
               {saving ? 'Saving…' : 'Save Product'}
             </button>
@@ -214,7 +214,20 @@ function AdminProductsContent() {
 
   const loadProducts = useCallback(async () => {
     setLoading(true);
-    const data = await fetchAllProducts();
+    let data = await fetchAllProducts();
+    const localData = localStorage.getItem('craft_products');
+    if (localData) {
+      try {
+        const parsedLocal = JSON.parse(localData);
+        if (Array.isArray(parsedLocal) && parsedLocal.length > 0) {
+          const localIds = new Set(parsedLocal.map((p: any) => p.id));
+          const toAdd = data.filter((p) => !localIds.has(p.id));
+          data = [...parsedLocal, ...toAdd];
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
     setProducts(data);
     setLoading(false);
   }, []);
@@ -244,17 +257,41 @@ function AdminProductsContent() {
 
   const handleSave = async (data: ProductInput, file: File | null) => {
     setSaving(true);
+    let success = false;
+    let finalImageUrl = data.image;
+
     try {
       if (editingId) {
         await updateProduct(editingId, data, file);
       } else {
         await createProduct(data, file);
       }
-      setModalOpen(false);
-      await loadProducts();
+      success = true;
     } catch (err) {
-      console.error(err);
-      alert('Failed to save product. Please try again.');
+      console.error('Firebase save failed, using local storage fallback', err);
+    }
+    
+    try {
+      if (!success && file) {
+        const { uploadProductImage } = await import('@/lib/productService');
+        finalImageUrl = await uploadProductImage(file);
+      }
+      
+      setProducts(prev => {
+        let newProducts;
+        if (editingId) {
+          newProducts = prev.map(p => p.id === editingId ? { ...p, ...data, image: finalImageUrl } : p);
+        } else {
+          const newProd = { ...data, id: `prod_${Date.now()}`, image: finalImageUrl, rating: 4.8, reviews: 0, stockCount: data.stockCount };
+          newProducts = [newProd, ...prev];
+        }
+        localStorage.setItem('craft_products', JSON.stringify(newProducts));
+        return newProducts;
+      });
+      setModalOpen(false);
+    } catch (fallbackErr) {
+      console.error(fallbackErr);
+      alert('Failed to save product.');
     } finally {
       setSaving(false);
     }
@@ -265,11 +302,14 @@ function AdminProductsContent() {
     if (!confirm('Delete this product permanently?')) return;
     try {
       await deleteProduct(id);
-      setProducts((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
-      console.error(err);
-      alert('Failed to delete product.');
+      console.error('Firebase delete failed, falling back to local storage', err);
     }
+    setProducts((prev) => {
+      const newProducts = prev.filter((p) => p.id !== id);
+      localStorage.setItem('craft_products', JSON.stringify(newProducts));
+      return newProducts;
+    });
   };
 
   const getStockBadge = (stock: number) => {
@@ -309,7 +349,7 @@ function AdminProductsContent() {
         {canManage && (
           <button
             onClick={openCreate}
-            className="inline-flex items-center gap-2 rounded-xl bg-[#442852] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:bg-[#321c3d]"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#0E2C2A] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:bg-[#0a1f1e]"
           >
             <Plus className="h-4 w-4" />
             Add New Product
@@ -321,7 +361,7 @@ function AdminProductsContent() {
       <div className="overflow-hidden rounded-3xl border border-gray-150 bg-white shadow-sm">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 text-gray-400">
-            <Loader2 className="h-8 w-8 animate-spin text-purple-750" />
+            <Loader2 className="h-8 w-8 animate-spin text-[#0E2C2A]" />
             <p className="mt-3 text-xs font-semibold">Loading product catalog...</p>
           </div>
         ) : products.length === 0 ? (

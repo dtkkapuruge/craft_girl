@@ -112,7 +112,21 @@ export default function Home() {
   // Fetch trending products
   useEffect(() => {
     fetchAllProducts().then((data) => {
-      setProducts(data);
+      const localData = localStorage.getItem('craft_products');
+      let finalData = data;
+      if (localData) {
+        try {
+          const parsedLocal = JSON.parse(localData);
+          if (Array.isArray(parsedLocal) && parsedLocal.length > 0) {
+            const localIds = new Set(parsedLocal.map((p: any) => p.id));
+            const toAdd = data.filter((p) => !localIds.has(p.id));
+            finalData = [...parsedLocal, ...toAdd];
+          }
+        } catch (e) {
+          console.error('Failed to parse local storage products', e);
+        }
+      }
+      setProducts(finalData);
       setLoading(false);
     });
   }, []);
@@ -151,7 +165,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-[#FAFAF8] min-h-screen text-[#0A0A0A] selection:bg-[#0A0A0A]/10 selection:text-[#0A0A0A] overflow-hidden">
+    <div className="bg-[#FAFAF8] min-h-screen text-[#0E2C2A] selection:bg-[#AB9266]/20 selection:text-[#0E2C2A] overflow-hidden">
       
       {/* ─── Hero Section (High-End Auto-Playing Slider) ─── */}
       <section className="relative w-full h-screen overflow-hidden bg-black rounded-none">
@@ -193,7 +207,7 @@ export default function Home() {
                     <div className="hero-text-cta pt-4">
                       <Link
                         href={slide.link}
-                        className="inline-flex items-center justify-center bg-white text-black px-8 py-3.5 text-[10px] font-extrabold tracking-[0.25em] uppercase hover:bg-black hover:text-white border border-white transition-all rounded-none"
+                        className="inline-flex items-center justify-center bg-white text-[#0E2C2A] px-8 py-3.5 text-[10px] font-extrabold tracking-[0.25em] uppercase hover:bg-[#0E2C2A] hover:text-white border border-white transition-all rounded-none"
                       >
                         EXPLORE COLLECTION
                       </Link>
@@ -224,8 +238,8 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center max-w-xl mx-auto mb-14 space-y-2">
           <span className="text-[10px] font-bold tracking-[0.25em] text-gray-400 uppercase">CATEGORIES</span>
-          <h2 className="text-2xl font-bold text-[#0A0A0A] tracking-[0.2em] uppercase">BROWSE COLLECTIONS</h2>
-          <div className="h-[1px] w-12 bg-black mx-auto mt-3"></div>
+          <h2 className="text-2xl font-bold text-[#0E2C2A] tracking-[0.2em] uppercase">BROWSE COLLECTIONS</h2>
+          <div className="h-[1px] w-12 bg-[#AB9266] mx-auto mt-3"></div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -233,7 +247,7 @@ export default function Home() {
             <Link
               key={cat.key}
               href={`/category/${cat.key}`}
-              className="group relative aspect-[4/5] w-full overflow-hidden border border-[#E8E4DF] hover:border-black transition-colors duration-300 rounded-none bg-white"
+              className="group relative aspect-[4/5] w-full overflow-hidden border border-[#E8E4DF] hover:border-[#AB9266] transition-colors duration-300 rounded-none bg-white"
             >
               <Image
                 src={cat.image}
@@ -260,11 +274,11 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row items-center justify-between mb-12 gap-4">
           <div className="space-y-1 text-center sm:text-left">
             <span className="text-[10px] font-bold tracking-[0.25em] text-gray-400 uppercase">CURATED LIST</span>
-            <h2 className="text-2xl font-bold text-[#0A0A0A] tracking-[0.2em] uppercase">TRENDING PIECES</h2>
+            <h2 className="text-2xl font-bold text-[#0E2C2A] tracking-[0.2em] uppercase">TRENDING PIECES</h2>
           </div>
           <Link
             href="/category/all-products"
-            className="flex items-center gap-1 text-[#0A0A0A] font-extrabold text-[10px] uppercase tracking-widest hover:underline"
+            className="flex items-center gap-1 text-[#0E2C2A] font-extrabold text-[10px] uppercase tracking-widest hover:underline"
           >
             View All Products <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -272,7 +286,7 @@ export default function Home() {
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <Loader2 className="h-6 w-6 animate-spin text-[#0A0A0A]" />
+            <Loader2 className="h-6 w-6 animate-spin text-[#0E2C2A]" />
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -300,20 +314,20 @@ export default function Home() {
           
           {/* Right Textual editorial story side */}
           <div className="p-8 md:p-16 flex flex-col justify-center space-y-6">
-            <span className="text-[10px] font-bold tracking-[0.25em] text-purple-700 uppercase">
+            <span className="text-[10px] font-bold tracking-[0.25em] text-[#0E2C2A] uppercase">
               GIFT PRESERVATION
             </span>
-            <h2 className="text-xl sm:text-3xl font-bold tracking-[0.18em] text-[#0A0A0A] uppercase leading-snug">
+            <h2 className="text-xl sm:text-3xl font-bold tracking-[0.18em] text-[#0E2C2A] uppercase leading-snug">
               PRESERVE YOUR SPECIAL MEMORIES
             </h2>
-            <div className="h-[1px] w-12 bg-black"></div>
+            <div className="h-[1px] w-12 bg-[#AB9266]"></div>
             <p className="text-xs text-gray-500 uppercase tracking-widest leading-loose">
               We preserve wedding bouquets, anniversary flowers, and special event tokens inside custom resin displays, glass domes, and jewelry. Message us to plan your custom keepsake.
             </p>
             <div className="pt-4">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center bg-[#0A0A0A] text-white px-8 py-4 text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-[#222222] transition-colors rounded-none"
+                className="inline-flex items-center justify-center bg-[#0E2C2A] text-white px-8 py-4 text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-[#0a1f1e] transition-colors rounded-none"
               >
                 Start Custom Order
               </Link>
@@ -329,24 +343,24 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
             
             <div className="space-y-3">
-              <h3 className="text-xs font-bold text-[#0A0A0A] uppercase tracking-[0.2em]">Premium Quality</h3>
-              <div className="h-[1px] w-6 bg-black mx-auto mt-2"></div>
+              <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Premium Quality</h3>
+              <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
               <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
                 Handcrafted with carefully curated materials and meticulous attention to details.
               </p>
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-xs font-bold text-[#0A0A0A] uppercase tracking-[0.2em]">Islandwide Delivery</h3>
-              <div className="h-[1px] w-6 bg-black mx-auto mt-2"></div>
+              <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Islandwide Delivery</h3>
+              <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
               <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
                 Safe packaging and reliable shipping to your doorstep across all Sri Lankan districts.
               </p>
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-xs font-bold text-[#0A0A0A] uppercase tracking-[0.2em]">Cash on Delivery</h3>
-              <div className="h-[1px] w-6 bg-black mx-auto mt-2"></div>
+              <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Cash on Delivery</h3>
+              <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
               <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
                 Pay conveniently in Cash only when you receive your handmade craft parcel.
               </p>

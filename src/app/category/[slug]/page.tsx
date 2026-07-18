@@ -264,14 +264,21 @@ export default function CategoryPage() {
         const salesA = salesMap[a.name] || salesMap[a.id] || 0;
         const salesB = salesMap[b.name] || salesMap[b.id] || 0;
         if (salesB === salesA) {
-          return b.reviews - a.reviews;
+          const ratingA = (a as any).rating || a.reviews || 0;
+          const ratingB = (b as any).rating || b.reviews || 0;
+          if (ratingB !== ratingA) return ratingB - ratingA;
+          return String(b.id).localeCompare(String(a.id));
         }
         return salesB - salesA;
       });
     }
     if (activeSubFilter === 'new') {
-      // Show newest arrivals (last 4 products or products ending with higher digits)
-      return baseProducts.slice(-4);
+      return [...baseProducts].sort((a, b) => {
+        const timeA = (a as any).created_at ? new Date((a as any).created_at).getTime() : 0;
+        const timeB = (b as any).created_at ? new Date((b as any).created_at).getTime() : 0;
+        if (timeA !== timeB) return timeB - timeA;
+        return String(b.id).localeCompare(String(a.id));
+      });
     }
     return baseProducts;
   }, [baseProducts, activeSubFilter, salesMap]);
