@@ -3,7 +3,14 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { trackEvent } from '@/components/PixelTracker';
-import { CheckCircle2, ShoppingBag, Truck, Calendar, Heart, Loader2 } from 'lucide-react';
+import {
+  CheckCircle2,
+  ShoppingBag,
+  Truck,
+  Calendar,
+  Heart,
+  Loader2,
+} from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
@@ -11,11 +18,16 @@ function OrderSuccessContent() {
   const params = useParams();
   const router = useRouter();
 
-  const orderId = params?.orderId as string;
+  let orderId = params?.orderId as string;
+if (!orderId && typeof window !== 'undefined') {
+  const parts = window.location.pathname.split('/');
+  orderId = parts[parts.length - 1];
+}
 
   const [orderNumber, setOrderNumber] = useState('CGS-UNKNOWN');
   const [totalAmount, setTotalAmount] = useState(0);
   const [loading, setLoading] = useState(true);
+const [error, setError] = useState<string | null>(null);
 
   // Fetch order data from Firestore
   useEffect(() => {
@@ -28,9 +40,12 @@ function OrderSuccessContent() {
           const data = snap.data();
           setOrderNumber(data?.orderNumber ?? data?.orderId ?? 'CGS-UNKNOWN');
           setTotalAmount(data?.totalBill ?? data?.total ?? 0);
+        } else {
+          setError('Order not found.');
         }
       } catch (error) {
         console.error('Failed to fetch order:', error);
+        setError(error instanceof Error ? error.message : String(error));
       } finally {
         setLoading(false);
       }
@@ -51,12 +66,20 @@ function OrderSuccessContent() {
   }, [loading, orderId, orderNumber, totalAmount]);
 
   if (loading) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 text-center">
-        <Loader2 className="w-12 h-12 text-[#442852] animate-spin" />
-      </div>
-    );
-  }
+  return (
+    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 text-center">
+      <Loader2 className="w-12 h-12 text-[#442852] animate-spin" />
+    </div>
+  );
+}
+
+if (error) {
+  return (
+    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 text-center">
+      <p className="text-red-600 font-semibold">{error}</p>
+    </div>
+  );
+}
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8 text-center">
@@ -71,7 +94,8 @@ function OrderSuccessContent() {
         Order Confirmed!
       </h1>
       <p className="mt-3 text-lg text-gray-500 leading-relaxed">
-        Thank you for shopping with us! Your Cash on Delivery order has been successfully placed.
+        Thank you for shopping with us! Your Cash on Delivery order has been
+        successfully placed.
       </p>
 
       {/* Order Summary Card */}
@@ -84,15 +108,21 @@ function OrderSuccessContent() {
         </div>
 
         <div className="flex justify-between items-center pb-3 border-b border-[#F9F6F0]">
-          <span className="text-sm font-semibold text-gray-500">Total Bill (Pay on Delivery)</span>
+          <span className="text-sm font-semibold text-gray-500">
+            Total Bill (Pay on Delivery)
+          </span>
           <span className="text-base font-extrabold text-[#2D2D2D]">
             Rs. {totalAmount.toLocaleString()}.00
           </span>
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="text-sm font-semibold text-gray-500">Payment Status</span>
-          <span className="text-sm font-bold text-[#442852]">Pending Cash on Delivery</span>
+          <span className="text-sm font-semibold text-gray-500">
+            Payment Status
+          </span>
+          <span className="text-sm font-bold text-[#442852]">
+            Pending Cash on Delivery
+          </span>
         </div>
       </div>
 
@@ -101,16 +131,25 @@ function OrderSuccessContent() {
         <div className="rounded-2xl border border-[#E5E0D8] bg-white p-4 shadow-sm flex gap-3">
           <Truck className="h-5 w-5 text-[#B292C7] shrink-0" />
           <div>
-            <h4 className="text-xs font-bold text-[#2D2D2D] uppercase tracking-wider">Delivery Time</h4>
-            <p className="text-xs text-gray-500 mt-1">2-3 business days within Western Province. 4-5 days islandwide.</p>
+            <h4 className="text-xs font-bold text-[#2D2D2D] uppercase tracking-wider">
+              Delivery Time
+            </h4>
+            <p className="text-xs text-gray-500 mt-1">
+              2-3 business days within Western Province. 4-5 days islandwide.
+            </p>
           </div>
         </div>
 
         <div className="rounded-2xl border border-[#E5E0D8] bg-white p-4 shadow-sm flex gap-3">
           <Calendar className="h-5 w-5 text-[#B292C7] shrink-0" />
           <div>
-            <h4 className="text-xs font-bold text-[#2D2D2D] uppercase tracking-wider">Order Update</h4>
-            <p className="text-xs text-gray-500 mt-1">You will receive a phone call or SMS from our courier service once your package is dispatched.</p>
+            <h4 className="text-xs font-bold text-[#2D2D2D] uppercase tracking-wider">
+              Order Update
+            </h4>
+            <p className="text-xs text-gray-500 mt-1">
+              You will receive a phone call or SMS from our courier service once
+              your package is dispatched.
+            </p>
           </div>
         </div>
       </div>
@@ -132,11 +171,13 @@ function OrderSuccessContent() {
 export default function OrderSuccessPage() {
   return (
     <div className="min-h-screen bg-[#F9F6F0]">
-      <Suspense fallback={
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <Loader2 className="w-10 h-10 text-[#442852] animate-spin" />
-        </div>
-      }>
+      <Suspense
+        fallback={
+          <div className="min-h-[60vh] flex items-center justify-center">
+            <Loader2 className="w-10 h-10 text-[#442852] animate-spin" />
+          </div>
+        }
+      >
         <OrderSuccessContent />
       </Suspense>
     </div>
