@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { trackEvent } from '@/components/PixelTracker';
 import toast from 'react-hot-toast';
-import { ShoppingBag, CheckCircle, AlertCircle, Loader2, CreditCard, Banknote, Building } from 'lucide-react';
+import { ShoppingBag, AlertCircle, Loader2, CreditCard, Banknote, Building } from 'lucide-react';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -66,8 +66,32 @@ export default function CheckoutPage() {
     setErrorMessage('');
 
     try {
+      /*
+       * CRITICAL FIX — read the live Firebase Auth user from the SDK at submit time.
+       *
+       * The `user` object from AuthContext may be a mock/stale object that does NOT
+       * carry a real Firebase ID token. Firestore Security Rules evaluate `request.auth`
+       * based on the JWT that the Firebase Client SDK automatically attaches to each
+       * request — this token only exists when `auth.currentUser` is a real, signed-in
+       * Firebase user (via signInWithEmailAndPassword, signInWithPopup, etc.).
+       *
+       * Reading `auth.currentUser` here guarantees the Firestore write is made under
+       * the authenticated user's token, satisfying `request.auth != null` in rules.
+       */
+      const firebaseUser = auth.currentUser;
+
+      if (!firebaseUser) {
+        // Hit when using legacy mock-admin session (no real Firebase token exists).
+        // Redirect the user to sign in with actual Firebase credentials.
+        setStatus('error');
+        setErrorMessage(
+          'Your session does not have write permissions. Please sign in with your email/password or Google account to place an order.'
+        );
+        return;
+      }
+
       const orderNumber = `CGS-${Math.floor(100000 + Math.random() * 900000)}`;
-      
+
       let giftingDetails = null;
       try {
         const giftStr = localStorage.getItem('checkout_gifting');
@@ -80,13 +104,14 @@ export default function CheckoutPage() {
 
       const orderData = {
         orderNumber,
-        userId: user?.uid || null,
+        // Use the real Firebase UID so Firestore rules can match it
+        userId: firebaseUser.uid,
         customer: {
           name: formData.name,
           phone: formData.phone,
           address: formData.address,
           district: formData.city,
-          email: user?.email || null,
+          email: firebaseUser.email || null,
         },
         items: cartItems.map(item => ({
           productId: item.id,
@@ -105,7 +130,7 @@ export default function CheckoutPage() {
       };
 
       const docRef = await addDoc(collection(db, 'orders'), orderData);
-      
+
       // Track Purchase Event
       trackEvent('Purchase', {
         content_ids: cartItems.map(i => i.id),
@@ -118,11 +143,20 @@ export default function CheckoutPage() {
       toast.success('Order placed successfully!');
       clearCart();
       router.push(`/checkout/success/${docRef.id}`);
-      
+
     } catch (error: any) {
       console.error('Order submission failed:', error);
       setStatus('error');
-      setErrorMessage(error.message || 'Failed to place order. Please try again.');
+
+      // Surface a clear message for Firestore permission errors
+      if (error?.code === 'permission-denied') {
+        setErrorMessage(
+          'Permission denied. Please ensure you are signed in and try again. ' +
+          'If the problem persists, contact support.'
+        );
+      } else {
+        setErrorMessage(error.message || 'Failed to place order. Please try again.');
+      }
     }
   };
 
