@@ -46,10 +46,10 @@ export default function AboutPage() {
           <span className="text-[10px] font-bold tracking-[0.25em] text-[#9B9B9B] uppercase">
             WHO WE ARE
           </span>
-          <h1 className="text-2xl md:text-4xl font-bold tracking-[0.2em] uppercase text-[#0A0A0A]">
+          <h1 className="text-2xl md:text-4xl font-bold tracking-[0.2em] uppercase text-brand-primary">
             CRAFT GIRLY STUDIO
           </h1>
-          <div className="h-[1px] w-12 bg-black mx-auto"></div>
+          <div className="h-[1px] w-12 bg-[#CBB0DC] mx-auto mt-3"></div>
           <p className="text-xs uppercase tracking-widest text-[#6B6B6B] leading-relaxed max-w-xl mx-auto">
             A premium Sri Lankan studio dedicated to resin craftsmanship, memory preservation, and fine handmade creations.
           </p>
@@ -75,10 +75,10 @@ export default function AboutPage() {
             
             <div className="reveal reveal-d1 space-y-4">
               <span className="text-[9px] font-bold tracking-[0.3em] text-gray-405 text-gray-400">01 / BRAND MISSION</span>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-[0.2em] uppercase text-[#0A0A0A]">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-[0.2em] uppercase text-brand-primary">
                 THE ART OF PRESERVATION
               </h2>
-              <div className="h-[1px] w-8 bg-black"></div>
+              <div className="h-[1px] w-8 bg-brand-accent"></div>
               <p className="text-xs uppercase tracking-widest leading-loose text-[#6B6B6B]">
                 Craft Girly Store is a boutique studio specializing in transforming transient life moments into solid keepsakes. We preserve bridal bouquets, anniversary florals, and memorable tokens inside premium, optical-grade resin that prevents yellowing.
               </p>
@@ -86,10 +86,10 @@ export default function AboutPage() {
 
             <div className="reveal reveal-d2 space-y-4">
               <span className="text-[9px] font-bold tracking-[0.3em] text-gray-400">02 / CRAFTSMANSHIP</span>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-[0.2em] uppercase text-[#0A0A0A]">
+              <h2 className="text-xl sm:text-2xl font-bold tracking-[0.2em] uppercase text-brand-primary">
                 HANDCRAFTED WITH LOVE
               </h2>
-              <div className="h-[1px] w-8 bg-black"></div>
+              <div className="h-[1px] w-8 bg-brand-accent"></div>
               <p className="text-xs uppercase tracking-widest leading-loose text-[#6B6B6B]">
                 Every single piece we design undergoes a meticulous curing, polishing, and setting cycle inside our studio. From initial flower drying to final resin curing, we pay absolute attention to detail, bubble removal, and structural clarity.
               </p>
@@ -104,14 +104,14 @@ export default function AboutPage() {
       <section className="border-t border-[#E8E4DF] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-16 space-y-2">
           <span className="text-[10px] font-bold tracking-[0.25em] text-[#9B9B9B] uppercase">STUDIO STRENGTHS</span>
-          <h2 className="text-2xl font-bold tracking-[0.2em] text-[#0A0A0A] uppercase">OUR AREAS OF EXPERTISE</h2>
+          <h2 className="text-2xl font-bold tracking-[0.2em] text-brand-primary uppercase">OUR AREAS OF EXPERTISE</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {SPECIALTIES.map(({ title, desc }) => (
-            <div key={title} className="bg-white border border-[#E8E4DF] p-8 space-y-4 hover:border-black transition-colors duration-300 rounded-none text-left">
-              <div className="h-[1px] w-6 bg-black"></div>
-              <h3 className="font-extrabold text-xs tracking-widest text-[#0A0A0A] uppercase">{title}</h3>
+            <div key={title} className="bg-white border border-[#E8E4DF] p-8 space-y-4 hover:border-brand-accent transition-colors duration-300 rounded-none text-left">
+              <div className="h-[2px] w-6 bg-[#CBB0DC] my-3"></div>
+              <h3 className="font-extrabold text-xs tracking-widest text-brand-primary uppercase">{title}</h3>
               <p className="text-[10px] text-[#6B6B6B] uppercase tracking-wider leading-relaxed">{desc}</p>
             </div>
           ))}
@@ -127,7 +127,7 @@ export default function AboutPage() {
           <div className="pt-2">
             <Link
               href="/category/all-products"
-              className="inline-flex items-center justify-center bg-[#0A0A0A] text-white px-10 py-4 text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-[#222222] transition-colors rounded-none"
+              className="inline-flex items-center justify-center bg-[#4A2244] text-white px-8 py-4 text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-[#5C2B54] transition-colors rounded-none mt-6"
             >
               SHOP NEW RELEASES
             </Link>

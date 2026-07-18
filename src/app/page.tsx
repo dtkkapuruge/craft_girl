@@ -152,7 +152,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-[#FAFAF8] min-h-screen text-[#0E2C2A] selection:bg-[#AB9266]/20 selection:text-[#0E2C2A] overflow-hidden">
+    <div className="bg-[#FAFAF8] min-h-screen text-brand-text selection:bg-[#AB9266]/20 selection:text-brand-text overflow-hidden">
       
       {/* ─── Hero Section (High-End Auto-Playing Slider) ─── */}
       <section className="relative w-full h-screen overflow-hidden bg-black rounded-none">
@@ -194,7 +194,7 @@ export default function Home() {
                     <div className="hero-text-cta pt-4">
                       <Link
                         href={slide.link}
-                        className="inline-flex items-center justify-center bg-white text-[#0E2C2A] px-8 py-3.5 text-[10px] font-extrabold tracking-[0.25em] uppercase hover:bg-[#0E2C2A] hover:text-white border border-white transition-all rounded-none"
+                        className="inline-flex items-center justify-center bg-brand-primary text-white px-8 py-3.5 text-[10px] font-extrabold tracking-[0.25em] uppercase hover:bg-brand-primary/90 hover:text-white border border-white transition-all rounded-none"
                       >
                         EXPLORE COLLECTION
                       </Link>
@@ -225,7 +225,7 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center max-w-xl mx-auto mb-14 space-y-2">
           <span className="text-[10px] font-bold tracking-[0.25em] text-gray-400 uppercase">CATEGORIES</span>
-          <h2 className="text-2xl font-bold text-[#0E2C2A] tracking-[0.2em] uppercase">BROWSE COLLECTIONS</h2>
+          <h2 className="text-2xl font-bold text-brand-primary tracking-[0.2em] uppercase">BROWSE COLLECTIONS</h2>
           <div className="h-[1px] w-12 bg-[#AB9266] mx-auto mt-3"></div>
         </div>
 
@@ -261,11 +261,11 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row items-center justify-between mb-12 gap-4">
           <div className="space-y-1 text-center sm:text-left">
             <span className="text-[10px] font-bold tracking-[0.25em] text-gray-400 uppercase">CURATED LIST</span>
-            <h2 className="text-2xl font-bold text-[#0E2C2A] tracking-[0.2em] uppercase">TRENDING PIECES</h2>
+            <h2 className="text-2xl font-bold text-brand-primary tracking-[0.2em] uppercase">TRENDING PIECES</h2>
           </div>
           <Link
             href="/category/all-products"
-            className="flex items-center gap-1 text-[#0E2C2A] font-extrabold text-[10px] uppercase tracking-widest hover:underline"
+            className="flex items-center gap-1 text-brand-primary font-extrabold text-[10px] uppercase tracking-widest hover:underline"
           >
             View All Products <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -314,10 +314,10 @@ export default function Home() {
           
           {/* Right Textual editorial story side */}
           <div className="p-8 md:p-16 flex flex-col justify-center space-y-6">
-            <span className="text-[10px] font-bold tracking-[0.25em] text-[#0E2C2A] uppercase">
+            <span className="text-[10px] font-bold tracking-[0.25em] text-brand-primary uppercase">
               GIFT PRESERVATION
             </span>
-            <h2 className="text-xl sm:text-3xl font-bold tracking-[0.18em] text-[#0E2C2A] uppercase leading-snug">
+            <h2 className="text-xl sm:text-3xl font-bold tracking-[0.18em] text-brand-primary uppercase leading-snug">
               PRESERVE YOUR SPECIAL MEMORIES
             </h2>
             <div className="h-[1px] w-12 bg-[#AB9266]"></div>
@@ -327,7 +327,7 @@ export default function Home() {
             <div className="pt-4">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center bg-[#0E2C2A] text-white px-8 py-4 text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-[#0a1f1e] transition-colors rounded-none"
+                className="inline-flex items-center justify-center bg-[#4A2244] text-white px-8 py-4 text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-[#5C2B54] transition-colors rounded-none"
               >
                 Start Custom Order
               </Link>
@@ -344,7 +344,7 @@ export default function Home() {
             
             <div className="flex flex-col items-center text-center space-y-3">
   <Star className="w-6 h-6 text-[#AB9266]" />
-  <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Premium Quality</h3>
+  <h3 className="text-xs font-bold text-brand-primary uppercase tracking-[0.2em]">Premium Quality</h3>
   <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
   <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
     Handcrafted with carefully curated materials and meticulous attention to details.
@@ -353,7 +353,7 @@ export default function Home() {
 
             <div className="flex flex-col items-center text-center space-y-3">
   <Truck className="w-6 h-6 text-[#AB9266]" />
-  <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Islandwide Delivery</h3>
+  <h3 className="text-xs font-bold text-brand-primary uppercase tracking-[0.2em]">Islandwide Delivery</h3>
   <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
   <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
     Safe packaging and reliable shipping to your doorstep across all Sri Lankan districts.
@@ -362,7 +362,7 @@ export default function Home() {
 
             <div className="flex flex-col items-center text-center space-y-3">
   <Wallet className="w-6 h-6 text-[#AB9266]" />
-  <h3 className="text-xs font-bold text-[#0E2C2A] uppercase tracking-[0.2em]">Cash on Delivery</h3>
+  <h3 className="text-xs font-bold text-brand-primary uppercase tracking-[0.2em]">Cash on Delivery</h3>
   <div className="h-[1px] w-6 bg-[#AB9266] mx-auto mt-2"></div>
   <p className="text-[10px] text-gray-500 max-w-xs mx-auto uppercase tracking-wider leading-relaxed">
     Pay conveniently in Cash only when you receive your handmade craft parcel.

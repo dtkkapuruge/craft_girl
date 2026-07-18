@@ -70,7 +70,7 @@ export default function ContactPage() {
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center bg-[#0A0A0A] hover:bg-[#222222] text-white text-[10px] font-bold tracking-[0.25em] uppercase px-8 py-3.5 transition-colors rounded-none shadow-sm"
+            className="inline-flex items-center justify-center bg-[#4A2244] hover:bg-[#5C2B54] text-white text-[10px] font-bold tracking-[0.25em] uppercase px-8 py-3.5 transition-colors rounded-none shadow-sm"
           >
             Message on WhatsApp
           </a>
