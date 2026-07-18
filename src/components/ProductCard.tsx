@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import type { Product } from '@/lib/products';
 import { getCategoryLabel } from '@/lib/categories';
 import toast from 'react-hot-toast';
@@ -13,6 +14,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const outOfStock = product.stockCount !== undefined && product.stockCount <= 0;
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const handleAddToCart = () => {
     if (outOfStock) return;
@@ -23,21 +25,32 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
   return (
     <div className="group bg-white border border-[#E8E4DF] overflow-hidden hover:border-[#0A0A0A] transition-colors duration-300 flex flex-col h-full rounded-none">
       {/* Image Container with sliding Quick Add bar */}
-      <Link href={`/product/${product.id}`} className="block relative aspect-[3/4] w-full overflow-hidden bg-neutral-50 shrink-0 rounded-none">
+      <Link href={`/product/${product.id}`} className="block relative aspect-[3/4] w-full overflow-hidden bg-neutral-100 shrink-0 rounded-none">
+        {/* Skeleton shimmer — visible until image loads */}
+        <div
+          className={`absolute inset-0 bg-gradient-to-r from-neutral-100 via-neutral-200 to-neutral-100 bg-[length:200%_100%] animate-[shimmer_1.4s_infinite] transition-opacity duration-300 rounded-none ${
+            imgLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+        />
+
         <Image
           src={product.image}
           alt={product.name}
           fill
-          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 rounded-none"
+          className={`object-cover w-full h-full group-hover:scale-105 transition-all duration-700 rounded-none ${
+            imgLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          onLoad={() => setImgLoaded(true)}
         />
+
         {outOfStock && (
-          <span className="absolute top-3 left-3 bg-[#0A0A0A] px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-[#FAFAF8] rounded-none">
+          <span className="absolute top-3 left-3 bg-[#0A0A0A] px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-[#FAFAF8] rounded-none z-10">
             Out of Stock
           </span>
         )}
-        
-        {/* Quick Add Bar - slides up on hover, visible by default on mobile touch screens */}
+
+        {/* Quick Add Bar - slides up on hover */}
         {outOfStock ? (
           <div className="quick-add-bar out-of-stock lg:translate-y-[100%] lg:group-hover:translate-y-0 transition-transform duration-300 rounded-none">
             Out of Stock

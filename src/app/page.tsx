@@ -8,7 +8,7 @@ import { trackEvent } from '@/components/PixelTracker';
 import { fetchAllProducts } from '@/lib/productService';
 import type { Product } from '@/lib/products';
 import ProductCard from '@/components/ProductCard';
-import { Loader2, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { fetchLayoutSettings } from '@/lib/layoutService';
 
 const SLIDES = [
@@ -109,24 +109,11 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [dynamicSlides.length]);
 
-  // Fetch trending products
+  // Fetch trending products — always use the authoritative live source to
+  // prevent stale cached images from flashing before real data arrives.
   useEffect(() => {
     fetchAllProducts().then((data) => {
-      const localData = localStorage.getItem('craft_products');
-      let finalData = data;
-      if (localData) {
-        try {
-          const parsedLocal = JSON.parse(localData);
-          if (Array.isArray(parsedLocal) && parsedLocal.length > 0) {
-            const localIds = new Set(parsedLocal.map((p: any) => p.id));
-            const toAdd = data.filter((p) => !localIds.has(p.id));
-            finalData = [...parsedLocal, ...toAdd];
-          }
-        } catch (e) {
-          console.error('Failed to parse local storage products', e);
-        }
-      }
-      setProducts(finalData);
+      setProducts(data);
       setLoading(false);
     });
   }, []);
@@ -285,8 +272,21 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="h-6 w-6 animate-spin text-[#0E2C2A]" />
+          // Skeleton grid — same column structure as the real card grid so
+          // layout never jumps when live products swap in.
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex flex-col bg-white border border-[#E8E4DF] overflow-hidden rounded-none">
+                {/* Image placeholder */}
+                <div className="aspect-[3/4] w-full bg-gradient-to-r from-neutral-100 via-neutral-200 to-neutral-100 bg-[length:200%_100%] animate-[shimmer_1.4s_infinite]" />
+                {/* Text placeholders */}
+                <div className="p-4 space-y-2">
+                  <div className="h-2 w-1/3 bg-neutral-200 rounded animate-pulse" />
+                  <div className="h-3 w-3/4 bg-neutral-200 rounded animate-pulse" />
+                  <div className="h-3 w-1/2 bg-neutral-200 rounded animate-pulse mt-2" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

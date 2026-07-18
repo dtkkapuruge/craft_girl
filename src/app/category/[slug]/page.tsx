@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Product } from '@/lib/products';
 import Link from 'next/link';
-import { ArrowDownAZ, ArrowUpAZ, Clock, Loader2, Search, X } from 'lucide-react';
+import { ArrowDownAZ, ArrowUpAZ, Clock, Search, X } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { trackEvent } from '@/components/PixelTracker';
 import { useState, useMemo, useEffect } from 'react';
@@ -459,8 +459,19 @@ export default function CategoryPage() {
 
         {/* Product Grid */}
         {loading ? (
-          <div className="flex justify-center py-24">
-            <Loader2 className="h-8 w-8 animate-spin text-[#442852]" />
+          // Skeleton grid — same column layout as real product cards so the
+          // page height is stable and there is zero flash when data arrives.
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex flex-col bg-white border border-[#E8E4DF] overflow-hidden rounded-none">
+                <div className="aspect-[3/4] w-full bg-gradient-to-r from-neutral-100 via-neutral-200 to-neutral-100 bg-[length:200%_100%] animate-[shimmer_1.4s_infinite]" />
+                <div className="p-4 space-y-2">
+                  <div className="h-2 w-1/3 bg-neutral-200 rounded animate-pulse" />
+                  <div className="h-3 w-3/4 bg-neutral-200 rounded animate-pulse" />
+                  <div className="h-3 w-1/2 bg-neutral-200 rounded animate-pulse mt-2" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : sortedProducts.length === 0 ? (
           <div className="text-center py-20">

@@ -61,6 +61,13 @@ body {
   100% { transform: scale(1.02); }
 }
 
+/* Skeleton shimmer sweep — used by ProductCard and grid loading skeletons */
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+
 @keyframes slideUpFade {
   0%   { opacity: 0; transform: translateY(32px); }
   100% { opacity: 1; transform: translateY(0); }
