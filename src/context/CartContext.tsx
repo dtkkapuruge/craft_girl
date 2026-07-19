@@ -1,6 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { db } from '@/lib/firebase';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useAuth } from './AuthContext';
 
 export interface CartItem {
@@ -45,6 +47,38 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsLoaded(true);
   }, []);
 
+  // Fetch cart from Firestore on login and merge with existing items
+  useEffect(() => {
+    if (user) {
+      const fetchCart = async () => {
+        try {
+          const cartDoc = await getDoc(doc(db, 'carts', user.uid));
+          if (cartDoc.exists()) {
+            const dbItems = (cartDoc.data()?.items as CartItem[]) || [];
+            // Merge with current cart (guest) items
+            const mergedMap: Record<string, CartItem> = {};
+            const addToMap = (item: CartItem) => {
+              const key = `${item.id}|${item.variant ?? ''}`;
+              if (mergedMap[key]) {
+                mergedMap[key].quantity += item.quantity;
+              } else {
+                mergedMap[key] = { ...item };
+              }
+            };
+            cartItems.forEach(addToMap);
+            dbItems.forEach(addToMap);
+            const merged = Object.values(mergedMap);
+            setCartItems(merged);
+          }
+        } catch (e) {
+          console.error('Failed to fetch cart from Firestore:', e);
+        }
+      };
+      fetchCart();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
   // Clear cart when user logs out (auth state becomes null)
   useEffect(() => {
     if (user === null) {
@@ -56,7 +90,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     }
   }, [user]);
-  // Save to local storage when cart changes
+
+  // Save to local storage and Firestore when cart changes
   useEffect(() => {
     if (isLoaded) {
       try {
@@ -64,8 +99,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       } catch (error) {
         console.error('Failed to save cart to local storage:', error);
       }
+      // Sync to Firestore for logged‑in users
+      if (user) {
+        const syncCart = async () => {
+          try {
+            await setDoc(doc(db, 'carts', user.uid), { items: cartItems });
+          } catch (e) {
+            console.error('Failed to sync cart to Firestore:', e);
+          }
+        };
+        syncCart();
+      }
     }
-  }, [cartItems, isLoaded]);
+  }, [cartItems, isLoaded, user]);
 
   const addToCart = (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
     setCartItems((prev) => {
