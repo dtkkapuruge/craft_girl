@@ -8,6 +8,7 @@ export interface LayoutSettings {
   heroBanner2?: string;
   heroBanner3?: string;
   aboutUsImage?: string;
+  aboutUsEditorialSplitBanner?: string;
   category_resin?: string;
   category_jewellery?: string;
   category_chocolate_boxes?: string;

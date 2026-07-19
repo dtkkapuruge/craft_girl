@@ -208,7 +208,7 @@ export default function Home() {
               className="group relative aspect-[4/5] w-full overflow-hidden border border-[#E8E4DF] hover:border-[#AB9266] transition-colors duration-300 rounded-none bg-white"
             >
               <Image
-                src={layoutSettings?.[`category_${cat.key}` as keyof LayoutSettings] || ''}
+                src={layoutSettings?.[`category_${cat.key.replace(/-/g, '_')}` as keyof LayoutSettings] || ''}
                 alt={cat.label}
                 fill
                 sizes="(max-width: 768px) 100vw, 25vw"
@@ -271,7 +271,7 @@ export default function Home() {
           {/* Left Visual side */}
           <div className="relative aspect-[4/5] lg:aspect-square w-full min-h-[400px]">
             <Image
-              src={layoutSettings?.aboutUsImage || "https://images.unsplash.com/photo-1610996841103-6f8dce4937bb?q=80&w=1200&auto=format&fit=crop"}
+              src={layoutSettings?.aboutUsEditorialSplitBanner || "https://images.unsplash.com/photo-1610996841103-6f8dce4937bb?q=80&w=1200&auto=format&fit=crop"}
               alt="Preserved event keepsake"
               fill
               className="object-cover w-full h-full rounded-none"
