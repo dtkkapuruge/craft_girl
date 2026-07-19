@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import Image from 'next/image';
 import { fetchAllCategories, type Category } from '@/lib/categoryService';
 import Link from 'next/link';
@@ -271,7 +273,7 @@ export default function Home() {
           {/* Left Visual side */}
           <div className="relative aspect-[4/5] lg:aspect-square w-full min-h-[400px]">
             <Image
-              src={layoutSettings?.aboutUsEditorialSplitBanner || "https://images.unsplash.com/photo-1610996841103-6f8dce4937bb?q=80&w=1200&auto=format&fit=crop"}
+              src={layoutSettings?.homepageEditorialBanner || "https://images.unsplash.com/photo-1610996841103-6f8dce4937bb?q=80&w=1200&auto=format&fit=crop"}
               alt="Preserved event keepsake"
               fill
               className="object-cover w-full h-full rounded-none"
