@@ -9,6 +9,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  uploadProductImage,
   type ProductInput,
 } from '@/lib/productService';
 import type { Product } from '@/lib/products';
@@ -273,7 +274,6 @@ function AdminProductsContent() {
     try {
       // If a new image file is provided, upload it first to obtain the URL
       if (file) {
-        const { uploadProductImage } = await import('@/lib/productService');
         finalImageUrl = await uploadProductImage(file);
       }
       // Save product data (with the correct image URL) to Firebase
