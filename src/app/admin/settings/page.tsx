@@ -323,6 +323,7 @@ function SettingsContent() {
                 <AssetDropzone label="Hero Slider Banner 2" configKey="heroBanner2" currentValue={layoutSettings.heroBanner2} onUploadSuccess={handleUploadSuccess} />
                 <AssetDropzone label="Hero Slider Banner 3" configKey="heroBanner3" currentValue={layoutSettings.heroBanner3} onUploadSuccess={handleUploadSuccess} />
                 <AssetDropzone label="About Us Editorial Split Banner" configKey="aboutUsImage" currentValue={layoutSettings.aboutUsImage} onUploadSuccess={handleUploadSuccess} />
+                <AssetDropzone label="Homepage Editorial Banner" configKey="homepageEditorialBanner" currentValue={layoutSettings.homepageEditorialBanner} onUploadSuccess={handleUploadSuccess} />
               </div>
             )}
           </div>

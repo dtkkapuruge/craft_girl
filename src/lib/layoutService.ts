@@ -9,6 +9,7 @@ export interface LayoutSettings {
   heroBanner3?: string;
   aboutUsImage?: string;
   aboutUsEditorialSplitBanner?: string;
+  homepageEditorialBanner?: string;
   category_resin?: string;
   category_jewellery?: string;
   category_chocolate_boxes?: string;
@@ -24,6 +25,7 @@ export const DEFAULT_LAYOUT_SETTINGS: LayoutSettings = {
   heroBanner2: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=1920&auto=format&fit=crop',
   heroBanner3: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1920&auto=format&fit=crop',
   aboutUsImage: 'https://images.unsplash.com/photo-1610996841103-6f8dce4937bb?q=80&w=1000&auto=format&fit=crop',
+  homepageEditorialBanner: '',
   category_resin: 'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?q=80&w=1920&auto=format&fit=crop',
   category_jewellery: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1920&auto=format&fit=crop',
   category_chocolate_boxes: 'https://images.unsplash.com/photo-1549007994-cb92ca817b7a?q=80&w=1920&auto=format&fit=crop',
