@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { fetchAllCategories, type Category } from '@/lib/categoryService';
 import Link from 'next/link';
 import { useEffect, useState, useMemo } from 'react';
 import { useCart } from '@/context/CartContext';
@@ -49,6 +50,7 @@ export default function Home() {
     heroBanner3: '',
   });
   const [layoutSettings, setLayoutSettings] = useState<LayoutSettings | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     fetchLayoutSettings().then((settings) => {
