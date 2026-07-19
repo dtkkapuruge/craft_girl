@@ -9,7 +9,7 @@ import { fetchAllProducts } from '@/lib/productService';
 import type { Product } from '@/lib/products';
 import ProductCard from '@/components/ProductCard';
 import { ArrowRight, Star, Truck, Wallet } from 'lucide-react';
-import { fetchLayoutSettings } from '@/lib/layoutService';
+import { fetchLayoutSettings, type LayoutSettings } from '@/lib/layoutService';
 
 const SLIDES = [
   {
@@ -35,32 +35,7 @@ const SLIDES = [
   }
 ];
 
-const CATEGORIES_SHOWCASE = [
-  {
-    key: 'jewellery',
-    label: 'Custom Jewellery',
-    count: 'AESTHETIC & HANDCRAFTED',
-    image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop',
-  },
-  {
-    key: 'resin',
-    label: 'Resin Crafts',
-    count: 'KEYCHAINS & LETTERS',
-    image: 'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?q=80&w=600&auto=format&fit=crop',
-  },
-  {
-    key: 'stationery',
-    label: 'Stationery Items',
-    count: 'JOURNALS & WAX SEALS',
-    image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?q=80&w=600&auto=format&fit=crop',
-  },
-  {
-    key: 'flower-preservation',
-    label: 'Preservations',
-    count: 'WEDDING & EVENT KEEPSAKES',
-    image: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=600&auto=format&fit=crop',
-  }
-];
+// Static categories removed – now fetched dynamically
 
 export default function Home() {
   const { addToCart } = useCart();
@@ -73,6 +48,7 @@ export default function Home() {
     heroBanner2: '',
     heroBanner3: '',
   });
+  const [layoutSettings, setLayoutSettings] = useState<LayoutSettings | null>(null);
 
   useEffect(() => {
     fetchLayoutSettings().then((settings) => {
@@ -81,7 +57,9 @@ export default function Home() {
         heroBanner2: settings.heroBanner2 || '',
         heroBanner3: settings.heroBanner3 || '',
       });
+      setLayoutSettings(settings);
     });
+    fetchAllCategories().then(setCategories);
   }, []);
 
   const dynamicSlides = useMemo(() => {
@@ -101,7 +79,6 @@ export default function Home() {
     ];
   }, [heroBanners]);
 
-  // Auto-play hero slider every 5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % dynamicSlides.length);
@@ -109,8 +86,6 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [dynamicSlides.length]);
 
-  // Fetch trending products — always use the authoritative live source to
-  // prevent stale cached images from flashing before real data arrives.
   useEffect(() => {
     fetchAllProducts().then((data) => {
       setProducts(data);
@@ -118,7 +93,6 @@ export default function Home() {
     });
   }, []);
 
-  // Viewport scroll reveal logic
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -154,7 +128,6 @@ export default function Home() {
   return (
     <div className="bg-[#FAFAF8] min-h-screen text-brand-text selection:bg-[#AB9266]/20 selection:text-brand-text overflow-hidden">
       
-      {/* ─── Hero Section (High-End Auto-Playing Slider) ─── */}
       <section className="relative w-full h-screen overflow-hidden bg-black rounded-none">
         {dynamicSlides.map((slide, idx) => {
           const isActive = idx === currentSlide;
@@ -165,7 +138,6 @@ export default function Home() {
                 isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'
               }`}
             >
-              {/* Background image with Ken Burns */}
               <div className="absolute inset-0 bg-[#0A0A0A] rounded-none">
                 <Image
                   src={slide.image}
@@ -178,7 +150,6 @@ export default function Home() {
                 />
               </div>
 
-              {/* Text overlay containing slideUp Animations */}
               {isActive && (
                 <div className="absolute inset-0 flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 z-20">
                   <div className="max-w-4xl mx-auto text-center space-y-6">
@@ -206,7 +177,6 @@ export default function Home() {
           );
         })}
 
-        {/* Slide Indicator Dots */}
         <div className="absolute bottom-8 left-0 right-0 z-30 flex justify-center gap-3">
           {dynamicSlides.map((_, idx) => (
             <button
@@ -221,7 +191,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── Shop by Category Section ─── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center max-w-xl mx-auto mb-14 space-y-2">
           <span className="text-[10px] font-bold tracking-[0.25em] text-gray-400 uppercase">CATEGORIES</span>
@@ -230,25 +199,21 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {CATEGORIES_SHOWCASE.map((cat) => (
+          {categories.map((cat) => (
             <Link
-              key={cat.key}
+              key={cat.id}
               href={`/category/${cat.key}`}
               className="group relative aspect-[4/5] w-full overflow-hidden border border-[#E8E4DF] hover:border-[#AB9266] transition-colors duration-300 rounded-none bg-white"
             >
               <Image
-                src={cat.image}
+                src={layoutSettings?.[`category_${cat.key}` as keyof LayoutSettings] || ''}
                 alt={cat.label}
                 fill
                 sizes="(max-width: 768px) 100vw, 25vw"
                 className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105 rounded-none"
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
-              
               <div className="absolute bottom-6 left-6 right-6 text-white space-y-1">
-                <span className="text-[8px] uppercase font-bold tracking-[0.2em] text-[#CBB0DC]">
-                  {cat.count}
-                </span>
                 <h3 className="text-sm font-extrabold uppercase tracking-widest">{cat.label}</h3>
               </div>
             </Link>
@@ -304,7 +269,7 @@ export default function Home() {
           {/* Left Visual side */}
           <div className="relative aspect-[4/5] lg:aspect-square w-full min-h-[400px]">
             <Image
-              src="https://images.unsplash.com/photo-1610996841103-6f8dce4937bb?q=80&w=1200&auto=format&fit=crop"
+              src={layoutSettings?.aboutUsImage || "https://images.unsplash.com/photo-1610996841103-6f8dce4937bb?q=80&w=1200&auto=format&fit=crop"}
               alt="Preserved event keepsake"
               fill
               className="object-cover w-full h-full rounded-none"
