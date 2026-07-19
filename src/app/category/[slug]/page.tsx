@@ -267,15 +267,29 @@ export default function CategoryPage() {
       });
     }
     if (activeSubFilter === 'new') {
-      // Filter for New In: take newest items
-      const sorted = [...baseProducts].sort((a, b) => {
-        const timeA = (a as any).createdAt?.seconds ? (a as any).createdAt.seconds : 0;
-        const timeB = (b as any).createdAt?.seconds ? (b as any).createdAt.seconds : 0;
-        if (timeA !== timeB) return timeB - timeA;
-        return b.id.localeCompare(a.id);
+      // Filter for New In:
+      // First, try to filter by explicit isNew flag or recent createdAt timestamp (last 30 days)
+      const thirtyDaysAgo = Date.now() / 1000 - (30 * 24 * 60 * 60);
+      const newItems = baseProducts.filter(p => {
+        if ((p as any).isNew) return true;
+        const time = (p as any).createdAt?.seconds || (p as any).createdAt?._seconds;
+        if (time && time > thirtyDaysAgo) return true;
+        return false;
       });
-      // Return top 8 newest products (or half, whichever is bigger) to display in "New In"
-      return sorted.slice(0, Math.max(8, Math.ceil(sorted.length / 2)));
+
+      if (newItems.length > 0) {
+        return newItems.sort((a, b) => {
+          const timeA = (a as any).createdAt?.seconds || (a as any).createdAt?._seconds || 0;
+          const timeB = (b as any).createdAt?.seconds || (b as any).createdAt?._seconds || 0;
+          return timeB - timeA;
+        });
+      }
+      
+      // Fallback for static lists without timestamps: return at most 4 latest products by ID
+      // To ensure it doesn't return all items for small categories, we limit it.
+      const sorted = [...baseProducts].sort((a, b) => b.id.localeCompare(a.id));
+      const limit = Math.max(1, Math.floor(sorted.length / 2));
+      return sorted.slice(0, Math.min(4, limit));
     }
     // Default: return base list (no additional sorting/filtering)
     return baseProducts;

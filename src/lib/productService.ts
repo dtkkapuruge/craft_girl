@@ -58,6 +58,7 @@ function docToProduct(id: string, data: Record<string, unknown>): Product {
     rating: Number(data.rating) || 4.8,
     reviews: Number(data.reviews) || 0,
     stockCount: Number(data.stockCount ?? data.stock) || 0,
+    createdAt: (data.createdAt as any) || null,
   };
 }
 

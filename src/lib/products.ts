@@ -10,6 +10,7 @@ export interface Product {
   category: string;
   description?: string;
   stockCount?: number;
+  createdAt?: any;
 }
 
 export const PRODUCTS: Product[] = [
