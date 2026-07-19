@@ -53,8 +53,9 @@ export default function CheckoutPage() {
         const settingsRef = doc(db, 'storeMetadata', 'settings');
         const snap = await getDoc(settingsRef);
         if (snap.exists()) {
-          const data = snap.data() as { defaultCodFee?: number };
-          setCodFee(data.defaultCodFee ?? 0);
+          const rawFee = (snap.data() as any).defaultCodFee;
+          const fee = Number(rawFee);
+          setCodFee(isNaN(fee) ? 0 : fee);
         }
       } catch (e) {
         console.error('Failed to fetch COD fee:', e);

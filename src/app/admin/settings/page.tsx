@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import AdminGuard from '@/components/AdminGuard';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy, limit, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit, Timestamp, doc, setDoc, getDoc } from 'firebase/firestore';
 import { useAuth } from '@/context/AuthContext';
 import { Loader2, Settings, Terminal, ShieldCheck, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -101,10 +101,14 @@ function SettingsContent() {
   const [loadingLayout, setLoadingLayout] = useState(true);
 
   useEffect(() => {
-    async function fetchLogs() {
+    async function fetchData() {
       try {
         const q = query(collection(db, 'audit_logs'), orderBy('timestamp', 'desc'), limit(25));
-        const snap = await getDocs(q);
+        const [snap, settingsSnap] = await Promise.all([
+            getDocs(q),
+            getDoc(doc(db, 'storeMetadata', 'settings'))
+        ]);
+        
         const fetchedLogs: AuditLog[] = [];
         snap.forEach((d) => {
           const data = d.data();
@@ -117,23 +121,11 @@ function SettingsContent() {
           });
         });
 
-        // Add mock initial logs if empty
-        if (fetchedLogs.length === 0) {
-          fetchedLogs.push({
-            id: 'mock_1',
-            timestamp: Timestamp.now(),
-            userEmail: 'superadmin@craft.com',
-            userRole: 'super-admin',
-            actionDescription: 'Admin Portal initial setup completed',
-          });
-          fetchedLogs.push({
-            id: 'mock_2',
-            timestamp: Timestamp.fromMillis(Date.now() - 3600000),
-            userEmail: 'admin@craft.com',
-            userRole: 'admin',
-            actionDescription: 'Products stock limits verified',
-          });
+        if (settingsSnap.exists()) {
+            const data = settingsSnap.data();
+            if (data.defaultCodFee) setCodThreshold(String(data.defaultCodFee));
         }
+
         setLogs(fetchedLogs);
       } catch (err) {
         console.error(err);
@@ -142,7 +134,7 @@ function SettingsContent() {
       }
     }
 
-    fetchLogs();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -159,9 +151,21 @@ function SettingsContent() {
     }));
   };
 
-  const handleSaveSettings = (e: React.FormEvent) => {
+  const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Settings updated successfully!');
+    const fee = Number(codThreshold);
+    if (isNaN(fee)) {
+      toast.error('Invalid COD fee');
+      return;
+    }
+    try {
+      const settingsRef = doc(db, 'storeMetadata', 'settings');
+      await setDoc(settingsRef, { defaultCodFee: fee }, { merge: true });
+      toast.success('Settings updated successfully!');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to save settings');
+    }
   };
 
   return (
