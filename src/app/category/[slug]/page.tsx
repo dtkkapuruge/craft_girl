@@ -252,7 +252,44 @@ export default function CategoryPage() {
       if (slug === 'all-products' || slug === 'all') {
         return allProducts;
       }
-      return allProducts.filter((p) => p.category === resolvedSlug || p.category === slug);
+
+      const sanitize = (str: string) => (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const sanitizedSlug = sanitize(slug);
+      const sanitizedResolved = sanitize(resolvedSlug);
+      
+      // Build a robust set of matching strings to compare against product.category
+      const validMatches = new Set<string>([
+        slug, resolvedSlug, sanitizedSlug, sanitizedResolved
+      ]);
+
+      // Cross-reference with our config to catch label matches (e.g. "luxury-chocolate-boxes" -> "chocolate-boxes")
+      Object.entries(CATEGORY_META_CONFIG).forEach(([key, meta]) => {
+        const sKey = sanitize(key);
+        const sLabel = sanitize(meta.label);
+        
+        if (sKey === sanitizedSlug || sLabel === sanitizedSlug || sKey === sanitizedResolved || sLabel === sanitizedResolved) {
+          validMatches.add(key);
+          validMatches.add(sKey);
+          validMatches.add(meta.label);
+          validMatches.add(sLabel);
+        }
+      });
+
+      return allProducts.filter((p) => {
+        const pc = p.category || '';
+        const pcSanitized = sanitize(pc);
+
+        if (validMatches.has(pc) || validMatches.has(pcSanitized)) return true;
+
+        // Fallback: Check for multi-word inclusion if one is a substring of another
+        for (const match of Array.from(validMatches)) {
+          if (match.length > 4 && (pcSanitized.includes(match) || match.includes(pcSanitized))) {
+            return true;
+          }
+        }
+        
+        return false;
+      });
     },
     [allProducts, resolvedSlug, slug]
   );
