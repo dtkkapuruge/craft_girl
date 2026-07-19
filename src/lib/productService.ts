@@ -100,17 +100,21 @@ export async function updateProduct(
   id: string,
   input: Partial<ProductInput>,
   imageFile?: File | null
-): Promise<void> {
+): Promise<string> {
   const payload: Record<string, any> = {
     ...input,
     updatedAt: Timestamp.now(),
   };
 
+  // If a new image file is provided, upload it and set the image URL
   if (imageFile) {
     payload.image = await uploadProductImage(imageFile);
   }
 
   await updateDoc(doc(db, 'products', id), payload);
+
+  // Return the final image URL (either existing or newly uploaded)
+  return payload.image as string;
 }
 
 export async function deleteProduct(id: string): Promise<void> {
