@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 export interface CartItem {
   id: string;
@@ -29,6 +30,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const { user } = useAuth();
 
   // Load from local storage on mount
   useEffect(() => {
@@ -43,6 +45,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsLoaded(true);
   }, []);
 
+  // Clear cart when user logs out (auth state becomes null)
+  useEffect(() => {
+    if (user === null) {
+      clearCart();
+      try {
+        localStorage.removeItem('craft_girly_cart');
+      } catch (error) {
+        console.error('Failed to clear cart from local storage on logout:', error);
+      }
+    }
+  }, [user]);
   // Save to local storage when cart changes
   useEffect(() => {
     if (isLoaded) {
@@ -92,6 +105,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = () => {
     setCartItems([]);
+    try {
+      localStorage.removeItem('craft_girly_cart');
+    } catch (error) {
+      console.error('Failed to remove cart from local storage during clearCart:', error);
+    }
   };
 
   const toggleCart = (isOpen?: boolean) => {
