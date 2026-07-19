@@ -82,7 +82,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Clear cart when user logs out (auth state becomes null)
   useEffect(() => {
     if (user === null) {
-      clearCart();
+      // Directly clear local state without invoking clearCart (which would write to Firestore)
+      setCartItems([]);
       try {
         localStorage.removeItem('craft_girly_cart');
       } catch (error) {
@@ -91,27 +92,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user]);
 
-  // Save to local storage and Firestore when cart changes
-  useEffect(() => {
-    if (isLoaded) {
-      try {
-        localStorage.setItem('craft_girly_cart', JSON.stringify(cartItems));
-      } catch (error) {
-        console.error('Failed to save cart to local storage:', error);
-      }
-      // Sync to Firestore for logged‑in users
-      if (user) {
-        const syncCart = async () => {
-          try {
-            await setDoc(doc(db, 'carts', user.uid), { items: cartItems });
-          } catch (e) {
-            console.error('Failed to sync cart to Firestore:', e);
-          }
-        };
-        syncCart();
-      }
-    }
-  }, [cartItems, isLoaded, user]);
+
 
   const addToCart = (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
     setCartItems((prev) => {
