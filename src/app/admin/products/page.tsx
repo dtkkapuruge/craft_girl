@@ -30,6 +30,7 @@ import {
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
+
 const EMPTY_FORM: ProductInput = {
   name: '',
   description: '',
