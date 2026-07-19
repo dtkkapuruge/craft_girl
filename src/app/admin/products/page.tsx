@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import AdminGuard from '@/components/AdminGuard';
 import { useAuth } from '@/context/AuthContext';
@@ -27,6 +27,8 @@ import {
   AlertTriangle,
   XCircle
 } from 'lucide-react';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 const EMPTY_FORM: ProductInput = {
   name: '',
@@ -212,29 +214,38 @@ function AdminProductsContent() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formInitial, setFormInitial] = useState<ProductInput>(EMPTY_FORM);
 
-  const loadProducts = useCallback(async () => {
-    setLoading(true);
-    let data = await fetchAllProducts();
-    const localData = localStorage.getItem('craft_products');
-    if (localData) {
-      try {
-        const parsedLocal = JSON.parse(localData);
-        if (Array.isArray(parsedLocal) && parsedLocal.length > 0) {
-          const localIds = new Set(parsedLocal.map((p: any) => p.id));
-          const toAdd = data.filter((p) => !localIds.has(p.id));
-          data = [...parsedLocal, ...toAdd];
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    setProducts(data);
-    setLoading(false);
-  }, []);
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
+  // Remove loadProducts function and replace useEffect
   useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
+    setLoading(true);
+    const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (snapshot.empty) {
+        setProducts([]);
+        setLoading(false);
+        return;
+      }
+      const data = snapshot.docs.map((docSnap) => {
+        const data = docSnap.data();
+        return {
+          id: docSnap.id,
+          name: (data.name as string) ?? '',
+          description: (data.description as string) ?? '',
+          price: Number(data.price) || 0,
+          category: (data.category as string) ?? 'handmade',
+          image: (data.image as string) ?? '',
+          rating: Number(data.rating) || 4.8,
+          reviews: Number(data.reviews) || 0,
+          stockCount: Number(data.stockCount ?? data.stock) || 0,
+        } as Product;
+      });
+      setProducts(data);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const openCreate = () => {
     setEditingId(null);
