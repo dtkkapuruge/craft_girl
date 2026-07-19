@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { db, auth } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { trackEvent } from '@/components/PixelTracker';
@@ -32,6 +32,7 @@ export default function CheckoutPage() {
   });
 
   const [paymentMethod, setPaymentMethod] = useState<'COD' | 'CARD' | 'BANK'>('COD');
+  const [codFee, setCodFee] = useState<number>(0);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -44,6 +45,24 @@ export default function CheckoutPage() {
       }));
     }
   }, [user]);
+
+  // Fetch store metadata (default COD fee) once on component mount
+  useEffect(() => {
+    const fetchCodFee = async () => {
+      try {
+        const settingsRef = doc(db, 'storeMetadata', 'settings');
+        const snap = await getDoc(settingsRef);
+        if (snap.exists()) {
+          const data = snap.data() as { defaultCodFee?: number };
+          setCodFee(data.defaultCodFee ?? 0);
+        }
+      } catch (e) {
+        console.error('Failed to fetch COD fee:', e);
+        setCodFee(0);
+      }
+    };
+    fetchCodFee();
+  }, []);
 
   // Guard against empty carts – redirect back to the store
   useEffect(() => {
@@ -59,13 +78,6 @@ export default function CheckoutPage() {
     }));
   };
 
-  /**
-   * Submit the order.
-   * Steps:
-   * 1. Generate a reliable, unique order ID.
-   * 2. Build a complete payload that mirrors the required Firestore schema.
-   * 3. Write the document using `addDoc`. Only on success do we navigate to the Success page.
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (cartItems.length === 0) return;
@@ -74,7 +86,6 @@ export default function CheckoutPage() {
     setErrorMessage('');
 
     try {
-      // 1️⃣ Grab the *real* authenticated Firebase user
       const firebaseUser = auth.currentUser;
       if (!firebaseUser) {
         setStatus('error');
@@ -82,19 +93,20 @@ export default function CheckoutPage() {
         return;
       }
 
-      // 2️⃣ Generate a robust, human‑readable order identifier
       const orderId = `CGS-${Math.floor(100000 + Math.random() * 900000)}`;
 
-      // 3️⃣ Optional gifting information stored in localStorage
       let giftingDetails: any = null;
       try {
         const giftStr = localStorage.getItem('checkout_gifting');
         if (giftStr) giftingDetails = JSON.parse(giftStr);
       } catch (_) {
-        // Silently ignore malformed gifting data – it is non‑critical
+        // Silently ignore malformed gifting data
       }
 
-      // 4️⃣ Assemble the Firestore payload exactly as required
+      // Calculate final bill with conditional COD fee
+      const currentCodFee = paymentMethod === 'COD' ? codFee : 0;
+      const finalTotal = cartTotal + currentCodFee;
+
       const orderPayload = {
         orderId,
         userId: firebaseUser.uid,
@@ -113,7 +125,8 @@ export default function CheckoutPage() {
           image: item.image,
           variant: item.variant || null,
         })),
-        totalBill: cartTotal,
+        codFee: currentCodFee,
+        totalBill: finalTotal,
         paymentMethod,
         status: 'Pending',
         notes: formData.notes,
@@ -121,21 +134,17 @@ export default function CheckoutPage() {
         createdAt: serverTimestamp(),
       };
 
-      // 5️⃣ Write the order to Firestore
       const docRef = await addDoc(collection(db, 'orders'), orderPayload);
 
-      // 6️⃣ Track the purchase event for analytics
       trackEvent('Purchase', {
         content_ids: cartItems.map(i => i.id),
-        value: cartTotal,
+        value: finalTotal,
         currency: 'LKR',
       });
 
-      // 7️⃣ Clean‑up local state & navigate to the success page **only** after a successful write
       localStorage.removeItem('checkout_gifting');
       toast.success('Order placed successfully!');
       clearCart();
-      // Pass orderId and totalBill as query parameters so the success page can display them
       router.push(`/checkout/success/${docRef.id}`);
     } catch (err: any) {
       console.error('Order submission failed:', err);
@@ -169,6 +178,9 @@ export default function CheckoutPage() {
       </div>
     );
   }
+
+  const currentCodFee = paymentMethod === 'COD' ? codFee : 0;
+  const dynamicTotal = cartTotal + currentCodFee;
 
   return (
     <div className="min-h-screen bg-[#FAFAF8] py-8 px-4 sm:px-6 lg:px-8">
@@ -373,7 +385,7 @@ export default function CheckoutPage() {
                   </>
                 ) : (
                   <>
-                    Place Order &bull; Rs. {cartTotal.toLocaleString()}
+                    Place Order &bull; Rs. {dynamicTotal.toLocaleString()}
                   </>
                 )}
               </button>
@@ -419,13 +431,19 @@ export default function CheckoutPage() {
                   <span>Subtotal</span>
                   <span>Rs. {cartTotal.toLocaleString()}</span>
                 </div>
+                {paymentMethod === 'COD' && (
+                  <div className="flex justify-between text-[#6B6B6B] tracking-wide font-medium text-amber-800">
+                    <span>COD Fee</span>
+                    <span>Rs. {codFee.toLocaleString()}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-[#6B6B6B] tracking-wide">
                   <span>Shipping</span>
                   <span>Calculated later</span>
                 </div>
                 <div className="flex justify-between items-center font-medium text-[#0A0A0A] pt-3 border-t border-[#E8E4DE]">
                   <span className="text-xs uppercase tracking-[0.1em]">Total</span>
-                  <span className="text-base font-serif">Rs. {cartTotal.toLocaleString()}</span>
+                  <span className="text-base font-serif">Rs. {dynamicTotal.toLocaleString()}</span>
                 </div>
               </div>
             </div>
