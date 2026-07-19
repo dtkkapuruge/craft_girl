@@ -260,29 +260,22 @@ export default function CategoryPage() {
   // Apply Sub-navigation filtering (All Creations | Best Sellers | New In)
   const subFilteredProducts = useMemo(() => {
     if (activeSubFilter === 'best') {
-      // Bulletproof sorting for Best Sellers
-      return [...baseProducts].sort((a, b) => {
-        const salesA = salesMap[a.name] ?? salesMap[a.id] ?? 0;
-        const salesB = salesMap[b.name] ?? salesMap[b.id] ?? 0;
-        if (salesA !== salesB) return salesB - salesA;
-        const ratingA = (a as any).rating ?? 0;
-        const ratingB = (b as any).rating ?? 0;
-        if (ratingA !== ratingB) return ratingB - ratingA;
-        // Fallback: price descending
-        return b.price - a.price;
+      // Filter for Best Sellers: Products with sales > 0 or rating >= 4.8
+      return baseProducts.filter(p => {
+        const sales = salesMap[p.name] ?? salesMap[p.id] ?? 0;
+        return sales > 0 || (p.rating && p.rating >= 4.8);
       });
     }
     if (activeSubFilter === 'new') {
-      // Bulletproof sorting for New In
-      return [...baseProducts].sort((a, b) => {
-        const createdA = (a as any).created_at ? new Date((a as any).created_at).getTime() : null;
-        const createdB = (b as any).created_at ? new Date((b as any).created_at).getTime() : null;
-        if (createdA != null && createdB != null) return createdB - createdA;
-        if (createdA != null) return -1;
-        if (createdB != null) return 1;
-        // Fallback: price ascending
-        return a.price - b.price;
+      // Filter for New In: take newest items
+      const sorted = [...baseProducts].sort((a, b) => {
+        const timeA = (a as any).createdAt?.seconds ? (a as any).createdAt.seconds : 0;
+        const timeB = (b as any).createdAt?.seconds ? (b as any).createdAt.seconds : 0;
+        if (timeA !== timeB) return timeB - timeA;
+        return b.id.localeCompare(a.id);
       });
+      // Return top 8 newest products (or half, whichever is bigger) to display in "New In"
+      return sorted.slice(0, Math.max(8, Math.ceil(sorted.length / 2)));
     }
     // Default: return base list (no additional sorting/filtering)
     return baseProducts;
