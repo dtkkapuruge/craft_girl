@@ -25,7 +25,7 @@ import {
   Tags,
   CheckCircle2,
   AlertTriangle,
-  XCircle
+  XCircle,
 } from 'lucide-react';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -214,8 +214,7 @@ function AdminProductsContent() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formInitial, setFormInitial] = useState<ProductInput>(EMPTY_FORM);
 
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+
 
   // Remove loadProducts function and replace useEffect
   useEffect(() => {
@@ -268,40 +267,45 @@ import { db } from '@/lib/firebase';
 
   const handleSave = async (data: ProductInput, file: File | null) => {
     setSaving(true);
-    let success = false;
     let finalImageUrl = data.image;
 
     try {
-      if (editingId) {
-        await updateProduct(editingId, data, file);
-      } else {
-        await createProduct(data, file);
-      }
-      success = true;
-    } catch (err) {
-      console.error('Firebase save failed, using local storage fallback', err);
-    }
-    
-    try {
-      if (!success && file) {
+      // If a new image file is provided, upload it first to obtain the URL
+      if (file) {
         const { uploadProductImage } = await import('@/lib/productService');
         finalImageUrl = await uploadProductImage(file);
       }
-      
+      // Save product data (with the correct image URL) to Firebase
+      if (editingId) {
+        await updateProduct(editingId, { ...data, image: finalImageUrl }, null);
+      } else {
+        await createProduct({ ...data, image: finalImageUrl }, null);
+      }
+
+      // Update local state and localStorage with the new/updated product
       setProducts(prev => {
         let newProducts;
         if (editingId) {
-          newProducts = prev.map(p => p.id === editingId ? { ...p, ...data, image: finalImageUrl } : p);
+          newProducts = prev.map(p =>
+            p.id === editingId ? { ...p, ...data, image: finalImageUrl } : p
+          );
         } else {
-          const newProd = { ...data, id: `prod_${Date.now()}`, image: finalImageUrl, rating: 4.8, reviews: 0, stockCount: data.stockCount };
+          const newProd = {
+            ...data,
+            id: `prod_${Date.now()}`,
+            image: finalImageUrl,
+            rating: 4.8,
+            reviews: 0,
+            stockCount: data.stockCount,
+          };
           newProducts = [newProd, ...prev];
         }
         localStorage.setItem('craft_products', JSON.stringify(newProducts));
         return newProducts;
       });
       setModalOpen(false);
-    } catch (fallbackErr) {
-      console.error(fallbackErr);
+    } catch (err) {
+      console.error('Save failed', err);
       alert('Failed to save product.');
     } finally {
       setSaving(false);
