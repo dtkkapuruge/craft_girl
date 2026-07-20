@@ -13,7 +13,7 @@ import { ShoppingBag, AlertCircle, Loader2, CreditCard, Banknote, Building } fro
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cartItems, cartTotal, clearCart } = useCart();
+  const { cartItems, cartTotal, clearCart, sendAsGift, giftMessage, packagingSelection } = useCart();
   const { user, loading } = useAuth();
 
   // Ensure the user is authenticated before proceeding
@@ -96,13 +96,7 @@ export default function CheckoutPage() {
 
       const orderId = `CGS-${Math.floor(100000 + Math.random() * 900000)}`;
 
-      let giftingDetails: any = null;
-      try {
-        const giftStr = localStorage.getItem('checkout_gifting');
-        if (giftStr) giftingDetails = JSON.parse(giftStr);
-      } catch (_) {
-        // Silently ignore malformed gifting data
-      }
+
 
       // Calculate final bill with conditional COD fee
       const currentCodFee = paymentMethod === 'COD' ? codFee : 0;
@@ -131,7 +125,9 @@ export default function CheckoutPage() {
         paymentMethod,
         status: 'Pending',
         notes: formData.notes,
-        gifting: giftingDetails,
+        sendAsGift,
+        giftMessage: sendAsGift ? giftMessage : '',
+        packagingSelection: sendAsGift ? packagingSelection : '',
         createdAt: serverTimestamp(),
       };
 
@@ -143,7 +139,7 @@ export default function CheckoutPage() {
         currency: 'LKR',
       });
 
-      localStorage.removeItem('checkout_gifting');
+
       toast.success('Order placed successfully!');
       clearCart();
       router.push(`/checkout/success/${docRef.id}`);

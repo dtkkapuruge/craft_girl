@@ -8,10 +8,7 @@ import { useEffect, useState } from 'react';
 
 export default function CartDrawer() {
   const router = useRouter();
-  const { isCartOpen, toggleCart, cartItems, updateQuantity, removeFromCart, cartTotal } = useCart();
-  const [isGifting, setIsGifting] = useState(false);
-  const [giftMessage, setGiftMessage] = useState('');
-  const [giftPackaging, setGiftPackaging] = useState('signature-wax');
+  const { isCartOpen, toggleCart, cartItems, updateQuantity, removeFromCart, cartTotal, sendAsGift, setSendAsGift, giftMessage, setGiftMessage, packagingSelection, setPackagingSelection } = useCart();
 
   // Prevent background scrolling when cart is open
   useEffect(() => {
@@ -130,8 +127,8 @@ export default function CartDrawer() {
                   <label className="flex items-center cursor-pointer gap-2">
                     <input 
                       type="checkbox" 
-                      checked={isGifting}
-                      onChange={(e) => setIsGifting(e.target.checked)}
+                      checked={sendAsGift}
+                      onChange={(e) => setSendAsGift(e.target.checked)}
                       className="w-4 h-4 text-[#442852] border-gray-300 rounded-none focus:ring-[#442852] focus:ring-offset-0 bg-transparent cursor-pointer"
                     />
                     <span className="text-[10px] font-extrabold text-[#0A0A0A] uppercase tracking-[0.2em] flex items-center gap-2">
@@ -140,7 +137,7 @@ export default function CartDrawer() {
                     </span>
                   </label>
 
-                  {isGifting && (
+                  {sendAsGift && (
                     <div className="mt-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 border-t border-[#E8E4DF] pt-4">
                       <div>
                         <label className="block text-[9px] font-bold text-[#0A0A0A] mb-2 uppercase tracking-widest">Handwritten Gift Message</label>
@@ -157,9 +154,9 @@ export default function CartDrawer() {
                         <div className="grid grid-cols-2 gap-2">
                           <button
                             type="button"
-                            onClick={() => setGiftPackaging('signature-wax')}
+                            onClick={() => setPackagingSelection('wax-seal')}
                             className={`border rounded-none p-2 text-[8px] font-extrabold uppercase tracking-widest text-center transition-colors ${
-                              giftPackaging === 'signature-wax' 
+                              packagingSelection === 'wax-seal' 
                                 ? 'border-[#442852] bg-[#442852] text-white' 
                                 : 'border-[#E8E4DF] text-[#6B6B6B] hover:border-[#442852] hover:text-[#442852]'
                             }`}
@@ -168,9 +165,9 @@ export default function CartDrawer() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => setGiftPackaging('custom-ribbon')}
+                            onClick={() => setPackagingSelection('custom-ribbon')}
                             className={`border rounded-none p-2 text-[8px] font-extrabold uppercase tracking-widest text-center transition-colors ${
-                              giftPackaging === 'custom-ribbon' 
+                              packagingSelection === 'custom-ribbon' 
                                 ? 'border-[#442852] bg-[#442852] text-white' 
                                 : 'border-[#E8E4DF] text-[#6B6B6B] hover:border-[#442852] hover:text-[#442852]'
                             }`}
@@ -189,15 +186,6 @@ export default function CartDrawer() {
                 </div>
                 <button
                   onClick={() => {
-                    if (isGifting) {
-                      localStorage.setItem('checkout_gifting', JSON.stringify({
-                        isGifting: true,
-                        giftMessage,
-                        giftPackaging,
-                      }));
-                    } else {
-                      localStorage.removeItem('checkout_gifting');
-                    }
                     toggleCart(false);
                     router.push('/checkout');
                   }}

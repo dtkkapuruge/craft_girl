@@ -24,6 +24,12 @@ interface CartContextType {
   toggleCart: (isOpen?: boolean) => void;
   cartTotal: number;
   cartCount: number;
+  sendAsGift: boolean;
+  setSendAsGift: (val: boolean) => void;
+  giftMessage: string;
+  setGiftMessage: (val: string) => void;
+  packagingSelection: 'wax-seal' | 'custom-ribbon';
+  setPackagingSelection: (val: 'wax-seal' | 'custom-ribbon') => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -33,6 +39,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const { user } = useAuth();
+  
+  const [sendAsGift, setSendAsGift] = useState(false);
+  const [giftMessage, setGiftMessage] = useState('');
+  const [packagingSelection, setPackagingSelection] = useState<'wax-seal' | 'custom-ribbon'>('wax-seal');
 
   // Load from local storage on mount
   useEffect(() => {
@@ -158,6 +168,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         toggleCart,
         cartTotal,
         cartCount,
+        sendAsGift,
+        setSendAsGift,
+        giftMessage,
+        setGiftMessage,
+        packagingSelection,
+        setPackagingSelection,
       }}
     >
       {children}

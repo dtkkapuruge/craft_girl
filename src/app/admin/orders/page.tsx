@@ -62,6 +62,9 @@ interface Order {
   paymentMethod: 'COD';
   paymentStatus: 'Pending COD' | 'Paid';
   createdAt: { toDate?: () => Date };
+  sendAsGift?: boolean;
+  giftMessage?: string;
+  packagingSelection?: string;
 }
 
 const MOCK_ORDERS: Order[] = [
@@ -214,6 +217,9 @@ function normalizeOrder(id: string, data: any): Order {
     paymentMethod: data.paymentMethod || "COD",
     paymentStatus: data.paymentStatus || "Pending COD",
     createdAt: parsedCreatedAt,
+    sendAsGift: !!data.sendAsGift,
+    giftMessage: data.giftMessage || '',
+    packagingSelection: data.packagingSelection || '',
   };
 }
 
@@ -519,6 +525,13 @@ function AdminOrdersPageContent() {
                           )}
                         </div>
                       ))}
+                      {order.sendAsGift && (
+                        <div className="mt-3 rounded bg-pink-50 p-2 text-xs text-pink-700 border border-pink-100">
+                          <p className="font-bold mb-1 flex items-center gap-1">🎁 Gift Order</p>
+                          <p className="text-[10px] uppercase tracking-wider font-semibold">Packaging: {order.packagingSelection}</p>
+                          {order.giftMessage && <p className="text-[11px] mt-1 italic">&ldquo;{order.giftMessage}&rdquo;</p>}
+                        </div>
+                      )}
                     </td>
 
                     <td className="px-5 py-4 whitespace-nowrap">
