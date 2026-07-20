@@ -321,7 +321,7 @@ function DashboardContent() {
                     {/* Interactive tooltip on hover */}
                     <div className="absolute bottom-full mb-2 bg-gray-900 text-white text-[10px] px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 w-max shadow-xl pointer-events-none flex flex-col items-center gap-0.5 translate-y-2 group-hover:translate-y-0">
                       <span className="font-bold text-xs mb-0.5">{item.name}</span>
-                      <span className="text-gray-300">{item.quantity} Units Sold</span>
+                      <span className="text-gray-300">{item.quantity} items sold</span>
                       <span className="text-purple-300 font-bold">{formatCurrency(item.revenue)}</span>
                       {/* Triangle pointer */}
                       <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
