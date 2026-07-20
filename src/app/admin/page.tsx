@@ -2,14 +2,14 @@
 
 import AdminGuard from '@/components/AdminGuard';
 import Link from 'next/link';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
 import {
   collection,
   query,
   orderBy,
   getDocs,
-  limit,
+  onSnapshot,
 } from 'firebase/firestore';
 import {
   TrendingUp,
@@ -139,31 +139,36 @@ function DashboardContent() {
   const [userCount, setUserCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const loadDashboardData = useCallback(async () => {
+  useEffect(() => {
     setLoading(true);
-    try {
-      // Fetch all orders (same collection as Orders page)
-      const ordersQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
-      const ordersSnap = await getDocs(ordersQuery);
+
+    // Fetch user count from users collection (one-time)
+    const fetchUsers = async () => {
+      try {
+        const usersSnap = await getDocs(collection(db, 'users'));
+        setUserCount(usersSnap.size);
+      } catch (err) {
+        console.error('Users fetch failed:', err);
+      }
+    };
+    fetchUsers();
+
+    // Real-time listener for orders
+    const ordersQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+    const unsubscribeOrders = onSnapshot(ordersQuery, (snapshot) => {
       const allOrders: Order[] = [];
-      ordersSnap.forEach((docSnap) => {
+      snapshot.forEach((docSnap) => {
         allOrders.push(normalizeOrder(docSnap.id, docSnap.data()));
       });
       setOrders(allOrders);
-
-      // Fetch user count from users collection
-      const usersSnap = await getDocs(collection(db, 'users'));
-      setUserCount(usersSnap.size);
-    } catch (err) {
-      console.error('Dashboard data fetch failed:', err);
-    } finally {
       setLoading(false);
-    }
-  }, []);
+    }, (error) => {
+      console.error('Dashboard orders fetch failed:', error);
+      setLoading(false);
+    });
 
-  useEffect(() => {
-    loadDashboardData();
-  }, [loadDashboardData]);
+    return () => unsubscribeOrders();
+  }, []);
 
   // ─── Compute real metrics from orders ────────────────────────────────────
 
@@ -221,14 +226,15 @@ function DashboardContent() {
     : 'conic-gradient(#E5E7EB 0% 100%)';
 
   // Top selling products — aggregate item quantities across all orders
-  const productSalesMap: Record<string, { name: string; quantity: number }> = {};
+  const productSalesMap: Record<string, { name: string; quantity: number; revenue: number }> = {};
   orders.forEach((o) => {
     o.items.forEach((item) => {
       const key = item.name || item.productId;
       if (!productSalesMap[key]) {
-        productSalesMap[key] = { name: item.name, quantity: 0 };
+        productSalesMap[key] = { name: item.name, quantity: 0, revenue: 0 };
       }
       productSalesMap[key].quantity += item.quantity;
+      productSalesMap[key].revenue += item.quantity * item.price;
     });
   });
   const topSelling = Object.values(productSalesMap)
@@ -312,9 +318,13 @@ function DashboardContent() {
                   const percentage = Math.max(10, Math.round((item.quantity / maxSales) * 90));
                   return (
                     <div key={idx} className="flex flex-col items-center justify-end h-full group w-1/5 relative">
-                    {/* Count tooltip on hover */}
-                    <div className="absolute -top-8 bg-gray-800 text-white text-[10px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                      {item.quantity} sold
+                    {/* Interactive tooltip on hover */}
+                    <div className="absolute bottom-full mb-2 bg-gray-900 text-white text-[10px] px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 w-max shadow-xl pointer-events-none flex flex-col items-center gap-0.5 translate-y-2 group-hover:translate-y-0">
+                      <span className="font-bold text-xs mb-0.5">{item.name}</span>
+                      <span className="text-gray-300">{item.quantity} Units Sold</span>
+                      <span className="text-purple-300 font-bold">{formatCurrency(item.revenue)}</span>
+                      {/* Triangle pointer */}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
                     </div>
                     {/* Bar */}
                     <div
