@@ -256,7 +256,7 @@ export default function CategoryPage() {
       const sanitize = (str: string) => (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
       const sanitizedSlug = sanitize(slug);
       const sanitizedResolved = sanitize(resolvedSlug);
-      
+
       // Build a robust set of matching strings to compare against product.category
       const validMatches = new Set<string>([
         slug, resolvedSlug, sanitizedSlug, sanitizedResolved
@@ -266,7 +266,7 @@ export default function CategoryPage() {
       Object.entries(CATEGORY_META_CONFIG).forEach(([key, meta]) => {
         const sKey = sanitize(key);
         const sLabel = sanitize(meta.label);
-        
+
         if (sKey === sanitizedSlug || sLabel === sanitizedSlug || sKey === sanitizedResolved || sLabel === sanitizedResolved) {
           validMatches.add(key);
           validMatches.add(sKey);
@@ -287,7 +287,7 @@ export default function CategoryPage() {
             return true;
           }
         }
-        
+
         return false;
       });
     },
@@ -300,33 +300,30 @@ export default function CategoryPage() {
       // Filter for Best Sellers: Products with sales > 0 or rating >= 4.8
       return baseProducts.filter(p => {
         const sales = salesMap[p.name] ?? salesMap[p.id] ?? 0;
-        return sales > 0 || (p.rating && p.rating >= 4.8);
+        return (
+          sales > 0 ||
+          (p.rating && p.rating >= 4.8) ||
+          (p as any).isBestSeller === true ||
+          (p as any).isBestseller === true ||
+          (p as any).tags?.includes('bestseller')
+        );
       });
     }
     if (activeSubFilter === 'new') {
       // Filter for New In:
-      // First, try to filter by explicit isNew flag or recent createdAt timestamp (last 30 days)
-      const thirtyDaysAgo = Date.now() / 1000 - (30 * 24 * 60 * 60);
-      const newItems = baseProducts.filter(p => {
-        if ((p as any).isNew) return true;
-        const time = (p as any).createdAt?.seconds || (p as any).createdAt?._seconds;
-        if (time && time > thirtyDaysAgo) return true;
-        return false;
-      });
-
-      if (newItems.length > 0) {
-        return newItems.sort((a, b) => {
-          const timeA = (a as any).createdAt?.seconds || (a as any).createdAt?._seconds || 0;
-          const timeB = (b as any).createdAt?.seconds || (b as any).createdAt?._seconds || 0;
-          return timeB - timeA;
-        });
+      const explicitNewItems = baseProducts.filter(p => (p as any).isNew === true);
+      if (explicitNewItems.length > 0) {
+        return explicitNewItems;
       }
-      
-      // Fallback for static lists without timestamps: return at most 4 latest products by ID
-      // To ensure it doesn't return all items for small categories, we limit it.
-      const sorted = [...baseProducts].sort((a, b) => b.id.localeCompare(a.id));
-      const limit = Math.max(1, Math.floor(sorted.length / 2));
-      return sorted.slice(0, Math.min(4, limit));
+      return [...baseProducts].sort((a, b) => {
+        const getTime = (item: any) => {
+          if (item.createdAt?.seconds) return item.createdAt.seconds * 1000;
+          if (item.createdAt?._seconds) return item.createdAt._seconds * 1000;
+          if (item.createdAt) return new Date(item.createdAt).getTime();
+          return 0;
+        };
+        return getTime(b) - getTime(a);
+      });
     }
     // Default: return base list (no additional sorting/filtering)
     return baseProducts;
@@ -365,7 +362,7 @@ export default function CategoryPage() {
 
   return (
     <div className="bg-[#FAFAF8] min-h-screen text-[#0A0A0A] selection:bg-[#442852]/10 selection:text-[#442852]">
-      
+
       {/* 1. Immersive Luxury Hero Banner */}
       <section className="relative h-[40vh] md:h-[48vh] w-full flex items-center justify-center bg-[#0A0A0A] overflow-hidden">
         <Image
@@ -376,7 +373,7 @@ export default function CategoryPage() {
           className="object-cover opacity-50"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/50 via-transparent to-[#0A0A0A]/20" />
-        
+
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 space-y-3">
           <span className="text-[10px] font-bold tracking-[0.3em] text-[#CBB0DC] uppercase">
             {meta.eyebrow}
@@ -413,17 +410,16 @@ export default function CategoryPage() {
 
       {/* Product Catalog & Controls */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        
+
         {/* 3. Sleek, Minimal Sub-navigation Filtering Bar */}
         <div className="flex justify-center border-b border-[#E8E4DF] pb-3 mb-10">
           <div className="flex items-center gap-8 text-[9px] font-bold uppercase tracking-[0.22em]">
             <button
               onClick={() => setActiveSubFilter('all')}
-              className={`pb-3 transition-all relative ${
-                activeSubFilter === 'all'
-                  ? 'text-[#442852]'
-                  : 'text-gray-400 hover:text-[#0A0A0A]'
-              }`}
+              className={`pb-3 transition-all relative ${activeSubFilter === 'all'
+                ? 'text-[#442852]'
+                : 'text-gray-400 hover:text-[#0A0A0A]'
+                }`}
             >
               All Creations
               {activeSubFilter === 'all' && (
@@ -432,11 +428,10 @@ export default function CategoryPage() {
             </button>
             <button
               onClick={() => setActiveSubFilter('best')}
-              className={`pb-3 transition-all relative ${
-                activeSubFilter === 'best'
-                  ? 'text-[#442852]'
-                  : 'text-gray-400 hover:text-[#0A0A0A]'
-              }`}
+              className={`pb-3 transition-all relative ${activeSubFilter === 'best'
+                ? 'text-[#442852]'
+                : 'text-gray-400 hover:text-[#0A0A0A]'
+                }`}
             >
               Best Sellers
               {activeSubFilter === 'best' && (
@@ -445,11 +440,10 @@ export default function CategoryPage() {
             </button>
             <button
               onClick={() => setActiveSubFilter('new')}
-              className={`pb-3 transition-all relative ${
-                activeSubFilter === 'new'
-                  ? 'text-[#442852]'
-                  : 'text-gray-400 hover:text-[#0A0A0A]'
-              }`}
+              className={`pb-3 transition-all relative ${activeSubFilter === 'new'
+                ? 'text-[#442852]'
+                : 'text-gray-400 hover:text-[#0A0A0A]'
+                }`}
             >
               New In
               {activeSubFilter === 'new' && (
@@ -527,8 +521,8 @@ export default function CategoryPage() {
           <div className="text-center py-20">
             <Search className="h-8 w-8 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500 text-xs font-semibold uppercase tracking-wider">
-              {searchQuery 
-                ? 'No creations match your search query.' 
+              {searchQuery
+                ? 'No creations match your search query.'
                 : `No creations found in the "${categoryName}" category.`}
             </p>
             {searchQuery && (
