@@ -63,7 +63,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#FAFAF8] border-t border-[#E8E4DF] text-[#0A0A0A] rounded-none">
+    <footer className="bg-[#DEC8D8] border-t border-[#E8E4DF] text-[#2D182B] rounded-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
 
@@ -72,7 +72,7 @@ export default function Footer() {
             {footerLogo ? (
               <img src={footerLogo} alt="Logo" className="h-8 w-auto object-contain" />
             ) : (
-              <h3 className="font-bold text-xs tracking-[0.25em] uppercase text-[#0A0A0A]">
+              <h3 className="font-bold text-xs tracking-[0.25em] uppercase text-[#2D182B]">
                 CRAFT GIRLY
               </h3>
             )}
@@ -85,7 +85,7 @@ export default function Footer() {
                 href={SOCIAL_LINKS.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#0A0A0A] hover:text-[#442852] transition-colors"
+                className="text-[#2D182B] hover:text-[#4A2040] transition-colors"
                 aria-label="Facebook"
               >
                 <FacebookIcon />
@@ -94,7 +94,7 @@ export default function Footer() {
                 href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#0A0A0A] hover:text-[#442852] transition-colors"
+                className="text-[#2D182B] hover:text-[#4A2040] transition-colors"
                 aria-label="Instagram"
               >
                 <InstagramIcon />
@@ -103,7 +103,7 @@ export default function Footer() {
                 href={SOCIAL_LINKS.tiktok}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#0A0A0A] hover:text-[#442852] transition-colors"
+                className="text-[#2D182B] hover:text-[#4A2040] transition-colors"
                 aria-label="TikTok"
               >
                 <TikTokIcon />
@@ -112,7 +112,7 @@ export default function Footer() {
                 href={SOCIAL_LINKS.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#0A0A0A] hover:text-[#442852] transition-colors"
+                className="text-[#2D182B] hover:text-[#4A2040] transition-colors"
                 aria-label="WhatsApp"
               >
                 <WhatsAppIcon />
@@ -122,35 +122,35 @@ export default function Footer() {
 
           {/* Shop Col */}
           <div>
-            <h4 className="font-bold text-[#0A0A0A] mb-6 text-[10px] uppercase tracking-[0.2em]">Shop</h4>
+            <h4 className="font-bold text-[#2D182B] mb-6 text-[10px] uppercase tracking-[0.2em]">Shop</h4>
             <ul className="space-y-3 text-[10px] font-bold tracking-widest uppercase">
               <li>
-                <Link href="/category/jewellery" className="text-[#6B6B6B] hover:text-[#442852] transition-colors">
+                <Link href="/category/jewellery" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
                   Bespoke Jewelry
                 </Link>
               </li>
               <li>
-                <Link href="/category/resin" className="text-[#6B6B6B] hover:text-[#442852] transition-colors">
+                <Link href="/category/resin" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
                   Resin Art & Decor
                 </Link>
               </li>
               <li>
-                <Link href="/category/chocolate-boxes" className="text-[#6B6B6B] hover:text-[#442852] transition-colors">
+                <Link href="/category/chocolate-boxes" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
                   Luxury Chocolate Boxes
                 </Link>
               </li>
               <li>
-                <Link href="/category/flower-preservation" className="text-[#6B6B6B] hover:text-[#442852] transition-colors">
+                <Link href="/category/flower-preservation" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
                   Floral Preservation
                 </Link>
               </li>
               <li>
-                <Link href="/category/stationery" className="text-[#6B6B6B] hover:text-[#442852] transition-colors">
+                <Link href="/category/stationery" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
                   Aesthetic Stationery
                 </Link>
               </li>
               <li>
-                <Link href="/category/all-products" className="text-[#6B6B6B] hover:text-[#442852] transition-colors">
+                <Link href="/category/all-products" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
                   All Products
                 </Link>
               </li>
@@ -159,20 +159,20 @@ export default function Footer() {
 
           {/* Care Col */}
           <div>
-            <h4 className="font-bold text-[#0A0A0A] mb-6 text-[10px] uppercase tracking-[0.2em]">Customer Care</h4>
+            <h4 className="font-bold text-[#2D182B] mb-6 text-[10px] uppercase tracking-[0.2em]">Customer Care</h4>
             <ul className="space-y-3 text-[10px] font-bold tracking-widest uppercase">
               <li>
-                <Link href="/contact" className="text-[#6B6B6B] hover:text-[#442852] transition-colors">
+                <Link href="/contact" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-[#6B6B6B] hover:text-[#442852] transition-colors">
+                <Link href="/about" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/search" className="text-[#6B6B6B] hover:text-[#442852] transition-colors">
+                <Link href="/search" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
                   Search Products
                 </Link>
               </li>
@@ -182,7 +182,7 @@ export default function Footer() {
           {/* Keep in Touch (Newsletter) Col */}
           <div>
             <h4 className="font-bold text-[#0A0A0A] mb-6 text-[10px] uppercase tracking-[0.2em]">Newsletter</h4>
-            <p className="text-[10px] text-[#6B6B6B] uppercase tracking-wider mb-4 leading-relaxed">
+            <p className="text-[10px] text-[#2D182B] uppercase tracking-wider mb-4 leading-relaxed">
               Subscribe to receive updates on new custom collections and special offers.
             </p>
             <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
@@ -190,11 +190,11 @@ export default function Footer() {
                 required
                 type="email"
                 placeholder="YOUR EMAIL ADDRESS"
-                className="w-full bg-white border border-[#C4BFBA] px-3.5 py-2.5 text-[10px] font-semibold text-[#0A0A0A] focus:outline-none focus:border-[#442852] tracking-wider rounded-none uppercase transition-colors"
+                className="w-full bg-white border border-[#4A2040] px-3.5 py-2.5 text-[10px] font-semibold text-[#2D182B] focus:outline-none focus:border-[#4A2040] tracking-wider rounded-none uppercase transition-colors"
               />
               <button
                 type="submit"
-                className="w-full bg-[#0A0A0A] text-white px-4 py-2.5 text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-[#442852] transition-colors rounded-none"
+                className="w-full bg-[#4A2040] text-white px-4 py-2.5 text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-[#5A3050] transition-colors rounded-none"
               >
                 SUBSCRIBE
               </button>
