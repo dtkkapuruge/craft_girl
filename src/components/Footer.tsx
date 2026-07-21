@@ -72,11 +72,11 @@ export default function Footer() {
             {footerLogo ? (
               <img src={footerLogo} alt="Logo" className="h-8 w-auto object-contain" />
             ) : (
-              <h3 className="font-bold text-xs tracking-[0.25em] uppercase text-[#2D182B]">
+              <h3 className="text-xs md:text-sm font-bold tracking-widest uppercase text-neutral-900 mb-4">
                 CRAFT GIRLY
               </h3>
             )}
-            <p className="text-[11px] text-[#6B6B6B] leading-relaxed uppercase tracking-wider">
+            <p className="text-xs md:text-sm font-normal text-neutral-700 leading-relaxed">
               Premium handmade jewellery, resin crafts, flower preservation, and chocolate boxes. Handcrafted with love.
             </p>
             {/* Social Links Grouped */}
@@ -122,35 +122,35 @@ export default function Footer() {
 
           {/* Shop Col */}
           <div>
-            <h4 className="font-bold text-[#2D182B] mb-6 text-[10px] uppercase tracking-[0.2em]">Shop</h4>
+            <h4 className="text-xs md:text-sm font-bold tracking-widest uppercase text-neutral-900 mb-4">Shop</h4>
             <ul className="space-y-3 text-[10px] font-bold tracking-widest uppercase">
               <li>
-                <Link href="/category/jewellery" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
+                <Link href="/category/jewellery" className="text-xs md:text-sm font-normal text-neutral-700 hover:text-black py-1 transition-colors block">
                   Bespoke Jewelry
                 </Link>
               </li>
               <li>
-                <Link href="/category/resin" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
+                <Link href="/category/resin" className="text-xs md:text-sm font-normal text-neutral-700 hover:text-black py-1 transition-colors block">
                   Resin Art & Decor
                 </Link>
               </li>
               <li>
-                <Link href="/category/chocolate-boxes" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
+                <Link href="/category/chocolate-boxes" className="text-xs md:text-sm font-normal text-neutral-700 hover:text-black py-1 transition-colors block">
                   Luxury Chocolate Boxes
                 </Link>
               </li>
               <li>
-                <Link href="/category/flower-preservation" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
+                <Link href="/category/flower-preservation" className="text-xs md:text-sm font-normal text-neutral-700 hover:text-black py-1 transition-colors block">
                   Floral Preservation
                 </Link>
               </li>
               <li>
-                <Link href="/category/stationery" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
+                <Link href="/category/stationery" className="text-xs md:text-sm font-normal text-neutral-700 hover:text-black py-1 transition-colors block">
                   Aesthetic Stationery
                 </Link>
               </li>
               <li>
-                <Link href="/category/all-products" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
+                <Link href="/category/all-products" className="text-xs md:text-sm font-normal text-neutral-700 hover:text-black py-1 transition-colors block">
                   All Products
                 </Link>
               </li>
@@ -159,20 +159,20 @@ export default function Footer() {
 
           {/* Care Col */}
           <div>
-            <h4 className="font-bold text-[#2D182B] mb-6 text-[10px] uppercase tracking-[0.2em]">Customer Care</h4>
+            <h4 className="text-xs md:text-sm font-bold tracking-widest uppercase text-neutral-900 mb-4">Customer Care</h4>
             <ul className="space-y-3 text-[10px] font-bold tracking-widest uppercase">
               <li>
-                <Link href="/contact" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
+                <Link href="/contact" className="text-xs md:text-sm font-normal text-neutral-700 hover:text-black py-1 transition-colors block">
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
+                <Link href="/about" className="text-xs md:text-sm font-normal text-neutral-700 hover:text-black py-1 transition-colors block">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/search" className="text-[#2D182B] hover:text-[#4A2040] transition-colors">
+                <Link href="/search" className="text-xs md:text-sm font-normal text-neutral-700 hover:text-black py-1 transition-colors block">
                   Search Products
                 </Link>
               </li>
@@ -181,8 +181,8 @@ export default function Footer() {
 
           {/* Keep in Touch (Newsletter) Col */}
           <div>
-            <h4 className="font-bold text-[#0A0A0A] mb-6 text-[10px] uppercase tracking-[0.2em]">Newsletter</h4>
-            <p className="text-[10px] text-[#2D182B] uppercase tracking-wider mb-4 leading-relaxed">
+            <h4 className="text-xs md:text-sm font-bold tracking-widest uppercase text-neutral-900 mb-4">Newsletter</h4>
+            <p className="text-xs md:text-sm text-neutral-700 mb-3">
               Subscribe to receive updates on new custom collections and special offers.
             </p>
             <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
@@ -190,11 +190,11 @@ export default function Footer() {
                 required
                 type="email"
                 placeholder="YOUR EMAIL ADDRESS"
-                className="w-full bg-white border border-[#4A2040] px-3.5 py-2.5 text-[10px] font-semibold text-[#2D182B] focus:outline-none focus:border-[#4A2040] tracking-wider rounded-none uppercase transition-colors"
+                className="w-full bg-white border border-[#4A2040] px-3.5 py-2.5 text-xs md:text-sm font-medium text-[#2D182B] focus:outline-none focus:border-[#4A2040] tracking-wider rounded-none"
               />
               <button
                 type="submit"
-                className="w-full bg-[#4A2040] text-white px-4 py-2.5 text-[10px] font-bold tracking-[0.25em] uppercase hover:bg-[#5A3050] transition-colors rounded-none"
+                className="w-full bg-[#4A2040] text-white px-4 py-2.5 text-xs md:text-sm font-medium"
               >
                 SUBSCRIBE
               </button>
@@ -205,7 +205,7 @@ export default function Footer() {
 
         <div className="border-t border-[#E8E4DF] my-8 md:my-12"></div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[9px] font-bold tracking-widest uppercase text-[#9B9B9B]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-normal text-neutral-600">
           <p>
             © {currentYear} Craft Girly Store. All rights reserved.
           </p>

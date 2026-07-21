@@ -105,7 +105,7 @@ export default function Header() {
           : 'sticky top-0 bg-[#FAFAF8]/95 backdrop-blur-md border-b border-[#E8E4DF]/50 py-4'
       }`}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="container mx-auto w-full px-6 py-4 flex items-center justify-between">
         
         {/* Mobile hamburger */}
         <button
@@ -119,7 +119,7 @@ export default function Header() {
         </button>
 
         {/* Minimalist Logo Wordmark & Sparkle Icon */}
-        <Link href="/home" className="flex items-center gap-2.5 flex-shrink-0 group">
+        <Link href="/home" className="flex items-center gap-2.5 flex-shrink-0 group mr-8">
           {navbarLogo ? (
             <img src={navbarLogo} alt="Logo" className="h-6 w-auto object-contain transition-opacity duration-300 group-hover:opacity-80" />
           ) : (
@@ -136,21 +136,21 @@ export default function Header() {
                 <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z" fill="currentColor" fillOpacity="0.1" />
               </svg>
               <span
-                className={`font-bold text-xs tracking-[0.3em] uppercase transition-colors duration-300 ${
+                  className={`text-base md:text-lg font-bold tracking-widest text-neutral-900 transition-colors duration-300 ${
                   isDarkText
                     ? 'text-[#0A0A0A] group-hover:text-[#442852]'
                     : 'text-white group-hover:text-white/80'
                 }`}
-              >
-                CRAFT GIRLY
-              </span>
+                >
+                  CRAFT GIRLY
+                </span>
             </>
           )}
         </Link>
 
         {/* Desktop Nav with Luxury Spacing */}
         <nav
-          className={`hidden md:flex items-center gap-8 text-[9px] font-extrabold uppercase tracking-[0.25em] ml-8 transition-colors duration-300 flex-1`}
+          className={`hidden md:flex items-center space-x-6 text-sm md:text-base font-semibold tracking-wide text-neutral-800 transition-colors duration-300 flex-1`}
         >
           {/* Home */}
           <Link
@@ -158,8 +158,8 @@ export default function Header() {
             className={`transition-all duration-300 whitespace-nowrap ${
               pathname === '/home' || pathname === '/'
                 ? isDarkText
-                  ? 'text-[#442852] underline underline-offset-8 decoration-[#442852] decoration-[1.5px]'
-                  : 'text-white underline underline-offset-8 decoration-white decoration-[1.5px]'
+                  ? 'text-[#442852]'
+                  : 'text-white'
                 : isDarkText
                 ? 'text-[#6B6B6B] hover:text-[#442852]'
                 : 'text-white/70 hover:text-white'
@@ -170,20 +170,7 @@ export default function Header() {
 
           {/* Admin link (staff/admin only) */}
           {isAdminOrStaff && (
-            <Link
-              href="/admin"
-              className={`transition-all duration-300 whitespace-nowrap ${
-                isActive('/admin')
-                  ? isDarkText
-                    ? 'text-[#442852] underline underline-offset-8 decoration-[#442852] decoration-[1.5px]'
-                    : 'text-white underline underline-offset-8 decoration-white decoration-[1.5px]'
-                  : isDarkText
-                  ? 'text-[#6B6B6B] hover:text-[#442852]'
-                  : 'text-white/70 hover:text-white'
-              }`}
-            >
-              Admin
-            </Link>
+            <Link href="/admin" className={`transition-all duration-300 whitespace-nowrap ${isDarkText ? 'text-[#6B6B6B] hover:text-[#442852]' : 'text-white/70 hover:text-white'}`}>Admin</Link>
           )}
 
           {/* Dynamic Shop / Categories dropdown (customers only) */}
@@ -194,8 +181,8 @@ export default function Header() {
                 className={`flex items-center gap-1.5 transition-all duration-300 whitespace-nowrap ${
                   isCategoryActive
                     ? isDarkText
-                      ? 'text-[#442852] underline underline-offset-8 decoration-[#442852] decoration-[1.5px]'
-                      : 'text-white underline underline-offset-8 decoration-white decoration-[1.5px]'
+                      ? 'text-[#442852]'
+                      : 'text-white'
                     : isDarkText
                     ? 'text-[#6B6B6B] hover:text-[#442852]'
                     : 'text-white/70 hover:text-white'
@@ -208,7 +195,7 @@ export default function Header() {
               </button>
 
               {shopMenuOpen && (
-                <div className="absolute top-full left-0 mt-3.5 w-56 bg-white border border-[#E8E4DF] rounded-none shadow-md py-2.5 z-50 animate-in fade-in duration-150 text-[#0A0A0A]">
+                <div className="absolute top-full left-0 mt-3.5 min-w-[220px] bg-white border border-neutral-100 rounded-md shadow-lg py-2.5 z-50 animate-in fade-in duration-150 text-[#0A0A0A]">
                   {categoriesLoading ? (
                     <div className="px-4 py-3 space-y-2">
                       {[1, 2, 3, 4].map((i) => (
@@ -222,23 +209,16 @@ export default function Header() {
                           key={cat.key}
                           href={`/category/${cat.key}`}
                           onClick={() => setShopMenuOpen(false)}
-                          className={`flex items-center gap-2.5 px-4 py-2.5 text-[9px] font-bold tracking-widest uppercase transition-colors ${
-                            isActive(`/category/${cat.key}`)
-                              ? 'bg-[#FAFAF8] text-[#442852]'
-                              : 'text-[#6B6B6B] hover:bg-[#FAFAF8] hover:text-[#442852]'
-                          }`}
+                          className={`block whitespace-nowrap py-2.5 px-4 text-[13px] md:text-sm font-medium text-neutral-800 hover:text-black hover:bg-neutral-100 rounded-md transition-colors ${isActive(`/category/${cat.key}`) ? 'bg-[#FAFAF8] text-[#442852]' : 'text-[#6B6B6B] hover:bg-neutral-100'}`} 
                         >
-                          <span className={`w-1 h-1 rounded-none flex-shrink-0 ${
-                            isActive(`/category/${cat.key}`) ? 'bg-[#442852]' : 'bg-[#0A0A0A]'
-                          }`} />
-                          {cat.label}
+                          {cat.label.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}
                         </Link>
                       ))}
                       <div className="border-t border-[#E8E4DF] mt-2 pt-2">
                         <Link
                           href="/category/all-products"
                           onClick={() => setShopMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2 text-[9px] font-extrabold tracking-widest text-[#0A0A0A] hover:text-[#442852] hover:bg-[#FAFAF8] transition-all uppercase"
+                          className="block whitespace-nowrap py-2.5 px-4 text-[13px] md:text-sm font-semibold text-neutral-900 hover:text-black hover:bg-neutral-100 rounded-md transition-colors"
                         >
                           All Products →
                         </Link>
@@ -261,8 +241,8 @@ export default function Header() {
               className={`transition-all duration-300 whitespace-nowrap ${
                 isActive(link.href)
                   ? isDarkText
-                    ? 'text-[#442852] underline underline-offset-8 decoration-[#442852] decoration-[1.5px]'
-                    : 'text-white underline underline-offset-8 decoration-white decoration-[1.5px]'
+                    ? 'text-[#442852]'
+                    : 'text-white'
                   : isDarkText
                   ? 'text-[#6B6B6B] hover:text-[#442852]'
                   : 'text-white/70 hover:text-white'
@@ -283,7 +263,7 @@ export default function Header() {
             }`}
             aria-label="Open Search"
           >
-            <Search className="w-4.5 h-4.5" />
+            <Search className="w-5 h-5" />
           </button>
           {/* Mobile search toggle */}
           <button
@@ -293,7 +273,7 @@ export default function Header() {
             }`}
             aria-label="Search"
           >
-            <Search className="w-4 h-4" />
+            <Search className="w-5 h-5" />
           </button>
 
           {/* User / Profile */}
@@ -308,7 +288,7 @@ export default function Header() {
               {user?.photoURL ? (
                 <img src={user.photoURL} alt="Profile" className="w-5 h-5 rounded-none object-cover" />
               ) : (
-                <UserCircle className="w-4.5 h-4.5" />
+                <UserCircle className="w-5 h-5" />
               )}
             </button>
 
@@ -375,9 +355,9 @@ export default function Header() {
               }`}
               aria-label="Open cart"
             >
-              <ShoppingCart className="w-4.5 h-4.5" />
+              <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
-                <span className={`absolute top-0.5 right-0.5 inline-flex items-center justify-center px-1.5 py-0.5 text-[8px] font-extrabold leading-none rounded-none ${
+                <span className={`absolute top-0.5 right-0.5 inline-flex items-center justify-center px-1.5 py-0.5 text-[9px] font-bold leading-none rounded-none ${
                   isDarkText ? 'text-white bg-[#0A0A0A]' : 'text-black bg-white'
                 }`}>
                   {cartCount}

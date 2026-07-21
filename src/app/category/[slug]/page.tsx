@@ -413,13 +413,10 @@ export default function CategoryPage() {
 
         {/* 3. Sleek, Minimal Sub-navigation Filtering Bar */}
         <div className="flex justify-center border-b border-[#E8E4DF] pb-3 mb-10">
-          <div className="flex items-center gap-8 text-[9px] font-bold uppercase tracking-[0.22em]">
+          <div className="flex items-center gap-6 md:gap-8 text-xs md:text-sm font-semibold tracking-wider uppercase">
             <button
               onClick={() => setActiveSubFilter('all')}
-              className={`pb-3 transition-all relative ${activeSubFilter === 'all'
-                ? 'text-[#442852]'
-                : 'text-gray-400 hover:text-[#0A0A0A]'
-                }`}
+              className={`pb-2 transition-colors relative ${activeSubFilter === 'all' ? 'text-neutral-900 border-b-2 border-neutral-900' : 'text-neutral-500 hover:text-neutral-800'}`}
             >
               All Creations
               {activeSubFilter === 'all' && (
@@ -428,10 +425,7 @@ export default function CategoryPage() {
             </button>
             <button
               onClick={() => setActiveSubFilter('best')}
-              className={`pb-3 transition-all relative ${activeSubFilter === 'best'
-                ? 'text-[#442852]'
-                : 'text-gray-400 hover:text-[#0A0A0A]'
-                }`}
+              className={`pb-2 transition-colors relative ${activeSubFilter === 'best' ? 'text-neutral-900 border-b-2 border-neutral-900' : 'text-neutral-500 hover:text-neutral-800'}`}
             >
               Best Sellers
               {activeSubFilter === 'best' && (
@@ -440,10 +434,7 @@ export default function CategoryPage() {
             </button>
             <button
               onClick={() => setActiveSubFilter('new')}
-              className={`pb-3 transition-all relative ${activeSubFilter === 'new'
-                ? 'text-[#442852]'
-                : 'text-gray-400 hover:text-[#0A0A0A]'
-                }`}
+              className={`pb-2 transition-colors relative ${activeSubFilter === 'new' ? 'text-neutral-900 border-b-2 border-neutral-900' : 'text-neutral-500 hover:text-neutral-800'}`}
             >
               New In
               {activeSubFilter === 'new' && (
@@ -455,13 +446,13 @@ export default function CategoryPage() {
 
         {/* Search & Sort Controls */}
         <div className="flex flex-col sm:flex-row items-center justify-between mb-10 gap-4">
-          <div className="relative w-full sm:max-w-xs rounded-none">
+          <div className="relative w-full sm:max-w-xs py-2.5 px-4 rounded-md border border-neutral-200 focus-within:border-neutral-900">
             <input
               type="text"
               placeholder={`SEARCH IN ${categoryName.toUpperCase()}...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-9 py-2.5 rounded-none border border-[#C4BFBA] bg-white text-[10px] font-semibold text-[#0A0A0A] placeholder-gray-400 focus:outline-none focus:border-[#442852] tracking-wider uppercase transition-all"
+              className="w-full pl-9 pr-9 bg-white text-xs md:text-sm font-normal text-neutral-800 placeholder:text-neutral-400 focus:outline-none"
             />
             <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             {searchQuery && (
@@ -476,7 +467,7 @@ export default function CategoryPage() {
           </div>
 
           <div className="flex items-center gap-4 shrink-0">
-            <p className="text-[9px] font-bold uppercase tracking-wider text-gray-400">
+            <p className="text-xs md:text-sm font-medium text-neutral-700 tracking-wide">
               {loading ? 'LOADING…' : `${displayedProducts.length} PRODUCT${displayedProducts.length !== 1 ? 'S' : ''}`}
             </p>
 
@@ -487,7 +478,7 @@ export default function CategoryPage() {
                   id="sort"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as 'newest' | 'price-asc' | 'price-desc')}
-                  className="appearance-none bg-white border border-[#C4BFBA] text-[#0A0A0A] py-2 pl-4 pr-10 rounded-none focus:outline-none focus:border-[#442852] font-semibold text-[10px] uppercase tracking-wider"
+                  className="appearance-none bg-white border border-neutral-300 text-neutral-800 py-2 px-4 rounded-md text-sm font-medium focus:outline-none focus:border-neutral-400"
                 >
                   <option value="newest">Newest Arrivals</option>
                   <option value="price-asc">Price: Low to High</option>
