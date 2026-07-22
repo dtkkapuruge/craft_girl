@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import AdminGuard from '@/components/AdminGuard';
 import { useAuth } from '@/context/AuthContext';
 import {
-  fetchAllProducts,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -13,7 +13,7 @@ import {
   type ProductInput,
 } from '@/lib/productService';
 import type { Product } from '@/lib/products';
-import { PRODUCT_CATEGORIES, getCategoryLabel } from '@/lib/categories';
+import { getCategoryLabel } from '@/lib/categories';
 import { hasPermission } from '@/lib/rbac';
 import {
   Plus,
@@ -21,9 +21,6 @@ import {
   Trash2,
   Loader2,
   PackageOpen,
-  X,
-  ImageIcon,
-  Tags,
   CheckCircle2,
   AlertTriangle,
   XCircle,
@@ -31,6 +28,9 @@ import {
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
+const ProductModal = dynamic(() => import('./ProductModal'), {
+  ssr: false,
+});
 
 const EMPTY_FORM: ProductInput = {
   name: '',
@@ -40,169 +40,6 @@ const EMPTY_FORM: ProductInput = {
   stockCount: 0,
   image: '',
 };
-
-function ProductModal({
-  open,
-  onClose,
-  onSave,
-  initial,
-  title,
-  saving,
-}: {
-  open: boolean;
-  onClose: () => void;
-  onSave: (data: ProductInput, file: File | null) => Promise<void>;
-  initial: ProductInput;
-  title: string;
-  saving: boolean;
-}) {
-  const [form, setForm] = useState<ProductInput>(initial);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>(initial.image);
-
-  useEffect(() => {
-    if (open) {
-      setForm(initial);
-      setPreview(initial.image);
-      setImageFile(null);
-    }
-  }, [open, initial]);
-
-  if (!open) return null;
-
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImageFile(file);
-    setPreview(URL.createObjectURL(file));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await onSave(form, imageFile);
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-zinc-950/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg rounded-3xl border border-gray-150 bg-white shadow-2xl overflow-hidden transition-all duration-300">
-        <div className="flex items-center justify-between border-b border-gray-100 bg-[#FDFBF7] px-6 py-5">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#0E2C2A]/10 text-[#0E2C2A] flex items-center justify-center border border-[#0E2C2A]/20">
-              <Tags className="w-4.5 h-4.5" />
-            </div>
-            <h2 className="text-md font-bold text-gray-900">{title}</h2>
-          </div>
-          <button onClick={onClose} className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 transition-colors">
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
-          <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Product Name</label>
-            <input
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="e.g. Preserved Rose Dome"
-              className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm focus:border-[#AB9266] focus:outline-none focus:ring-1 focus:ring-[#AB9266] transition-all font-medium text-gray-850"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Description</label>
-            <textarea
-              required
-              rows={3}
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              placeholder="Provide a detailed, elegant description..."
-              className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm resize-none focus:border-[#AB9266] focus:outline-none focus:ring-1 focus:ring-[#AB9266] transition-all font-medium text-gray-850"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Price (LKR)</label>
-              <input
-                required
-                type="number"
-                min={0}
-                value={form.price || ''}
-                onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-                placeholder="LKR 1,500"
-                className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm focus:border-[#AB9266] focus:outline-none focus:ring-1 focus:ring-[#AB9266] transition-all font-medium text-gray-850"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Initial Stock Qty</label>
-              <input
-                required
-                type="number"
-                min={0}
-                value={form.stockCount || ''}
-                onChange={(e) => setForm({ ...form, stockCount: Number(e.target.value) })}
-                placeholder="25"
-                className="w-full rounded-xl border border-gray-250 bg-white px-4 py-2.5 text-sm focus:border-[#AB9266] focus:outline-none focus:ring-1 focus:ring-[#AB9266] transition-all font-medium text-gray-850"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Category</label>
-            <select
-              value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value })}
-              className="w-full rounded-xl border border-gray-250 bg-white px-3.5 py-2.5 text-sm focus:border-[#AB9266] focus:outline-none focus:ring-1 focus:ring-[#AB9266] transition-all font-medium text-gray-850"
-            >
-              {PRODUCT_CATEGORIES.map((c) => (
-                <option key={c.value} value={c.value}>{c.label}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Product Image</label>
-            <div className="flex items-start gap-4">
-              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-50">
-                {preview ? (
-                  <Image src={preview} alt="Preview" fill className="object-cover" unoptimized />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-gray-300">
-                    <ImageIcon className="h-6 w-6" />
-                  </div>
-                )}
-              </div>
-              <label className="flex-1 cursor-pointer rounded-xl border border-dashed border-gray-300 px-4 py-4 text-center hover:border-[#AB9266] hover:bg-[#0E2C2A]/5 transition-colors">
-                <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
-                <p className="text-xs font-bold text-gray-700">Click to upload image</p>
-                <p className="text-[10px] text-gray-400 mt-1">PNG, JPG up to 5MB</p>
-              </label>
-            </div>
-          </div>
-
-          <div className="flex gap-3 pt-4 border-t border-gray-100">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 rounded-xl border border-gray-200 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className="flex-1 rounded-xl bg-[#0E2C2A] py-3 text-sm font-bold text-white hover:bg-[#0a1f1e] shadow transition-all disabled:opacity-50"
-            >
-              {saving ? 'Saving…' : 'Save Product'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
 
 function AdminProductsContent() {
   const { role } = useAuth();
@@ -216,9 +53,11 @@ function AdminProductsContent() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formInitial, setFormInitial] = useState<ProductInput>(EMPTY_FORM);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 12;
 
-
-  // Remove loadProducts function and replace useEffect
+  // Real-time listener for products
   useEffect(() => {
     setLoading(true);
     const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
@@ -248,6 +87,22 @@ function AdminProductsContent() {
     return () => unsubscribe();
   }, []);
 
+  // Compute pagination and total pages
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+
+  // Auto-adjust page if products list changes and current page exceeds total pages
+  useEffect(() => {
+    if (currentPage > 1 && currentPage > totalPages) {
+      setCurrentPage(Math.max(1, totalPages));
+    }
+  }, [products.length, totalPages, currentPage]);
+
+  // Memoize paginated slice of products to avoid unnecessary re-rendering
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [products, currentPage]);
+
   const openCreate = () => {
     setEditingId(null);
     setFormInitial(EMPTY_FORM);
@@ -272,18 +127,15 @@ function AdminProductsContent() {
     let finalImageUrl = data.image;
 
     try {
-      // If a new image file is provided, upload it first to obtain the URL
       if (file) {
         finalImageUrl = await uploadProductImage(file);
       }
-      // Save product data (with the correct image URL) to Firebase
       if (editingId) {
         await updateProduct(editingId, { ...data, image: finalImageUrl }, null);
       } else {
         await createProduct({ ...data, image: finalImageUrl }, null);
       }
 
-      // Update local state and localStorage with the new/updated product
       setProducts(prev => {
         let newProducts;
         if (editingId) {
@@ -399,7 +251,7 @@ function AdminProductsContent() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm text-gray-650 font-medium">
-                {products.map((product) => {
+                {paginatedProducts.map((product) => {
                   const stock = product.stockCount ?? 0;
                   return (
                     <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
@@ -450,6 +302,50 @@ function AdminProductsContent() {
                 })}
               </tbody>
             </table>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-gray-100 bg-[#FDFBF7] px-6 py-4">
+                <div className="text-xs font-semibold text-gray-500">
+                  Showing <span className="font-bold text-gray-800">{Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, products.length)}</span> to{' '}
+                  <span className="font-bold text-gray-800">{Math.min(currentPage * ITEMS_PER_PAGE, products.length)}</span> of{' '}
+                  <span className="font-bold text-gray-800">{products.length}</span> products
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-650 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  >
+                    Previous
+                  </button>
+                  {[...Array(totalPages)].map((_, index) => {
+                    const pageNumber = index + 1;
+                    const isActive = pageNumber === currentPage;
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => setCurrentPage(pageNumber)}
+                        className={`rounded-xl px-3 py-1.5 text-xs font-bold border transition-all ${
+                          isActive
+                            ? 'bg-[#0E2C2A] text-white border-[#0E2C2A] shadow-sm'
+                            : 'border-gray-250 bg-white text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-650 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

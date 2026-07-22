@@ -294,59 +294,50 @@ export default function CategoryPage() {
     [allProducts, resolvedSlug, slug]
   );
 
-  // Apply Sub-navigation filtering (All Creations | Best Sellers | New In)
-  const subFilteredProducts = useMemo(() => {
-    if (activeTab === 'bestseller') {
-      // Filter for Best Sellers: products where isBestSeller is true, tag is bestseller, or tag contains bestseller
-      const filtered = baseProducts.filter(
-        (p) =>
-          (p as any).isBestSeller === true ||
-          (p as any).isBestseller === true ||
-          (p as any).tag === 'bestseller' ||
-          (p as any).tags?.includes('bestseller')
-      );
-      if (filtered.length > 0) return filtered;
-
-      // Fallback: Products with sales > 0 or rating >= 4.8
-      return baseProducts.filter((p) => {
-        const sales = salesMap[p.name] ?? salesMap[p.id] ?? 0;
-        return sales > 0 || (p.rating && p.rating >= 4.8);
-      });
-    }
-    if (activeTab === 'new') {
-      // Filter for New In: products where isNew is true, or newest items sorting
-      const explicitNewItems = baseProducts.filter((p) => (p as any).isNew === true);
-      if (explicitNewItems.length > 0) {
-        return explicitNewItems;
-      }
-      return [...baseProducts].sort((a, b) => {
-        const getTime = (item: any) => {
-          if (item.createdAt?.seconds) return item.createdAt.seconds * 1000;
-          if (item.createdAt?._seconds) return item.createdAt._seconds * 1000;
-          if (item.createdAt) return new Date(item.createdAt).getTime();
-          return 0;
-        };
-        return getTime(b) - getTime(a);
-      });
-    }
-    // Default: return base list (no additional sorting/filtering)
-    return baseProducts;
-  }, [baseProducts, activeTab, salesMap]);
-
+  // Filter by activeTab, search query, and sort
   const filteredProducts = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return subFilteredProducts;
-    return subFilteredProducts.filter((p) =>
-      `${p.name} ${p.description ?? ''}`.toLowerCase().includes(q)
-    );
-  }, [subFilteredProducts, searchQuery]);
+    // 1. Filter by activeTab
+    let result = baseProducts.filter((product) => {
+      if (activeTab === 'bestseller') {
+        return (
+          product.isBestSeller ||
+          product.tag === 'bestseller' ||
+          (product as any).is_best_seller ||
+          (product as any).isBestseller ||
+          (product as any).tags?.includes('bestseller')
+        );
+      }
+      if (activeTab === 'new') {
+        return (
+          product.isNew ||
+          product.tag === 'new' ||
+          (product as any).is_new ||
+          (product as any).isNew ||
+          (product as any).tags?.includes('new')
+        );
+      }
+      return true; // 'all'
+    });
 
-  const sortedProducts = useMemo(() => {
-    const products = [...filteredProducts];
-    if (sortBy === 'price-asc') return products.sort((a, b) => a.price - b.price);
-    if (sortBy === 'price-desc') return products.sort((a, b) => b.price - a.price);
-    return products.sort((a, b) => b.id.localeCompare(a.id));
-  }, [filteredProducts, sortBy]);
+    // 2. Filter by search query
+    const q = searchQuery.trim().toLowerCase();
+    if (q) {
+      result = result.filter((p) =>
+        `${p.name} ${p.description ?? ''}`.toLowerCase().includes(q)
+      );
+    }
+
+    // 3. Apply sorting
+    if (sortBy === 'price-asc') {
+      result = [...result].sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-desc') {
+      result = [...result].sort((a, b) => b.price - a.price);
+    } else {
+      result = [...result].sort((a, b) => b.id.localeCompare(a.id));
+    }
+
+    return result;
+  }, [baseProducts, activeTab, searchQuery, sortBy]);
 
   const handleAddToCart = (product: Product) => {
     addToCart({
@@ -362,7 +353,6 @@ export default function CategoryPage() {
       currency: 'LKR',
     });
   };
-  const displayedProducts = sortedProducts;
 
   return (
     <div className="bg-[#FAFAF8] min-h-screen text-[#0A0A0A] selection:bg-[#442852]/10 selection:text-[#442852]">
@@ -475,7 +465,7 @@ export default function CategoryPage() {
 
           <div className="flex items-center gap-4 shrink-0">
             <p className="text-xs md:text-sm font-medium text-neutral-700 tracking-wide">
-              {loading ? 'LOADING…' : `${displayedProducts.length} PRODUCT${displayedProducts.length !== 1 ? 'S' : ''}`}
+              {loading ? 'LOADING…' : `${filteredProducts.length} PRODUCT${filteredProducts.length !== 1 ? 'S' : ''}`}
             </p>
 
             <div className="flex items-center gap-2">
@@ -515,13 +505,11 @@ export default function CategoryPage() {
               </div>
             ))}
           </div>
-        ) : sortedProducts.length === 0 ? (
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-20">
             <Search className="h-8 w-8 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500 text-xs font-semibold uppercase tracking-wider">
-              {searchQuery
-                ? 'No creations match your search query.'
-                : `No creations found in the "${categoryName}" category.`}
+              No products found in this filter.
             </p>
             {searchQuery && (
               <button
@@ -534,7 +522,7 @@ export default function CategoryPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {displayedProducts.map((product) => (
+            {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
             ))}
           </div>
