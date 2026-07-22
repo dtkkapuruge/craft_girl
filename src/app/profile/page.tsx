@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { db } from '@/lib/firebase';
 import { getUserProfile, updateUserProfile } from '@/lib/userService';
 import { collection, query, getDocs, where } from 'firebase/firestore';
-import { Package, User, MapPin, Edit2, LogOut, Phone, ShieldCheck, Mail, Calendar, CreditCard } from 'lucide-react';
+import { Package, User, MapPin, Edit2, LogOut, Phone, ShieldCheck, Mail, Calendar, CreditCard, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -226,28 +226,43 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-1">
-                {orders.map((order: any) => (
-                  <div key={order.id} className="border border-[#E5E0D8] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-purple-250 transition-all hover:shadow-sm">
-                    <div className="space-y-2.5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-xs font-extrabold text-[#442852] bg-[#F9F6F0] border border-[#E5E0D8] px-2.5 py-1 rounded-full uppercase tracking-wider">
-                          #{order.orderNumber || order.id.slice(0, 8).toUpperCase()}
-                        </span>
-                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${getStatusStyles(order.status)}`}>
-                          {order.status}
-                        </span>
+                {orders.map((order: any) => {
+                  const calculatedItemsTotal = Array.isArray(order.items)
+                    ? order.items.reduce((acc: number, item: any) => acc + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0)
+                    : 0;
+
+                  const displayTotal = 
+                    Number(order.totalAmount) || 
+                    Number(order.total) || 
+                    Number(order.total_amount) || 
+                    Number(order.grandTotal) || 
+                    Number(order.totalPrice) || 
+                    calculatedItemsTotal || 
+                    0;
+
+                  return (
+                    <div key={order.id} className="border border-[#E5E0D8] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-purple-250 transition-all hover:shadow-sm">
+                      <div className="space-y-2.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-xs font-extrabold text-[#442852] bg-[#F9F6F0] border border-[#E5E0D8] px-2.5 py-1 rounded-full uppercase tracking-wider">
+                            #{order.orderNumber || order.id.slice(0, 8).toUpperCase()}
+                          </span>
+                          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${getStatusStyles(order.status)}`}>
+                            {order.status}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400 font-semibold">
+                          <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-gray-300" /> {order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString('en-LK') : 'Date N/A'}</span>
+                          <span className="flex items-center gap-1"><CreditCard className="w-3.5 h-3.5 text-gray-300" /> {order.paymentMethod || 'COD'}</span>
+                        </div>
                       </div>
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400 font-semibold">
-                        <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-gray-300" /> {order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString('en-LK') : 'Date N/A'}</span>
-                        <span className="flex items-center gap-1"><CreditCard className="w-3.5 h-3.5 text-gray-300" /> {order.paymentMethod || 'COD'}</span>
+                      <div className="text-left sm:text-right w-full sm:w-auto border-t sm:border-t-0 pt-3 sm:pt-0">
+                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Total Amount</p>
+                        <p className="text-lg font-extrabold text-[#2D2D2D]">Rs. {displayTotal.toLocaleString()}</p>
                       </div>
                     </div>
-                    <div className="text-left sm:text-right w-full sm:w-auto border-t sm:border-t-0 pt-3 sm:pt-0">
-                      <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Total Amount</p>
-                      <p className="text-lg font-extrabold text-[#2D2D2D]">Rs. {Number(order.totalAmount || 0).toLocaleString()}</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -257,16 +272,4 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-const Loader2 = ({ className, ...props }: any) => (
-  <svg
-    className={`animate-spin ${className}`}
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    {...props}
-  >
-    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-  </svg>
-);
+

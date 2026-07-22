@@ -122,6 +122,8 @@ export default function CheckoutPage() {
         })),
         codFee: currentCodFee,
         totalBill: finalTotal,
+        total: finalTotal,
+        totalAmount: finalTotal,
         paymentMethod,
         status: 'Pending',
         notes: formData.notes,
