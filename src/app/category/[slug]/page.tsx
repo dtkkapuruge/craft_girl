@@ -188,7 +188,7 @@ export default function CategoryPage() {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'newest' | 'price-asc' | 'price-desc'>('newest');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeSubFilter, setActiveSubFilter] = useState<'all' | 'best' | 'new'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'bestseller' | 'new'>('all');
   const [layoutSettings, setLayoutSettings] = useState<LayoutSettings>({});
   const [salesMap, setSalesMap] = useState<Record<string, number>>({});
 
@@ -296,22 +296,26 @@ export default function CategoryPage() {
 
   // Apply Sub-navigation filtering (All Creations | Best Sellers | New In)
   const subFilteredProducts = useMemo(() => {
-    if (activeSubFilter === 'best') {
-      // Filter for Best Sellers: Products with sales > 0 or rating >= 4.8
-      return baseProducts.filter(p => {
-        const sales = salesMap[p.name] ?? salesMap[p.id] ?? 0;
-        return (
-          sales > 0 ||
-          (p.rating && p.rating >= 4.8) ||
+    if (activeTab === 'bestseller') {
+      // Filter for Best Sellers: products where isBestSeller is true, tag is bestseller, or tag contains bestseller
+      const filtered = baseProducts.filter(
+        (p) =>
           (p as any).isBestSeller === true ||
           (p as any).isBestseller === true ||
+          (p as any).tag === 'bestseller' ||
           (p as any).tags?.includes('bestseller')
-        );
+      );
+      if (filtered.length > 0) return filtered;
+
+      // Fallback: Products with sales > 0 or rating >= 4.8
+      return baseProducts.filter((p) => {
+        const sales = salesMap[p.name] ?? salesMap[p.id] ?? 0;
+        return sales > 0 || (p.rating && p.rating >= 4.8);
       });
     }
-    if (activeSubFilter === 'new') {
-      // Filter for New In:
-      const explicitNewItems = baseProducts.filter(p => (p as any).isNew === true);
+    if (activeTab === 'new') {
+      // Filter for New In: products where isNew is true, or newest items sorting
+      const explicitNewItems = baseProducts.filter((p) => (p as any).isNew === true);
       if (explicitNewItems.length > 0) {
         return explicitNewItems;
       }
@@ -327,7 +331,7 @@ export default function CategoryPage() {
     }
     // Default: return base list (no additional sorting/filtering)
     return baseProducts;
-  }, [baseProducts, activeSubFilter, salesMap]);
+  }, [baseProducts, activeTab, salesMap]);
 
   const filteredProducts = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -413,33 +417,36 @@ export default function CategoryPage() {
 
         {/* 3. Sleek, Minimal Sub-navigation Filtering Bar */}
         <div className="flex justify-center border-b border-[#E8E4DF] pb-3 mb-10">
-          <div className="flex items-center gap-6 md:gap-8 text-xs md:text-sm font-semibold tracking-wider uppercase">
+          <div className="flex items-center gap-6 md:gap-8 text-xs md:text-sm tracking-wider uppercase">
             <button
-              onClick={() => setActiveSubFilter('all')}
-              className={`pb-2 transition-colors relative ${activeSubFilter === 'all' ? 'text-neutral-900 border-b-2 border-neutral-900' : 'text-neutral-500 hover:text-neutral-800'}`}
+              onClick={() => setActiveTab('all')}
+              className={`pb-2 transition-colors ${
+                activeTab === 'all'
+                  ? 'border-b-2 border-black font-semibold text-neutral-900'
+                  : 'text-neutral-500 hover:text-black'
+              }`}
             >
               All Creations
-              {activeSubFilter === 'all' && (
-                <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#442852]" />
-              )}
             </button>
             <button
-              onClick={() => setActiveSubFilter('best')}
-              className={`pb-2 transition-colors relative ${activeSubFilter === 'best' ? 'text-neutral-900 border-b-2 border-neutral-900' : 'text-neutral-500 hover:text-neutral-800'}`}
+              onClick={() => setActiveTab('bestseller')}
+              className={`pb-2 transition-colors ${
+                activeTab === 'bestseller'
+                  ? 'border-b-2 border-black font-semibold text-neutral-900'
+                  : 'text-neutral-500 hover:text-black'
+              }`}
             >
               Best Sellers
-              {activeSubFilter === 'best' && (
-                <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#442852]" />
-              )}
             </button>
             <button
-              onClick={() => setActiveSubFilter('new')}
-              className={`pb-2 transition-colors relative ${activeSubFilter === 'new' ? 'text-neutral-900 border-b-2 border-neutral-900' : 'text-neutral-500 hover:text-neutral-800'}`}
+              onClick={() => setActiveTab('new')}
+              className={`pb-2 transition-colors ${
+                activeTab === 'new'
+                  ? 'border-b-2 border-black font-semibold text-neutral-900'
+                  : 'text-neutral-500 hover:text-black'
+              }`}
             >
               New In
-              {activeSubFilter === 'new' && (
-                <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#442852]" />
-              )}
             </button>
           </div>
         </div>

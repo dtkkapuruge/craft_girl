@@ -216,7 +216,7 @@ export default function Header() {
                       ))}
                       <div className="border-t border-[#E8E4DF] mt-2 pt-2">
                         <Link
-                          href="/category/all-products"
+                          href="/category/all"
                           onClick={() => setShopMenuOpen(false)}
                           className="block whitespace-nowrap py-2.5 px-4 text-[13px] md:text-sm font-semibold text-neutral-900 hover:text-black hover:bg-neutral-100 rounded-md transition-colors"
                         >
