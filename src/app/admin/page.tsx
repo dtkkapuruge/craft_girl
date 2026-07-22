@@ -57,6 +57,17 @@ interface Order {
   paymentMethod: string;
   paymentStatus: string;
   createdAt: { toDate?: () => Date };
+  customerName?: string;
+  customer_name?: string;
+  shippingAddress?: {
+    fullName?: string;
+    name?: string;
+  };
+  shipping_address?: {
+    full_name?: string;
+    name?: string;
+  };
+  name?: string;
 }
 
 // ─── Normalize (shared with Orders page) ──────────────────────────────────────
@@ -114,6 +125,11 @@ function normalizeOrder(id: string, data: any): Order {
     paymentMethod: data.paymentMethod || 'COD',
     paymentStatus: data.paymentStatus || 'Pending COD',
     createdAt: parsedCreatedAt,
+    customerName: data.customerName,
+    customer_name: data.customer_name,
+    shippingAddress: data.shippingAddress,
+    shipping_address: data.shipping_address,
+    name: data.name,
   };
 }
 
@@ -422,11 +438,20 @@ function DashboardContent() {
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm text-gray-600 font-medium">
                 {recentOrders.map((ord) => {
-                  const customerName = ord.customer.name;
+                  const dynamicCustomerName = 
+                    ord.customer?.name ||
+                    ord.customerName ||
+                    ord.customer_name ||
+                    ord.shippingAddress?.fullName ||
+                    ord.shippingAddress?.name ||
+                    ord.shipping_address?.full_name ||
+                    ord.shipping_address?.name ||
+                    ord.name ||
+                    "Customer";
                   return (
                     <tr key={ord.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-6 py-4 text-gray-800 font-bold whitespace-nowrap">{ord.orderNumber}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{customerName}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{dynamicCustomerName}</td>
                     <td className="px-6 py-4 text-gray-500 text-xs whitespace-nowrap">{formatDate(ord.createdAt)}</td>
                     <td className="px-6 py-4 text-gray-900 font-semibold whitespace-nowrap">Rs. {ord.totalAmount.toLocaleString('en-LK')}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -486,7 +511,17 @@ function DashboardContent() {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-500">Customer</p>
-                    <p className="text-sm font-bold text-gray-900">{selectedOrder.customer.name}</p>
+                    <p className="text-sm font-bold text-gray-900 text-ellipsis overflow-hidden">
+                      {selectedOrder.customer?.name ||
+                       selectedOrder.customerName ||
+                       selectedOrder.customer_name ||
+                       selectedOrder.shippingAddress?.fullName ||
+                       selectedOrder.shippingAddress?.name ||
+                       selectedOrder.shipping_address?.full_name ||
+                       selectedOrder.shipping_address?.name ||
+                       selectedOrder.name ||
+                       "Customer"}
+                    </p>
                   </div>
                 </div>
 
