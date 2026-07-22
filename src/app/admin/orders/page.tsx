@@ -65,6 +65,7 @@ interface Order {
   sendAsGift?: boolean;
   giftMessage?: string;
   packagingSelection?: string;
+  isRead?: boolean;
 }
 
 const MOCK_ORDERS: Order[] = [
@@ -220,6 +221,7 @@ function normalizeOrder(id: string, data: any): Order {
     sendAsGift: !!data.sendAsGift,
     giftMessage: data.giftMessage || '',
     packagingSelection: data.packagingSelection || '',
+    isRead: data.isRead !== undefined ? !!data.isRead : false,
   };
 }
 
@@ -271,6 +273,13 @@ function AdminOrdersPageContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('All');
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('admin_last_orders_seen', new Date().toISOString());
+      window.dispatchEvent(new Event('orders_read'));
+    }
+  }, []);
+
   const canViewOrders = hasPermission(role, 'canViewOrders');
   const canUpdateOrderStatus = hasPermission(role, 'canUpdateOrderStatus');
   const canDeleteOrders = isSuperAdmin(role);
@@ -291,6 +300,19 @@ function AdminOrdersPageContent() {
             list.push(normalizeOrder(docSnap.id, docSnap.data()));
           });
           setOrders(list);
+
+          // Update any order in Firestore that is not read yet
+          list.forEach(async (order) => {
+            if (order.isRead !== true) {
+              try {
+                await updateDoc(doc(db, 'orders', order.id), {
+                  isRead: true
+                });
+              } catch (err) {
+                console.warn(`Failed to mark order ${order.id} as read in Firestore:`, err);
+              }
+            }
+          });
         } else {
           setOrders(MOCK_ORDERS);
         }

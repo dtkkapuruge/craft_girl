@@ -24,30 +24,75 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const { user, role, signOut, permissions } = useAuth();
 
-  const [pendingCount, setPendingCount] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [lastSeen, setLastSeen] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setLastSeen(localStorage.getItem('admin_last_orders_seen'));
+
+      const handleOrdersRead = () => {
+        setLastSeen(localStorage.getItem('admin_last_orders_seen'));
+      };
+      window.addEventListener('orders_read', handleOrdersRead);
+      return () => window.removeEventListener('orders_read', handleOrdersRead);
+    }
+  }, []);
 
   useEffect(() => {
     if (!user || !role) return;
     const canView = hasPermission(role, 'canViewOrders', permissions);
     if (!canView) return;
 
-    const q = query(
-      collection(db, 'orders'),
-      where('status', 'in', ['Pending', 'Pending COD', 'pending'])
-    );
+    const q = collection(db, 'orders');
 
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        setPendingCount(snapshot.size);
+        const list: any[] = [];
+        snapshot.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        setOrders(list);
       },
       (err) => {
-        console.warn('Error fetching pending orders count:', err);
+        console.warn('Error fetching orders count:', err);
       }
     );
 
     return () => unsubscribe();
   }, [user, role, permissions]);
+
+  useEffect(() => {
+    let count = 0;
+    const lastSeenTime = lastSeen ? new Date(lastSeen).getTime() : 0;
+
+    orders.forEach((order) => {
+      let orderTime = 0;
+      if (order.createdAt) {
+        if (typeof order.createdAt.toDate === 'function') {
+          orderTime = order.createdAt.toDate().getTime();
+        } else if (order.createdAt.seconds) {
+          orderTime = order.createdAt.seconds * 1000;
+        } else {
+          const d = new Date(order.createdAt);
+          if (!isNaN(d.getTime())) {
+            orderTime = d.getTime();
+          }
+        }
+      }
+
+      const isAfterTimestamp = orderTime > lastSeenTime;
+      const isUnread = order.isRead !== true;
+
+      if (isAfterTimestamp || isUnread) {
+        count++;
+      }
+    });
+
+    setUnreadCount(count);
+  }, [orders, lastSeen]);
 
   const isLoginPage = pathname === '/admin/login';
 
@@ -130,9 +175,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-white' : 'text-purple-300'}`} />
                     <span>{item.label}</span>
                   </div>
-                  {item.label === 'Orders' && pendingCount > 0 && (
+                  {item.label === 'Orders' && unreadCount > 0 && (
                     <span className="ml-auto bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                      {pendingCount}
+                      {unreadCount}
                     </span>
                   )}
                 </Link>
@@ -205,9 +250,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               <div className={`relative p-1.5 rounded-lg ${isActive ? 'bg-gradient-to-r from-[#442852] to-[#582da8] shadow-md' : ''}`}>
                 <Icon className="w-5 h-5 shrink-0" />
-                {item.label === 'Orders' && pendingCount > 0 && (
+                {item.label === 'Orders' && unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">
-                    {pendingCount}
+                    {unreadCount}
                   </span>
                 )}
               </div>
