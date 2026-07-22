@@ -14,13 +14,14 @@
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-hot-toast": "^2.6.0"
+    "react-hot-toast": "^2.6.0",
+    "sweetalert2": "^11.26.25"
   },
   "optionalDependencies": {
-    "lightningcss-linux-x64-gnu": "1.32.0",
-    "lightningcss-win32-x64-msvc": "1.32.0",
     "@tailwindcss/oxide-linux-x64-gnu": "4.3.1",
-    "@tailwindcss/oxide-win32-x64-msvc": "4.3.1"
+    "@tailwindcss/oxide-win32-x64-msvc": "4.3.1",
+    "lightningcss-linux-x64-gnu": "1.32.0",
+    "lightningcss-win32-x64-msvc": "1.32.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

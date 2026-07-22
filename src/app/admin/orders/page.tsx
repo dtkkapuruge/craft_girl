@@ -33,6 +33,11 @@ import {
   getRoleDisplayName,
   isSuperAdmin,
 } from '@/lib/rbac';
+import {
+  showConfirmDelete,
+  showSuccessToast,
+  showErrorToast,
+} from '@/lib/alerts';
 
 interface OrderItem {
   productId: string;
@@ -360,22 +365,32 @@ function AdminOrdersPageContent() {
         userRole: role,
         actionDescription: `Updated order status of ${orderId} to ${newStatus}`,
       });
+
+      showSuccessToast(`Order status updated to ${newStatus}`);
     } catch (dbErr) {
       console.warn('Firestore update failed (demo updated state locally):', dbErr);
+      showErrorToast('Failed to update order status');
     }
   };
 
-  const handleDeleteOrder = async (orderId: string) => {
+  const handleDeleteOrder = (orderId: string) => {
     if (!canDeleteOrders) return;
-    if (!confirm('Are you sure you want to permanently delete this order?')) return;
 
-    setOrders((prev) => prev.filter((ord) => ord.id !== orderId));
+    showConfirmDelete(
+      'Delete Order?',
+      'Are you sure you want to permanently delete this order? This action cannot be undone.',
+      async () => {
+        setOrders((prev) => prev.filter((ord) => ord.id !== orderId));
 
-    try {
-      await deleteDoc(doc(db, 'orders', orderId));
-    } catch (dbErr) {
-      console.warn('Firestore document delete failed (deleted local model):', dbErr);
-    }
+        try {
+          await deleteDoc(doc(db, 'orders', orderId));
+          showSuccessToast('Order deleted successfully');
+        } catch (dbErr) {
+          console.warn('Firestore document delete failed:', dbErr);
+          showErrorToast('Failed to delete order from database');
+        }
+      }
+    );
   };
 
   const totalRevenue = orders

@@ -1,5 +1,6 @@
 'use client';
 
+import 'sweetalert2/dist/sweetalert2.min.css';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
