@@ -119,9 +119,9 @@ export default function Header() {
         </button>
 
         {/* Minimalist Logo Wordmark & Sparkle Icon */}
-        <Link href="/home" className="flex items-center gap-2.5 flex-shrink-0 group mr-8">
+        <Link href="/home" className="flex items-center gap-2.5 flex-shrink-0 group mr-6 md:mr-8">
           {navbarLogo ? (
-            <img src={navbarLogo} alt="Logo" className="h-6 w-auto object-contain transition-opacity duration-300 group-hover:opacity-80" />
+            <img src={navbarLogo} alt="Logo" className="h-10 md:h-12 w-auto object-contain transition-opacity duration-300 group-hover:opacity-80" />
           ) : (
             <>
               <svg
