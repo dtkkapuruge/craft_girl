@@ -11,6 +11,11 @@ export interface Product {
   description?: string;
   stockCount?: number;
   createdAt?: any;
+  isBestSeller?: boolean;
+  isNew?: boolean;
+  is_best_seller?: boolean;
+  is_new?: boolean;
+  tag?: string;
 }
 
 export const PRODUCTS: Product[] = [
