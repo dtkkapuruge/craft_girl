@@ -4,6 +4,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { getRoleDisplayName, hasPermission } from '@/lib/rbac';
+import { useState, useEffect } from 'react';
+import { db } from '@/lib/firebase';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -20,6 +23,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const { user, role, signOut, permissions } = useAuth();
+
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (!user || !role) return;
+    const canView = hasPermission(role, 'canViewOrders', permissions);
+    if (!canView) return;
+
+    const q = query(
+      collection(db, 'orders'),
+      where('status', 'in', ['Pending', 'Pending COD', 'pending'])
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        setPendingCount(snapshot.size);
+      },
+      (err) => {
+        console.warn('Error fetching pending orders count:', err);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user, role, permissions]);
 
   const isLoginPage = pathname === '/admin/login';
 
@@ -92,14 +120,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                  className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                     isActive
                       ? 'bg-gradient-to-r from-[#442852] to-[#582da8] text-white shadow-md'
                       : 'hover:bg-[#25153b] hover:text-white'
                   }`}
                 >
-                  <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-white' : 'text-purple-300'}`} />
-                  {item.label}
+                  <div className="flex items-center gap-3">
+                    <Icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-white' : 'text-purple-300'}`} />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.label === 'Orders' && pendingCount > 0 && (
+                    <span className="ml-auto bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      {pendingCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -168,8 +203,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 isActive ? 'text-white' : 'text-purple-400 hover:text-purple-300'
               }`}
             >
-              <div className={`p-1.5 rounded-lg ${isActive ? 'bg-gradient-to-r from-[#442852] to-[#582da8] shadow-md' : ''}`}>
+              <div className={`relative p-1.5 rounded-lg ${isActive ? 'bg-gradient-to-r from-[#442852] to-[#582da8] shadow-md' : ''}`}>
                 <Icon className="w-5 h-5 shrink-0" />
+                {item.label === 'Orders' && pendingCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white">
+                    {pendingCount}
+                  </span>
+                )}
               </div>
             </Link>
           );
