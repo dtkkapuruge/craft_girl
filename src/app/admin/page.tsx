@@ -65,6 +65,20 @@ function normalizeOrder(id: string, data: any): Order {
   const customer = data.customer || {};
   const items = Array.isArray(data.items) ? data.items : [];
 
+  const customerName =
+    data.customerName ||
+    data.customer_name ||
+    data.user?.name ||
+    data.user?.full_name ||
+    data.profile?.full_name ||
+    data.shippingAddress?.fullName ||
+    data.shippingAddress?.name ||
+    data.shipping_address?.full_name ||
+    data.shipping_address?.name ||
+    data.email ||
+    customer.name ||
+    "Guest Customer";
+
   let parsedCreatedAt: Order['createdAt'] = { toDate: () => new Date() };
   if (data.createdAt) {
     if (typeof data.createdAt.toDate === 'function') {
@@ -83,7 +97,7 @@ function normalizeOrder(id: string, data: any): Order {
     id,
     orderNumber: data.orderNumber || `CGS-${Math.floor(100000 + Math.random() * 900000)}`,
     customer: {
-      name: customer.name || 'Anonymous Customer',
+      name: customerName,
       phone: customer.phone || 'N/A',
       address: customer.address || 'No address provided',
       district: customer.district || 'N/A',
@@ -407,10 +421,12 @@ function DashboardContent() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm text-gray-600 font-medium">
-                {recentOrders.map((ord) => (
-                  <tr key={ord.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 text-gray-800 font-bold whitespace-nowrap">{ord.orderNumber}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{ord.customer.name}</td>
+                {recentOrders.map((ord) => {
+                  const customerName = ord.customer.name;
+                  return (
+                    <tr key={ord.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4 text-gray-800 font-bold whitespace-nowrap">{ord.orderNumber}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{customerName}</td>
                     <td className="px-6 py-4 text-gray-500 text-xs whitespace-nowrap">{formatDate(ord.createdAt)}</td>
                     <td className="px-6 py-4 text-gray-900 font-semibold whitespace-nowrap">Rs. {ord.totalAmount.toLocaleString('en-LK')}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -431,8 +447,9 @@ function DashboardContent() {
                         <Eye className="w-3.5 h-3.5" /> Details
                       </button>
                     </td>
-                  </tr>
-                ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
