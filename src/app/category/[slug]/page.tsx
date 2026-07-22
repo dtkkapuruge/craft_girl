@@ -296,28 +296,73 @@ export default function CategoryPage() {
 
   // Filter by activeTab, search query, and sort
   const filteredProducts = useMemo(() => {
-    // 1. Filter by activeTab
-    let result = baseProducts.filter((product) => {
-      if (activeTab === 'bestseller') {
-        return (
-          product.isBestSeller ||
-          product.tag === 'bestseller' ||
-          (product as any).is_best_seller ||
-          (product as any).isBestseller ||
-          (product as any).tags?.includes('bestseller')
-        );
+    const products = baseProducts;
+    if (!products || products.length === 0) return [];
+
+    let result: Product[] = [];
+
+    // TAB 1: BEST SELLERS (Dynamic Sales / Fallback Sort)
+    if (activeTab === 'bestseller') {
+      // Check explicit flag first
+      const flagged = products.filter(
+        (p) =>
+          p.isBestSeller ||
+          p.tag === 'bestseller' ||
+          (p as any).is_best_seller ||
+          (p as any).isBestseller ||
+          (p as any).tags?.includes('bestseller')
+      );
+      if (flagged.length > 0) {
+        result = flagged;
+      } else {
+        // Dynamic Fallback: Sort by sales count / total sales, or return top items
+        result = [...products].sort((a, b) => {
+          const salesA =
+            (a as any).salesCount ||
+            (a as any).total_sales ||
+            (a as any).sales ||
+            salesMap[a.name] ||
+            salesMap[a.id] ||
+            0;
+          const salesB =
+            (b as any).salesCount ||
+            (b as any).total_sales ||
+            (b as any).sales ||
+            salesMap[b.name] ||
+            salesMap[b.id] ||
+            0;
+          return salesB - salesA; // Highest sales first
+        });
       }
-      if (activeTab === 'new') {
-        return (
-          product.isNew ||
-          product.tag === 'new' ||
-          (product as any).is_new ||
-          (product as any).isNew ||
-          (product as any).tags?.includes('new')
-        );
+    }
+
+    // TAB 2: NEW IN (Dynamic Date Sort - Newest First)
+    else if (activeTab === 'new') {
+      // Check explicit flag first
+      const flagged = products.filter(
+        (p) =>
+          p.isNew ||
+          p.tag === 'new' ||
+          (p as any).is_new ||
+          (p as any).isNew ||
+          (p as any).tags?.includes('new')
+      );
+      if (flagged.length > 0) {
+        result = flagged;
+      } else {
+        // Dynamic Fallback: Sort by createdAt date (Newest to Oldest)
+        result = [...products].sort((a, b) => {
+          const dateA = new Date((a as any).createdAt || (a as any).created_at || (a as any).id || 0).getTime();
+          const dateB = new Date((b as any).createdAt || (b as any).created_at || (b as any).id || 0).getTime();
+          return dateB - dateA; // Newest date first
+        });
       }
-      return true; // 'all'
-    });
+    }
+
+    // TAB 3: ALL CREATIONS
+    else {
+      result = products;
+    }
 
     // 2. Filter by search query
     const q = searchQuery.trim().toLowerCase();
@@ -332,12 +377,16 @@ export default function CategoryPage() {
       result = [...result].sort((a, b) => a.price - b.price);
     } else if (sortBy === 'price-desc') {
       result = [...result].sort((a, b) => b.price - a.price);
-    } else {
-      result = [...result].sort((a, b) => b.id.localeCompare(a.id));
+    } else if (sortBy === 'newest' && activeTab !== 'bestseller') {
+      result = [...result].sort((a, b) => {
+        const dateA = new Date((a as any).createdAt || (a as any).created_at || (a as any).id || 0).getTime();
+        const dateB = new Date((b as any).createdAt || (b as any).created_at || (b as any).id || 0).getTime();
+        return dateB - dateA;
+      });
     }
 
     return result;
-  }, [baseProducts, activeTab, searchQuery, sortBy]);
+  }, [baseProducts, activeTab, searchQuery, sortBy, salesMap]);
 
   const handleAddToCart = (product: Product) => {
     addToCart({
