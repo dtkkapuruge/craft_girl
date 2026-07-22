@@ -72,13 +72,24 @@ interface Order {
 
 // ─── Normalize (shared with Orders page) ──────────────────────────────────────
 
-function normalizeOrder(id: string, data: any): Order {
+function normalizeOrder(doc: any): Order {
+  const data = typeof doc.data === 'function' ? doc.data() : doc;
   const customer = data.customer || {};
   const items = Array.isArray(data.items) ? data.items : [];
 
   const customerName =
     data.customerName ||
     data.customer_name ||
+    data.customer?.name ||
+    data.customerDetails?.name ||
+    data.customerDetails?.fullName ||
+    data.shippingDetails?.fullName ||
+    data.shippingDetails?.name ||
+    (data.shippingDetails?.firstName && data.shippingDetails?.lastName ? `${data.shippingDetails.firstName} ${data.shippingDetails.lastName}` : null) ||
+    (data.customerDetails?.firstName && data.customerDetails?.lastName ? `${data.customerDetails.firstName} ${data.customerDetails.lastName}` : null) ||
+    data.firstName ||
+    data.lastName ||
+    (data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : null) ||
     data.user?.name ||
     data.user?.full_name ||
     data.profile?.full_name ||
@@ -105,7 +116,8 @@ function normalizeOrder(id: string, data: any): Order {
   }
 
   return {
-    id,
+    ...data, // Keep ALL raw document properties!
+    id: doc.id || data.id,
     orderNumber: data.orderNumber || `CGS-${Math.floor(100000 + Math.random() * 900000)}`,
     customer: {
       name: customerName,
@@ -188,7 +200,7 @@ function DashboardContent() {
     const unsubscribeOrders = onSnapshot(ordersQuery, (snapshot) => {
       const allOrders: Order[] = [];
       snapshot.forEach((docSnap) => {
-        allOrders.push(normalizeOrder(docSnap.id, docSnap.data()));
+        allOrders.push(normalizeOrder(docSnap));
       });
       setOrders(allOrders);
       setLoading(false);
@@ -442,6 +454,15 @@ function DashboardContent() {
                     ord.customer?.name ||
                     ord.customerName ||
                     ord.customer_name ||
+                    (ord as any).shippingDetails?.name ||
+                    (ord as any).shippingDetails?.fullName ||
+                    ((ord as any).shippingDetails?.firstName && (ord as any).shippingDetails?.lastName ? `${(ord as any).shippingDetails.firstName} ${(ord as any).shippingDetails.lastName}` : null) ||
+                    (ord as any).customerDetails?.name ||
+                    (ord as any).customerDetails?.fullName ||
+                    ((ord as any).customerDetails?.firstName && (ord as any).customerDetails?.lastName ? `${(ord as any).customerDetails.firstName} ${(ord as any).customerDetails.lastName}` : null) ||
+                    ((ord as any).firstName && (ord as any).lastName ? `${(ord as any).firstName} ${(ord as any).lastName}` : null) ||
+                    (ord as any).firstName ||
+                    (ord as any).lastName ||
                     ord.shippingAddress?.fullName ||
                     ord.shippingAddress?.name ||
                     ord.shipping_address?.full_name ||
