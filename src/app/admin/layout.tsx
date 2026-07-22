@@ -176,7 +176,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <span>{item.label}</span>
                   </div>
                   {item.label === 'Orders' && unreadCount > 0 && (
-                    <span className="ml-auto bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    <span className="ml-auto inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 text-xs font-bold bg-white text-purple-900 rounded-full shadow-sm">
                       {unreadCount}
                     </span>
                   )}
