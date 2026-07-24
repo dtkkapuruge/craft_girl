@@ -47,6 +47,7 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   // New loading flag for hero banners to avoid flashing default images
   const [heroLoading, setHeroLoading] = useState(true);
+  const [slideLoaded, setSlideLoaded] = useState<boolean[]>([false, false, false]);
 
   const [heroBanners, setHeroBanners] = useState({
     heroBanner1: '',
@@ -137,7 +138,7 @@ export default function Home() {
     <div className="bg-[#FAFAF8] min-h-screen text-brand-text selection:bg-[#AB9266]/20 selection:text-brand-text overflow-hidden">
       
       {heroLoading ? (
-        <div className="relative w-full h-screen bg-gray-200 animate-pulse" />
+        <div className="relative w-full h-screen bg-gradient-to-r from-[#2c003e] via-[#3a0062] to-[#2c003e] animate-pulse" />
       ) : (
         <section className="relative w-full h-screen overflow-hidden bg-black rounded-none">
           {dynamicSlides.map((slide, idx) => {
@@ -151,14 +152,21 @@ export default function Home() {
               >
                 <div className="absolute inset-0 bg-[#0A0A0A] rounded-none">
                   <Image
-                    src={slide.image}
-                    alt={slide.title}
-                    fill
-                    priority={idx === 0}
-                    className={`object-cover object-center w-full h-full opacity-60 rounded-none ${
-                      isActive ? 'hero-img-ken' : ''
-                    }`}
-                  />
+                  src={slide.image}
+                  alt={slide.title}
+                  fill
+                  priority={idx === 0}
+                  onLoadingComplete={() => {
+                    setSlideLoaded((prev) => {
+                      const newArr = [...prev];
+                      newArr[idx] = true;
+                      return newArr;
+                    });
+                  }}
+                  className={`object-cover object-center w-full h-full rounded-none transition-opacity duration-700 ${
+                    slideLoaded[idx] ? 'opacity-100' : 'opacity-0'
+                  } ${isActive ? 'hero-img-ken' : ''}`}
+                />
                 </div>
 
                 {isActive && (
