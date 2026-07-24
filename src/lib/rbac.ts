@@ -18,7 +18,10 @@ export interface RolePermission {
   canDeleteProducts: boolean;
   // Order permissions
   canViewOrders: boolean;
-  canManageOrders: boolean;
+  canCreateOrders: boolean;
+  canEditOrders: boolean;
+  canDeleteOrders: boolean;
+  canManageOrders: boolean; // deprecated alias for create+edit
   canUpdateOrderStatus: boolean;
   // Analytics and revenue
   canViewRevenue: boolean;
@@ -56,7 +59,10 @@ export const DEFAULT_PERMISSIONS: RolePermission = {
   canDeleteProducts: false,
   // Order defaults
   canViewOrders: false,
-  canManageOrders: false,
+  canCreateOrders: false,
+  canEditOrders: false,
+  canDeleteOrders: false,
+  canManageOrders: false, // deprecated alias
   canUpdateOrderStatus: false,
   // Analytics & revenue
   canViewRevenue: false,
@@ -82,7 +88,10 @@ const ROLE_PERMISSIONS: Record<UserRole, RolePermission> = {
     canDeleteProducts: false,
     // Orders
     canViewOrders: false,
-    canManageOrders: false,
+    canCreateOrders: false,
+    canEditOrders: false,
+    canDeleteOrders: false,
+    canManageOrders: false, // deprecated alias
     canUpdateOrderStatus: false,
     // Analytics & revenue
     canViewRevenue: false,
@@ -106,7 +115,10 @@ const ROLE_PERMISSIONS: Record<UserRole, RolePermission> = {
     canDeleteProducts: false,
     // Orders
     canViewOrders: true,
-    canManageOrders: false,
+    canCreateOrders: false,
+    canEditOrders: false,
+    canDeleteOrders: false,
+    canManageOrders: false, // deprecated alias
     canUpdateOrderStatus: false,
     // Analytics & revenue
     canViewRevenue: false,
@@ -130,7 +142,10 @@ const ROLE_PERMISSIONS: Record<UserRole, RolePermission> = {
     canDeleteProducts: true,
     // Orders
     canViewOrders: true,
-    canManageOrders: true,
+    canCreateOrders: true,
+    canEditOrders: true,
+    canDeleteOrders: false,
+    canManageOrders: true, // deprecated alias (create+edit)
     canUpdateOrderStatus: true,
     // Analytics & revenue
     canViewRevenue: false,
@@ -154,7 +169,10 @@ const ROLE_PERMISSIONS: Record<UserRole, RolePermission> = {
     canDeleteProducts: true,
     // Orders
     canViewOrders: true,
-    canManageOrders: true,
+    canCreateOrders: true,
+    canEditOrders: true,
+    canDeleteOrders: true,
+    canManageOrders: true, // deprecated alias
     canUpdateOrderStatus: true,
     // Analytics & revenue
     canViewRevenue: true,

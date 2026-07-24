@@ -286,8 +286,10 @@ function AdminOrdersPageContent() {
   }, []);
 
   const canViewOrders = hasPermission(role, 'canViewOrders');
+  const canCreateOrders = hasPermission(role, 'canCreateOrders');
+  const canEditOrders = hasPermission(role, 'canEditOrders');
+  const canDeleteOrders = hasPermission(role, 'canDeleteOrders');
   const canUpdateOrderStatus = hasPermission(role, 'canUpdateOrderStatus');
-  const canDeleteOrders = isSuperAdmin(role);
   const canViewRevenue = hasPermission(role, 'canViewRevenue');
   const showActionsColumn = canUpdateOrderStatus || canDeleteOrders;
 

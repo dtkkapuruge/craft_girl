@@ -104,9 +104,19 @@ const PERMISSION_GROUPS: PermissionGroup[] = [
         description: 'Access client purchases, address coordinates, and tracking indices.',
       },
       {
-        key: 'canManageOrders',
+        key: 'canCreateOrders',
+        label: 'Create Orders',
+        description: 'Create manual orders from admin workspace.',
+      },
+      {
+        key: 'canEditOrders',
         label: 'Edit Order Details',
         description: 'Amend order items, manual adjustments, or buyer info.',
+      },
+      {
+        key: 'canDeleteOrders',
+        label: 'Delete Orders',
+        description: 'Delete or remove orders from the system.',
       },
       {
         key: 'canUpdateOrderStatus',
