@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, getDocs, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 /**
@@ -171,6 +171,20 @@ export async function createNewRole(key: string, name: string): Promise<void> {
     ...DEFAULT_PERMISSIONS,
     _meta: { name, isCustom: true, createdAt: new Date().toISOString() },
   });
+}
+
+/**
+ * Delete a custom role from Firestore.
+ * Only callable for custom roles; built-in roles are protected.
+ */
+export async function deleteRole(roleKey: string): Promise<void> {
+  try {
+    const docRef = doc(db, 'roles', roleKey);
+    await deleteDoc(docRef);
+  } catch (err) {
+    console.error(`Failed to delete role ${roleKey}:`, err);
+    throw err;
+  }
 }
 
 /**

@@ -12,6 +12,7 @@ import {
   getPermissions,
   getRoleDisplayName,
   DEFAULT_PERMISSIONS,
+  deleteRole,
   type UserRole,
   type RolePermission,
   type CustomRole,
@@ -29,6 +30,7 @@ import {
   AlertTriangle,
   Lock,
   Eye,
+  Trash2,
 } from 'lucide-react';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -387,6 +389,23 @@ function RolePermissionsContent() {
     }
   };
 
+  // Delete a custom role with confirmation and permission check
+  const handleDeleteRole = async (key: string) => {
+    const role = customRoles.find((r) => r.key === key);
+    const roleName = role ? role.name : key;
+    if (!confirm(`Are you sure you want to delete the role '${roleName}'?`)) return;
+    try {
+      await deleteRole(key);
+      toast.success('Role deleted successfully');
+      await loadCustomRoles();
+      // Reset selection to default Staff Member
+      setSelectedEntry(BUILTIN_ROLES.find((r) => r.key === 'staff')!);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to delete role');
+    }
+  };
+
   // ── Sidebar rendering helpers
   const allEntries: SidebarEntry[] = [
     ...BUILTIN_ROLES,
@@ -475,6 +494,7 @@ function RolePermissionsContent() {
               const isActive =
                 selectedEntry.key === entry.key && selectedEntry.kind === entry.kind;
               const isSuper = entry.kind === 'builtin' && entry.key === 'super-admin';
+              const canDelete = entry.kind === 'custom' && userRole === 'super-admin';
 
               return (
                 <button
@@ -502,6 +522,19 @@ function RolePermissionsContent() {
                       <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 shrink-0">
                         Custom
                       </span>
+                    )}
+                    {canDelete && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteRole(entry.key);
+                        }}
+                        className="ml-2 text-red-500 hover:text-red-700"
+                        aria-label="Delete role"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     )}
                   </div>
                   <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider truncate">
