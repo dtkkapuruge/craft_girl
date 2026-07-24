@@ -11,15 +11,26 @@ export type UserRole = 'customer' | 'staff' | 'admin' | 'super-admin';
 
 export interface RolePermission {
   canViewDashboard: boolean;
+  // Product CRUD permissions
   canViewProducts: boolean;
-  canManageProducts: boolean;
+  canCreateProducts: boolean;
+  canEditProducts: boolean;
+  canDeleteProducts: boolean;
+  // Order permissions
   canViewOrders: boolean;
   canManageOrders: boolean;
   canUpdateOrderStatus: boolean;
+  // Analytics and revenue
   canViewRevenue: boolean;
   canViewAnalytics: boolean;
+  // User management
   canManageUsers: boolean;
-  canManageStaff: boolean;
+  // Staff CRUD permissions
+  canViewStaff: boolean;
+  canCreateStaff: boolean;
+  canEditStaff: boolean;
+  canDeleteStaff: boolean;
+  // Permission management
   canManagePermissions: boolean;
 }
 
@@ -38,69 +49,124 @@ export interface CustomRole {
  */
 export const DEFAULT_PERMISSIONS: RolePermission = {
   canViewDashboard: false,
+  // Product CRUD defaults
   canViewProducts: false,
-  canManageProducts: false,
+  canCreateProducts: false,
+  canEditProducts: false,
+  canDeleteProducts: false,
+  // Order defaults
   canViewOrders: false,
   canManageOrders: false,
   canUpdateOrderStatus: false,
+  // Analytics & revenue
   canViewRevenue: false,
   canViewAnalytics: false,
+  // User management
   canManageUsers: false,
-  canManageStaff: false,
+  // Staff CRUD defaults
+  canViewStaff: false,
+  canCreateStaff: false,
+  canEditStaff: false,
+  canDeleteStaff: false,
+  // Permission management
   canManagePermissions: false,
 };
 
 const ROLE_PERMISSIONS: Record<UserRole, RolePermission> = {
   customer: {
     canViewDashboard: false,
+    // Product CRUD
     canViewProducts: true,
-    canManageProducts: false,
+    canCreateProducts: false,
+    canEditProducts: false,
+    canDeleteProducts: false,
+    // Orders
     canViewOrders: false,
     canManageOrders: false,
     canUpdateOrderStatus: false,
+    // Analytics & revenue
     canViewRevenue: false,
     canViewAnalytics: false,
+    // Users
     canManageUsers: false,
-    canManageStaff: false,
+    // Staff CRUD
+    canViewStaff: false,
+    canCreateStaff: false,
+    canEditStaff: false,
+    canDeleteStaff: false,
+    // Permissions
     canManagePermissions: false,
   },
   staff: {
     canViewDashboard: true,
+    // Product CRUD
     canViewProducts: true,
-    canManageProducts: false,
+    canCreateProducts: false,
+    canEditProducts: false,
+    canDeleteProducts: false,
+    // Orders
     canViewOrders: true,
     canManageOrders: false,
     canUpdateOrderStatus: false,
+    // Analytics & revenue
     canViewRevenue: false,
     canViewAnalytics: false,
+    // Users
     canManageUsers: false,
-    canManageStaff: false,
+    // Staff CRUD
+    canViewStaff: false,
+    canCreateStaff: false,
+    canEditStaff: false,
+    canDeleteStaff: false,
+    // Permissions
     canManagePermissions: false,
   },
   admin: {
     canViewDashboard: true,
+    // Product CRUD – admin gets full control
     canViewProducts: true,
-    canManageProducts: true,
+    canCreateProducts: true,
+    canEditProducts: true,
+    canDeleteProducts: true,
+    // Orders
     canViewOrders: true,
     canManageOrders: true,
     canUpdateOrderStatus: true,
+    // Analytics & revenue
     canViewRevenue: false,
     canViewAnalytics: true,
+    // Users
     canManageUsers: false,
-    canManageStaff: false,
+    // Staff CRUD – admin does not manage staff by default
+    canViewStaff: false,
+    canCreateStaff: false,
+    canEditStaff: false,
+    canDeleteStaff: false,
+    // Permissions
     canManagePermissions: false,
   },
   'super-admin': {
     canViewDashboard: true,
+    // Product CRUD – full control
     canViewProducts: true,
-    canManageProducts: true,
+    canCreateProducts: true,
+    canEditProducts: true,
+    canDeleteProducts: true,
+    // Orders
     canViewOrders: true,
     canManageOrders: true,
     canUpdateOrderStatus: true,
+    // Analytics & revenue
     canViewRevenue: true,
     canViewAnalytics: true,
+    // Users
     canManageUsers: true,
-    canManageStaff: true,
+    // Staff CRUD – full control
+    canViewStaff: true,
+    canCreateStaff: true,
+    canEditStaff: true,
+    canDeleteStaff: true,
+    // Permissions
     canManagePermissions: true,
   },
 };

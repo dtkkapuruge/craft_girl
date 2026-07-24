@@ -88,11 +88,9 @@ const PERMISSION_GROUPS: PermissionGroup[] = [
         label: 'View Products List',
         description: 'Search and inspect products and inventory listings.',
       },
-      {
-        key: 'canManageProducts',
-        label: 'Manage Products',
-        description: 'Create, modify, upload pictures for, and delete catalog listings.',
-      },
+      { key: 'canCreateProducts', label: 'Create Products', description: 'Add new products to the catalog.' },
+      { key: 'canEditProducts', label: 'Edit Products', description: 'Modify existing product details and images.' },
+      { key: 'canDeleteProducts', label: 'Delete Products', description: 'Remove products from the catalog.' },
     ],
   },
   {
@@ -127,11 +125,10 @@ const PERMISSION_GROUPS: PermissionGroup[] = [
         label: 'Manage Customer Lists',
         description: 'Supervise registered store shopper profiles.',
       },
-      {
-        key: 'canManageStaff',
-        label: 'Manage Staff Members',
-        description: 'Add, update credentials of, or remove store assistants.',
-      },
+      { key: 'canViewStaff', label: 'View Staff', description: 'View staff member list and details.' },
+      { key: 'canCreateStaff', label: 'Create Staff', description: 'Add new staff members.' },
+      { key: 'canEditStaff', label: 'Edit Staff', description: 'Edit existing staff member information.' },
+      { key: 'canDeleteStaff', label: 'Delete Staff', description: 'Remove staff members from the system.' },
       {
         key: 'canManagePermissions',
         label: 'Edit Role Permissions',

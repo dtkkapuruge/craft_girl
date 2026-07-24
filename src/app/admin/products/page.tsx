@@ -43,8 +43,9 @@ const EMPTY_FORM: ProductInput = {
 
 function AdminProductsContent() {
   const { role } = useAuth();
-  const canManage = hasPermission(role, 'canManageProducts');
-  const canDelete = canManage && role !== 'staff';
+  const canCreate = hasPermission(role, 'canCreateProducts');
+  const canEdit = hasPermission(role, 'canEditProducts');
+  const canDelete = hasPermission(role, 'canDeleteProducts') && role !== 'staff';
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -214,7 +215,7 @@ function AdminProductsContent() {
             Create, edit, and publish craft products for consumer browse and purchase workflows.
           </p>
         </div>
-        {canManage && (
+        {canCreate && (
           <button
             onClick={openCreate}
             className="inline-flex items-center gap-2 rounded-xl bg-[#0E2C2A] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:bg-[#0a1f1e]"
@@ -247,7 +248,7 @@ function AdminProductsContent() {
                   <th className="px-6 py-4">Category</th>
                   <th className="px-6 py-4">Price</th>
                   <th className="px-6 py-4">Stock Status</th>
-                  {canManage && <th className="px-6 py-4 text-right">Actions</th>}
+                  {(canEdit || canDelete) && <th className="px-6 py-4 text-right">Actions</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm text-gray-650 font-medium">
@@ -275,16 +276,18 @@ function AdminProductsContent() {
                       <td className="px-6 py-4">
                         {getStockBadge(stock)}
                       </td>
-                      {canManage && (
+                      {(canEdit || canDelete) && (
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={() => openEdit(product)}
-                              className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-800 transition-colors"
-                              title="Edit product"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </button>
+                            {canEdit && (
+                              <button
+                                onClick={() => openEdit(product)}
+                                className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-800 transition-colors"
+                                title="Edit product"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </button>
+                            )}
                             {canDelete && (
                               <button
                                 onClick={() => handleDelete(product.id)}
