@@ -138,9 +138,9 @@ export default function Home() {
     <div className="bg-[#FAFAF8] min-h-screen text-brand-text selection:bg-[#AB9266]/20 selection:text-brand-text overflow-hidden">
       
       {heroLoading ? (
-        <div className="relative w-full h-screen bg-gradient-to-r from-[#2c003e] via-[#3a0062] to-[#2c003e] animate-pulse" />
+        <div className="relative w-full h-screen bg-slate-50 animate-pulse" />
       ) : (
-        <section className="relative w-full h-screen overflow-hidden bg-black rounded-none">
+        <section className="relative w-full h-screen overflow-hidden bg-black rounded-none" style={{ aspectRatio: '16/9' }}>
           {dynamicSlides.map((slide, idx) => {
             const isActive = idx === currentSlide;
             return (
@@ -152,21 +152,23 @@ export default function Home() {
               >
                 <div className="absolute inset-0 bg-[#0A0A0A] rounded-none">
                   <Image
-                  src={slide.image}
-                  alt={slide.title}
-                  fill
-                  priority={idx === 0}
-                  onLoadingComplete={() => {
-                    setSlideLoaded((prev) => {
-                      const newArr = [...prev];
-                      newArr[idx] = true;
-                      return newArr;
-                    });
-                  }}
-                  className={`object-cover object-center w-full h-full rounded-none transition-opacity duration-700 ${
-                    slideLoaded[idx] ? 'opacity-100' : 'opacity-0'
-                  } ${isActive ? 'hero-img-ken' : ''}`}
-                />
+                    src={slide.image}
+                    alt={slide.title}
+                    fill
+                    priority={idx === 0}
+                    quality={80}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    onLoadingComplete={() => {
+                      setSlideLoaded((prev) => {
+                        const newArr = [...prev];
+                        newArr[idx] = true;
+                        return newArr;
+                      });
+                    }}
+                    className={`object-cover object-center w-full h-full rounded-none transition-opacity duration-700 ${
+                      slideLoaded[idx] ? 'opacity-100' : 'opacity-0'
+                    } ${isActive ? 'hero-img-ken' : ''}`}
+                  />
                 </div>
 
                 {isActive && (
