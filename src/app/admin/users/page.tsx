@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import AdminGuard from '@/components/AdminGuard';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'react-hot-toast';
 import {
   fetchAdminUsers,
   createAdminUser,
@@ -66,7 +67,7 @@ function UserModal({
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [tempPassword, setTempPassword] = useState('');
-  const [role, setRole] = useState<string>('staff');
+  const [role, setRole] = useState<UserRole>('staff');
   const [status, setStatus] = useState<'active' | 'inactive'>('active');
   const [showPassword, setShowPassword] = useState(false);
   const [customRoles, setCustomRoles] = useState<CustomRole[]>([]);
@@ -111,7 +112,7 @@ function UserModal({
     e.preventDefault();
     await onSave({
       email,
-      role,
+      role: role as UserRole,
       displayName,
       phoneNumber,
       status,
@@ -214,7 +215,7 @@ function UserModal({
             <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Role</label>
             <select
               value={role}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={(e) => setRole(e.target.value as UserRole)}
               className="w-full rounded-xl border border-gray-250 bg-white px-3.5 py-2.5 text-sm focus:border-purple-650 focus:outline-none focus:ring-1 focus:ring-purple-650 transition-all font-medium text-gray-800"
             >
               {/* Built-in roles */}
