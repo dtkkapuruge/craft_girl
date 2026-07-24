@@ -14,6 +14,8 @@ import {
   getRoleDisplayName,
   getRoleColor,
   type UserRole,
+  fetchAllCustomRoles,
+  type CustomRole,
 } from '@/lib/rbac';
 import {
   Plus,
@@ -32,7 +34,7 @@ import {
   EyeOff
 } from 'lucide-react';
 
-const ASSIGNABLE_ROLES: { value: UserRole; label: string }[] = [
+const BUILTIN_ROLES: { value: UserRole; label: string }[] = [
   { value: 'staff', label: 'Staff Member' },
   { value: 'admin', label: 'Administrator' },
   { value: 'super-admin', label: 'Super Administrator' }
@@ -64,9 +66,23 @@ function UserModal({
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [tempPassword, setTempPassword] = useState('');
-  const [role, setRole] = useState<UserRole>('staff');
+  const [role, setRole] = useState<string>('staff');
   const [status, setStatus] = useState<'active' | 'inactive'>('active');
   const [showPassword, setShowPassword] = useState(false);
+  const [customRoles, setCustomRoles] = useState<CustomRole[]>([]);
+  const loadCustomRoles = useCallback(async () => {
+    try {
+      const roles = await fetchAllCustomRoles();
+      setCustomRoles(roles);
+    } catch {
+      toast.error('Failed to load custom roles');
+    }
+  }, []);
+  useEffect(() => {
+    if (open) {
+      loadCustomRoles();
+    }
+  }, [open, loadCustomRoles]);
 
   useEffect(() => {
     if (open) {
@@ -198,11 +214,16 @@ function UserModal({
             <label className="block text-xs font-bold text-gray-500 mb-1.5 uppercase tracking-wider">Role</label>
             <select
               value={role}
-              onChange={(e) => setRole(e.target.value as UserRole)}
+              onChange={(e) => setRole(e.target.value)}
               className="w-full rounded-xl border border-gray-250 bg-white px-3.5 py-2.5 text-sm focus:border-purple-650 focus:outline-none focus:ring-1 focus:ring-purple-650 transition-all font-medium text-gray-800"
             >
-              {ASSIGNABLE_ROLES.map((r) => (
+              {/* Built-in roles */}
+              {BUILTIN_ROLES.map((r) => (
                 <option key={r.value} value={r.value}>{r.label}</option>
+              ))}
+              {/* Custom roles */}
+              {customRoles.length > 0 && customRoles.map((r) => (
+                <option key={r.key} value={r.key}>{r.name}</option>
               ))}
             </select>
           </div>
