@@ -45,6 +45,8 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  // New loading flag for hero banners to avoid flashing default images
+  const [heroLoading, setHeroLoading] = useState(true);
 
   const [heroBanners, setHeroBanners] = useState({
     heroBanner1: '',
@@ -62,6 +64,8 @@ export default function Home() {
         heroBanner3: settings.heroBanner3 || '',
       });
       setLayoutSettings(settings);
+      // Hero banners fetched, stop showing placeholder
+      setHeroLoading(false);
     });
     fetchAllCategories().then(setCategories);
   }, []);
@@ -132,68 +136,72 @@ export default function Home() {
   return (
     <div className="bg-[#FAFAF8] min-h-screen text-brand-text selection:bg-[#AB9266]/20 selection:text-brand-text overflow-hidden">
       
-      <section className="relative w-full h-screen overflow-hidden bg-black rounded-none">
-        {dynamicSlides.map((slide, idx) => {
-          const isActive = idx === currentSlide;
-          return (
-            <div
-              key={idx}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'
-              }`}
-            >
-              <div className="absolute inset-0 bg-[#0A0A0A] rounded-none">
-                <Image
-                  src={slide.image}
-                  alt={slide.title}
-                  fill
-                  priority={idx === 0}
-                  className={`object-cover object-center w-full h-full opacity-60 rounded-none ${
-                    isActive ? 'hero-img-ken' : ''
-                  }`}
-                />
-              </div>
+      {heroLoading ? (
+        <div className="relative w-full h-screen bg-gray-200 animate-pulse" />
+      ) : (
+        <section className="relative w-full h-screen overflow-hidden bg-black rounded-none">
+          {dynamicSlides.map((slide, idx) => {
+            const isActive = idx === currentSlide;
+            return (
+              <div
+                key={idx}
+                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                  isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                }`}
+              >
+                <div className="absolute inset-0 bg-[#0A0A0A] rounded-none">
+                  <Image
+                    src={slide.image}
+                    alt={slide.title}
+                    fill
+                    priority={idx === 0}
+                    className={`object-cover object-center w-full h-full opacity-60 rounded-none ${
+                      isActive ? 'hero-img-ken' : ''
+                    }`}
+                  />
+                </div>
 
-              {isActive && (
-                <div className="absolute inset-0 flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 z-20">
-                  <div className="max-w-4xl mx-auto text-center space-y-6">
-                    <span className="hero-text-eyebrow block text-xs font-bold tracking-[0.25em] text-[#CBB0DC] uppercase">
-                      {slide.eyebrow}
-                    </span>
-                    <h1 className="hero-text-title text-4xl sm:text-7xl font-extrabold tracking-widest text-white leading-tight uppercase">
-                      {slide.title}
-                    </h1>
-                    <p className="hero-text-sub max-w-xl mx-auto text-[#FAFAF8]/85 text-xs sm:text-sm tracking-widest uppercase leading-relaxed font-bold">
-                      {slide.description}
-                    </p>
-                    <div className="hero-text-cta pt-4">
-                      <Link
-                        href={slide.link}
-                        className="inline-flex items-center justify-center bg-brand-primary text-white px-8 py-3.5 text-[10px] font-extrabold tracking-[0.25em] uppercase hover:bg-brand-primary/90 hover:text-white border border-white transition-all rounded-none"
-                      >
-                        EXPLORE COLLECTION
-                      </Link>
+                {isActive && (
+                  <div className="absolute inset-0 flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 z-20">
+                    <div className="max-w-4xl mx-auto text-center space-y-6">
+                      <span className="hero-text-eyebrow block text-xs font-bold tracking-[0.25em] text-[#CBB0DC] uppercase">
+                        {slide.eyebrow}
+                      </span>
+                      <h1 className="hero-text-title text-4xl sm:text-7xl font-extrabold tracking-widest text-white leading-tight uppercase">
+                        {slide.title}
+                      </h1>
+                      <p className="hero-text-sub max-w-xl mx-auto text-[#FAFAF8]/85 text-xs sm:text-sm tracking-widest uppercase leading-relaxed font-bold">
+                        {slide.description}
+                      </p>
+                      <div className="hero-text-cta pt-4">
+                        <Link
+                          href={slide.link}
+                          className="inline-flex items-center justify-center bg-brand-primary text-white px-8 py-3.5 text-[10px] font-extrabold tracking-[0.25em] uppercase hover:bg-brand-primary/90 hover:text-white border border-white transition-all rounded-none"
+                        >
+                          EXPLORE COLLECTION
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
+                )}
+              </div>
+            );
+          })}
 
-        <div className="absolute bottom-8 left-0 right-0 z-30 flex justify-center gap-3">
-          {dynamicSlides.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`w-2.5 h-2.5 border border-white transition-all rounded-none ${
-                idx === currentSlide ? 'bg-white scale-110' : 'bg-transparent opacity-50'
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
-        </div>
-      </section>
+          <div className="absolute bottom-8 left-0 right-0 z-30 flex justify-center gap-3">
+            {dynamicSlides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`w-2.5 h-2.5 border border-white transition-all rounded-none ${
+                  idx === currentSlide ? 'bg-white scale-110' : 'bg-transparent opacity-50'
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center max-w-xl mx-auto mb-14 space-y-2">
