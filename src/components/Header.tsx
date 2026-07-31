@@ -27,6 +27,21 @@ export default function Header() {
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [shopMenuOpen, setShopMenuOpen] = useState(false);
   const shopMenuRef = useRef<HTMLDivElement>(null);
+  const shopMenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnterShopMenu = () => {
+    if (shopMenuTimeoutRef.current) {
+      clearTimeout(shopMenuTimeoutRef.current);
+      shopMenuTimeoutRef.current = null;
+    }
+    setShopMenuOpen(true);
+  };
+
+  const handleMouseLeaveShopMenu = () => {
+    shopMenuTimeoutRef.current = setTimeout(() => {
+      setShopMenuOpen(false);
+    }, 150);
+  };
 
   useEffect(() => {
     fetchLayoutSettings().then((settings) => {
@@ -170,10 +185,10 @@ export default function Header() {
 
           {/* Dynamic Categories dropdown */}
           <div 
-            className="relative" 
+            className="relative group" 
             ref={shopMenuRef}
-            onMouseEnter={() => setShopMenuOpen(true)}
-            onMouseLeave={() => setShopMenuOpen(false)}
+            onMouseEnter={handleMouseEnterShopMenu}
+            onMouseLeave={handleMouseLeaveShopMenu}
           >
             <button
               onClick={() => setShopMenuOpen(!shopMenuOpen)}
@@ -194,7 +209,8 @@ export default function Header() {
             </button>
 
             {shopMenuOpen && (
-              <div className="absolute top-full left-0 mt-3.5 min-w-[200px] bg-white text-gray-900 border border-gray-100 shadow-xl rounded-xl p-3 z-50 animate-in fade-in duration-150">
+              <div className="absolute top-full left-0 pt-2 z-50 pointer-events-auto">
+                <div className="min-w-[200px] bg-white text-gray-900 border border-gray-100 shadow-xl rounded-xl p-3 animate-in fade-in duration-150">
                 {categoriesLoading ? (
                   <div className="space-y-2">
                     {[1, 2, 3, 4].map((i) => (
@@ -224,6 +240,7 @@ export default function Header() {
                     </div>
                   </div>
                 )}
+                </div>
               </div>
             )}
           </div>
