@@ -169,15 +169,17 @@ export default function Home() {
                       slideLoaded[idx] ? 'opacity-100' : 'opacity-0'
                     } ${isActive ? 'hero-img-ken' : ''}`}
                   />
+                  {/* Dark gradient overlay for better text readability */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30 pointer-events-none" />
                 </div>
 
                 {isActive && (
                   <div className="absolute inset-0 flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8 z-20">
                     <div className="max-w-4xl mx-auto text-center space-y-6">
-                      <span className="hero-text-eyebrow block text-xs font-bold tracking-[0.25em] text-[#CBB0DC] uppercase">
+                      <span className="hero-text-eyebrow block text-xs font-extrabold tracking-[0.25em] text-[#E8D1F6] drop-shadow-md uppercase">
                         {slide.eyebrow}
                       </span>
-                      <h1 className="hero-text-title text-4xl sm:text-7xl font-extrabold tracking-widest text-white leading-tight uppercase">
+                      <h1 className="hero-text-title text-4xl sm:text-7xl font-extrabold tracking-widest text-white drop-shadow-lg leading-tight uppercase">
                         {slide.title}
                       </h1>
                       <p className="hero-text-sub max-w-xl mx-auto text-[#FAFAF8]/85 text-xs sm:text-sm tracking-widest uppercase leading-relaxed font-bold">

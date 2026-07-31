@@ -100,7 +100,7 @@ export default function Header() {
           ? `fixed top-0 left-0 right-0 ${
               isScrolled
                 ? 'bg-[#FAFAF8]/95 backdrop-blur-md border-b border-[#E8E4DF]/50 shadow-sm py-4'
-                : 'bg-transparent bg-gradient-to-b from-black/50 via-black/15 to-transparent border-b border-white/10 py-5'
+                : 'bg-transparent bg-gradient-to-b from-black/80 via-black/40 to-transparent border-b border-white/10 py-5'
             }`
           : 'sticky top-0 bg-[#FAFAF8]/95 backdrop-blur-md border-b border-[#E8E4DF]/50 py-4'
       }`}
@@ -136,14 +136,14 @@ export default function Header() {
                 <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z" fill="currentColor" fillOpacity="0.1" />
               </svg>
               <span
-                  className={`text-base md:text-lg font-bold tracking-widest text-neutral-900 transition-colors duration-300 ${
+                  className={`text-base md:text-lg font-bold tracking-widest transition-colors duration-300 ${
                   isDarkText
                     ? 'text-[#0A0A0A] group-hover:text-[#442852]'
-                    : 'text-white group-hover:text-white/80'
+                    : 'text-white group-hover:text-white/80 drop-shadow-md'
                 }`}
-                >
-                  CRAFT GIRLY
-                </span>
+              >
+                CRAFT GIRLY
+              </span>
             </>
           )}
         </Link>
@@ -159,19 +159,16 @@ export default function Header() {
               pathname === '/home' || pathname === '/'
                 ? isDarkText
                   ? 'text-[#442852]'
-                  : 'text-white'
+                  : 'text-white drop-shadow-md'
                 : isDarkText
                 ? 'text-[#6B6B6B] hover:text-[#442852]'
-                : 'text-white/70 hover:text-white'
+                : 'text-white/90 hover:text-white drop-shadow-md'
             }`}
           >
             Home
           </Link>
 
-          {/* Admin link (staff/admin only) */}
-          {isAdminOrStaff && (
-            <Link href="/admin" className={`transition-all duration-300 whitespace-nowrap ${isDarkText ? 'text-[#6B6B6B] hover:text-[#442852]' : 'text-white/70 hover:text-white'}`}>Admin</Link>
-          )}
+
 
           {/* Dynamic Shop / Categories dropdown (customers only) */}
           {!isAdminOrStaff && (
@@ -182,10 +179,10 @@ export default function Header() {
                   isCategoryActive
                     ? isDarkText
                       ? 'text-[#442852]'
-                      : 'text-white'
+                      : 'text-white drop-shadow-md'
                     : isDarkText
                     ? 'text-[#6B6B6B] hover:text-[#442852]'
-                    : 'text-white/70 hover:text-white'
+                    : 'text-white/90 hover:text-white drop-shadow-md'
                 }`}
               >
                 Shop
@@ -242,10 +239,10 @@ export default function Header() {
                 isActive(link.href)
                   ? isDarkText
                     ? 'text-[#442852]'
-                    : 'text-white'
+                    : 'text-white drop-shadow-md'
                   : isDarkText
                   ? 'text-[#6B6B6B] hover:text-[#442852]'
-                  : 'text-white/70 hover:text-white'
+                  : 'text-white/90 hover:text-white drop-shadow-md'
               }`}
             >
               {link.label}
@@ -259,7 +256,7 @@ export default function Header() {
           <button
             onClick={() => setDesktopSearchOpen(true)}
             className={`hidden md:block p-2 rounded-none transition-colors ${
-              isDarkText ? 'text-[#0A0A0A] hover:text-[#442852] hover:bg-black/5' : 'text-white hover:text-white/80 hover:bg-white/10'
+              isDarkText ? 'text-[#0A0A0A] hover:text-[#442852] hover:bg-black/5' : 'text-white hover:text-white/80 hover:bg-white/10 drop-shadow-md'
             }`}
             aria-label="Open Search"
           >
@@ -269,7 +266,7 @@ export default function Header() {
           <button
             onClick={() => { setMobileSearchOpen(!mobileSearchOpen); setMobileMenuOpen(false); }}
             className={`md:hidden p-2 rounded-none transition-colors ${
-              isDarkText ? 'text-[#0A0A0A] hover:bg-black/5' : 'text-white hover:bg-white/10'
+              isDarkText ? 'text-[#0A0A0A] hover:bg-black/5' : 'text-white hover:bg-white/10 drop-shadow-md'
             }`}
             aria-label="Search"
           >
@@ -281,7 +278,7 @@ export default function Header() {
             <button
               onClick={() => user ? setIsProfileMenuOpen(!isProfileMenuOpen) : setAuthModalOpen(true)}
               className={`p-2 rounded-none transition-colors ${
-                isDarkText ? 'text-[#0A0A0A] hover:text-[#442852] hover:bg-black/5' : 'text-white hover:text-white/80 hover:bg-white/10'
+                isDarkText ? 'text-[#0A0A0A] hover:text-[#442852] hover:bg-black/5' : 'text-white hover:text-white/80 hover:bg-white/10 drop-shadow-md'
               }`}
               aria-label="User Profile"
             >
@@ -351,7 +348,7 @@ export default function Header() {
             <button
               onClick={() => toggleCart(true)}
               className={`relative p-2 rounded-none transition-colors ${
-                isDarkText ? 'text-[#0A0A0A] hover:text-[#442852] hover:bg-black/5' : 'text-white hover:text-white/80 hover:bg-white/10'
+                isDarkText ? 'text-[#0A0A0A] hover:text-[#442852] hover:bg-black/5' : 'text-white hover:text-white/80 hover:bg-white/10 drop-shadow-md'
               }`}
               aria-label="Open cart"
             >
@@ -404,22 +401,7 @@ export default function Header() {
               </Link>
             </li>
 
-            {/* Admin (staff only) */}
-            {isAdminOrStaff && (
-              <li>
-                <Link
-                  href="/admin"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-3 py-2.5 rounded-none text-xs font-bold uppercase tracking-widest transition-colors ${
-                    isActive('/admin')
-                      ? 'bg-[#442852] text-white'
-                      : 'text-[#6B6B6B] hover:bg-[#FAFAF8] hover:text-[#442852]'
-                  }`}
-                >
-                  Admin Console
-                </Link>
-              </li>
-            )}
+
 
             {/* Dynamic category links (customers only) */}
             {!isAdminOrStaff && (
