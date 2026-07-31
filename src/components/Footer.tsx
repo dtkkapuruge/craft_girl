@@ -70,7 +70,7 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="space-y-4">
             {footerLogo ? (
-              <img src={footerLogo} alt="Logo" className="h-8 w-auto object-contain" />
+              <img src={footerLogo} alt="Logo" className="h-14 w-14 object-contain" />
             ) : (
               <h3 className="text-xs md:text-sm font-bold tracking-widest uppercase text-neutral-900 mb-4">
                 CRAFT GIRLY

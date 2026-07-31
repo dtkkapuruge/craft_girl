@@ -136,10 +136,10 @@ export default function Header() {
         {/* Minimalist Logo Wordmark & Sparkle Icon */}
         <Link href="/" className="flex items-center gap-3 flex-shrink-0 group mr-6 md:mr-8">
           {navbarLogo ? (
-            <img src={navbarLogo} alt="Logo" className="h-10 w-auto object-contain drop-shadow-md transition-opacity duration-300 group-hover:opacity-80" />
+            <img src={navbarLogo} alt="Logo" className="h-12 w-12 object-contain drop-shadow-md transition-opacity duration-300 group-hover:opacity-80" />
           ) : (
             <svg
-              className={`w-10 h-10 transition-transform duration-700 group-hover:rotate-90 drop-shadow-md ${
+              className={`w-12 h-12 transition-transform duration-700 group-hover:rotate-90 drop-shadow-md ${
                 isDarkText ? 'text-[#442852]' : 'text-[#CBB0DC]'
               }`}
               viewBox="0 0 24 24"
