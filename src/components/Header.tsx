@@ -119,33 +119,31 @@ export default function Header() {
         </button>
 
         {/* Minimalist Logo Wordmark & Sparkle Icon */}
-        <Link href="/home" className="flex items-center gap-2.5 flex-shrink-0 group mr-6 md:mr-8">
+        <Link href="/" className="flex items-center gap-3 flex-shrink-0 group mr-6 md:mr-8">
           {navbarLogo ? (
-            <img src={navbarLogo} alt="Logo" className="h-10 md:h-12 w-auto object-contain transition-opacity duration-300 group-hover:opacity-80" />
+            <img src={navbarLogo} alt="Logo" className="h-10 w-auto object-contain drop-shadow-md transition-opacity duration-300 group-hover:opacity-80" />
           ) : (
-            <>
-              <svg
-                className={`w-4 h-4 transition-transform duration-700 group-hover:rotate-90 ${
-                  isDarkText ? 'text-[#442852]' : 'text-[#CBB0DC]'
-                }`}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z" fill="currentColor" fillOpacity="0.1" />
-              </svg>
-              <span
-                  className={`text-base md:text-lg font-bold tracking-widest transition-colors duration-300 ${
-                  isDarkText
-                    ? 'text-[#0A0A0A] group-hover:text-[#442852]'
-                    : 'text-white group-hover:text-white/80 drop-shadow-md'
-                }`}
-              >
-                CRAFT GIRLY
-              </span>
-            </>
+            <svg
+              className={`w-10 h-10 transition-transform duration-700 group-hover:rotate-90 drop-shadow-md ${
+                isDarkText ? 'text-[#442852]' : 'text-[#CBB0DC]'
+              }`}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z" fill="currentColor" fillOpacity="0.1" />
+            </svg>
           )}
+          <span
+            className={`text-xl font-bold tracking-wider drop-shadow-sm transition-colors duration-300 ${
+              isDarkText
+                ? 'text-[#0A0A0A] group-hover:text-[#442852]'
+                : 'text-white group-hover:text-white/80'
+            }`}
+          >
+            CRAFT GIRLY
+          </span>
         </Link>
 
         {/* Desktop Nav with Luxury Spacing */}
