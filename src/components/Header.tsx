@@ -168,9 +168,14 @@ export default function Header() {
 
 
 
-          {/* Dynamic Shop / Categories dropdown (customers only) */}
+          {/* Dynamic Categories dropdown (customers only) */}
           {!isAdminOrStaff && (
-            <div className="relative" ref={shopMenuRef}>
+            <div 
+              className="relative" 
+              ref={shopMenuRef}
+              onMouseEnter={() => setShopMenuOpen(true)}
+              onMouseLeave={() => setShopMenuOpen(false)}
+            >
               <button
                 onClick={() => setShopMenuOpen(!shopMenuOpen)}
                 className={`flex items-center gap-1.5 transition-all duration-300 whitespace-nowrap ${
@@ -183,42 +188,42 @@ export default function Header() {
                     : 'text-white/90 hover:text-white drop-shadow-md'
                 }`}
               >
-                Shop
+                Categories
                 <ChevronDown
-                  className={`w-3 h-3 transition-transform duration-200 ${shopMenuOpen ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 transition-transform duration-200 ${shopMenuOpen ? 'rotate-180' : ''}`}
                 />
               </button>
 
               {shopMenuOpen && (
-                <div className="absolute top-full left-0 mt-3.5 min-w-[220px] bg-white border border-neutral-100 rounded-md shadow-lg py-2.5 z-50 animate-in fade-in duration-150 text-[#0A0A0A]">
+                <div className="absolute top-full left-0 mt-3.5 min-w-[200px] bg-white/95 text-gray-900 backdrop-blur-md border border-gray-100 shadow-xl rounded-xl p-2 z-50 animate-in fade-in duration-150">
                   {categoriesLoading ? (
-                    <div className="px-4 py-3 space-y-2">
+                    <div className="px-2 py-2 space-y-2">
                       {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="h-4 bg-[#FAFAF8] rounded-none animate-pulse" />
+                        <div key={i} className="h-8 bg-gray-100 rounded-lg animate-pulse" />
                       ))}
                     </div>
                   ) : (
-                    <>
+                    <div className="flex flex-col gap-1">
                       {categories.map((cat) => (
                         <Link
                           key={cat.key}
                           href={`/category/${cat.key}`}
                           onClick={() => setShopMenuOpen(false)}
-                          className={`block whitespace-nowrap py-2.5 px-4 text-[13px] md:text-sm font-medium text-neutral-800 hover:text-black hover:bg-neutral-100 rounded-md transition-colors ${isActive(`/category/${cat.key}`) ? 'bg-[#FAFAF8] text-[#442852]' : 'text-[#6B6B6B] hover:bg-neutral-100'}`} 
+                          className={`block whitespace-nowrap py-2 px-3 text-[13px] md:text-sm font-medium rounded-lg transition-colors ${isActive(`/category/${cat.key}`) ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-purple-50 hover:text-purple-700'}`} 
                         >
                           {cat.label.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}
                         </Link>
                       ))}
-                      <div className="border-t border-[#E8E4DF] mt-2 pt-2">
+                      <div className="border-t border-gray-100 mt-1 pt-1">
                         <Link
                           href="/category/all"
                           onClick={() => setShopMenuOpen(false)}
-                          className="block whitespace-nowrap py-2.5 px-4 text-[13px] md:text-sm font-semibold text-neutral-900 hover:text-black hover:bg-neutral-100 rounded-md transition-colors"
+                          className="block whitespace-nowrap py-2 px-3 text-[13px] md:text-sm font-semibold text-gray-900 hover:bg-purple-50 hover:text-purple-700 rounded-lg transition-colors"
                         >
                           All Products →
                         </Link>
                       </div>
-                    </>
+                    </div>
                   )}
                 </div>
               )}
@@ -405,7 +410,7 @@ export default function Header() {
             {!isAdminOrStaff && (
               <>
                 <li className="pt-3 pb-1">
-                  <p className="px-3 text-[9px] font-bold uppercase tracking-[0.2em] text-gray-400">Collections</p>
+                  <p className="px-3 text-[9px] font-bold uppercase tracking-[0.2em] text-gray-400">Categories</p>
                 </li>
                 {categoriesLoading
                   ? [1, 2, 3].map((i) => (
